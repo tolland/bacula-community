@@ -137,6 +137,20 @@ Console {
   DirectoryAcl = *all*
   UserIdAcl = *all*
 }
+Console {
+  Name = restricted-job-client
+  Password = xxx
+  JobAcl    = backup
+  ClientAcl = test1-fd
+  PoolAcl   = *all*
+  CatalogAcl  = *all*
+  FileSetAcl  = *all*
+  CommandAcl  = *all*
+  StorageAcl  = *all*
+  WhereAcl = *all*
+  DirectoryAcl = *all*
+  UserIdAcl = *all*
+}
 EOF
 
 cat <<EOF >> $tmp/bconsole.conf2
@@ -148,7 +162,7 @@ EOF
 
 sed 's/Password.*/Password = xxx/' $conf/bconsole.conf >> $tmp/bconsole.conf2
 
-for i in job pool client clients fileset bvfs1 bvfs2
+for i in job pool client clients fileset bvfs1 bvfs2 job-client
 do
     sed "s/restricted/restricted-$i/" $tmp/bconsole.conf2 > $tmp/bconsole.conf.$i
 done
