@@ -23,22 +23,7 @@ echo "${cwd}/build/po" >${cwd}/tmp/file-list
 
 start_test
 
-cat <<EOF > $tmp/asleep.sh
-#!/bin/sh
-
-client=\$1
-job=\$2
-sleep 5
-nb=\`$bperl -e 'get_running_jobs("$HOST-fd", "R")'\`
-if [ "\$nb" -ge 1 ]; then
-   echo Found \$nb running jobs...
-   exit 1
-else
-   echo Found 0 job...
-   exit 0
-fi
-EOF
-
+sed "s!/opt/bacula!$cwd!" $cwd/build/scripts/MaximumConcurrentJobPerLevel > $tmp/asleep.sh
 chmod +x $tmp/asleep.sh
 
 cat <<EOF > $tmp/exit.sh
@@ -239,6 +224,7 @@ $j1 = decode_json(<>);
 $j2 = decode_json(<>);
 $j3 = decode_json(<>);
 
+# Sort the 3 jobs to determine the first one
 @js = sort { $a->{data}->[0]->{starttime} cmp $b->{data}->[0]->{starttime} } ($j1, $j2, $j3);
 unless ($js[0]->{data}->[0]->{endtime} lt $js[1]->{data}->[0]->{starttime}) {
        print "1 $js[0]->{data}->[0]->{endtime} lt $js[1]->{data}->[0]->{starttime}\n";

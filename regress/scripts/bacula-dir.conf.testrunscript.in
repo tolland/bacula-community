@@ -263,7 +263,7 @@ Job {
   Maximum Concurrent Jobs = 10
   RunScript {
     RunsWhen = Queued
-    Command = "@tmpdir@/asleep.sh %c %n"
+    Command = "@tmpdir@/asleep.sh %c %l"
     failjobonerror = no
     runsonclient = no
   }
