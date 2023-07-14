@@ -1733,6 +1733,12 @@ closedir(DIR *dirp)
 } WIN32_FIND_DATA, *PWIN32_FIND_DATA;
 */
 
+/* breaddir() is a a Bacula's replacement for readdir() using POOLMEM
+ * return:
+ *  0: returned the next filename in dname
+ * -1: end of directory reached
+ * >0: an error appends, the value is the errno
+ */
 int breaddir(DIR *dirp, POOLMEM *&dname)
 {
    _dir *dp = (_dir *)dirp;
