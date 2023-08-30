@@ -187,6 +187,11 @@ bool do_mac_init(JCR *jcr)
    wjcr = new_jcr(sizeof(JCR), dird_free_jcr);
    memcpy(&wjcr->previous_jr, &jcr->previous_jr, sizeof(wjcr->previous_jr));
 
+   /* Adjust the Comment field from the control job */
+   if (jcr->comment[0]) {
+      pm_strcpy(wjcr->comment, jcr->comment);
+   }
+
    /*
     * Turn the wjcr into a "real" job that takes on the aspects of
     *   the previous backup job "prev_job".
@@ -764,6 +769,13 @@ void start_mac_job(JCR *jcr)
    Mmsg(ua->cmd, "run job=\"%s\" jobid=%s ignoreduplicatecheck=yes pool=\"%s\"",
         jcr->job->name(), edit_uint64(jcr->MigrateJobId, ed1),
         jcr->pool->name());
+
+   if (is_comment_legal(NULL, jcr->comment)) {
+      pm_strcat(ua->cmd, " comment=\"");
+      pm_strcat(ua->cmd, jcr->comment);
+      pm_strcat(ua->cmd, "\"");
+   }
+
    if (jcr->next_pool) {
       bsnprintf(args, sizeof(args), " nextpool=\"%s\"", jcr->next_pool->name());
       pm_strcat(ua->cmd, args);
