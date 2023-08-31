@@ -116,7 +116,7 @@ list volumes
 @#setdebug level=51 storage=DiskChanger
 @#setdebug level=100 storage=File tags=dedup,asx,network options=h
 dedup rehydra_check_hash=1
-run job=copy-job $run_spooldata yes
+run job=copy-job $run_spooldata comment="from control job" yes
 wait
 messages
 @#purge volume=FileVolume001
@@ -152,6 +152,8 @@ yes
 list volumes
 wait
 messages
+@$out $tmp/log4.out
+.jlist jobid=6
 quit
 END_OF_DATA
 
@@ -166,6 +168,13 @@ grep 'Backup Level:' tmp/log3.out  | grep Incremental > /dev/null
 if [ $? != 0 ]; then
     bstat=2
     print_debug "The incremental job must use copied jobs"
+fi
+
+grep '{' $tmp/log4.out | perl -MJSON -e '$j = decode_json(<>); exit ($j->{data}->[0]->{comment} eq "from control job" && $j->{data}->[0]->{controljobid} == 5);'
+
+if [ $? = 0 ]; then
+    print_debug "Incorrect comment or controljobid SQL field"
+    estat=1
 fi
 
 end_test
