@@ -1150,7 +1150,7 @@ bool generic_driver::clean_cloud_volume(const char *VolumeName, cleanup_cb_type 
       }
    }
 
-   return (ret|rtn == 0);
+   return ((ret|rtn) == 0);
 }
 
 struct get_cloud_volume_parts_list_read_cb_arg {
