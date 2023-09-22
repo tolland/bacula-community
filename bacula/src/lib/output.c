@@ -508,6 +508,11 @@ char *OutputWriter::get_output(va_list ap, POOLMEM **out, OutputType first)
          Mmsg(tmp, "%s%c%llu", ow_quote_string(k), equal, u64);
          break;
 
+      case OT_PINT32:
+         u64 = va_arg(ap, uint32_t);
+         Mmsg(tmp, "%s%c%llu", ow_quote_string(k), equal, u64);
+         break;
+
       case OT_INT:
          i64 = va_arg(ap, int);
          Mmsg(tmp, "%s%c%lld", ow_quote_string(k), equal, i64);
