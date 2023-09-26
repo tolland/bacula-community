@@ -202,7 +202,7 @@ bool file_dev::open_device(DCR *dcr, int omode)
    /* Use system open() */
    if ((m_fd = ::open(archive_name.c_str(), mode|O_CLOEXEC|append, 0640)) < 0) {
       /* Open may fail if we want to write to the Immutable volume */
-      if (errno == EACCES && use_protect()) {
+      if ((errno == EACCES || errno == EPERM) && use_protect()) {
          bool immutable = check_for_immutable(getVolCatName());
          bool readonly = check_for_read_only(-1, getVolCatName());
          Dmsg3(DT_VOLUME|40, "volume=%s immutable=%d readonly=%d\n", getVolCatName(), immutable, readonly);

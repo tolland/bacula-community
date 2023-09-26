@@ -839,47 +839,47 @@ bool terminate_writing_volume(DCR *dcr)
    if (bstrcmp(dev->VolCatInfo.VolCatStatus, "Append")) {
       dev->setVolCatStatus("Full");
    }
-   
-   if (dev->device->set_vol_read_only) {
-      btime_t now = time(NULL);
+   char buf[128], buf2[128];
+   if (dev->device->set_vol_immutable || dev->device->set_vol_read_only) {
       uint32_t when = MAX(dev->device->min_volume_protection_time, dev->VolCatInfo.VolRetention);
-      dev->VolCatInfo.UseProtect = 1;
-      /* Set volume as immutable/read only */
-      if (dev->set_atime(dev->m_fd, dev->getVolCatName(), now + when) < 0) {
-         Jmsg(dcr->jcr, M_WARNING, 0, _("Failed to set the volume %s on device %s in atime retention, ERR=%s.\n"),
+      btime_t now = time(NULL);
+      if (dev->set_atime(-1, dev->getVolCatName(), now + when) < 0) {
+         Jmsg(dcr->jcr, M_WARNING, 0, _(" Failed to set the volume %s on device %s in atime retention, ERR=%s.\n"),
               dev->getVolCatName(), dev->print_name(), dev->errmsg);
       }
+      bstrftime(buf2, sizeof(buf2), now+when);
+      strip_trailing_junk(edit_utime(when, buf, sizeof(buf)));
+      dev->VolCatInfo.UseProtect = 1;
+   }
+
+   if (dev->device->set_vol_read_only) {
+      /* Set volume as immutable/read only */
       if (dev->set_readonly(dev->m_fd, dev->getVolCatName()) < 0) {
          berrno be;
          /* We may proceed with that but warn the user */
          Jmsg(dcr->jcr, M_WARNING, 0, _("Failed to set the volume %s on device %s in read-only, ERR=%s.\n"),
               dev->getVolCatName(), dev->print_name(), be.bstrerror());
       } else {
-         char buf[128], buf2[128];
-         strip_trailing_junk(edit_utime(when, buf, sizeof(buf)));
-         bstrftime(buf2, sizeof(buf2), now+when);
-
          Jmsg(dcr->jcr, M_INFO, 0, _("Marking Volume \"%s\" as read-only. Retention set to %s (%s).\n"),
               dev->getVolCatName(), buf2, buf);
          
          dev->VolCatInfo.Protected = 1;
          events_send_msg(dcr->jcr, "SJ0003", EVENTS_TYPE_VOLUME, me->hdr.name, (intptr_t)dcr->jcr,
-                            "Mark Volume \"%s\" as read-only. retention %s.", dev->getVolCatName(), buf);;
+                         "Mark Volume \"%s\" as read-only. Retention set to %s (%s).", dev->getVolCatName(), buf2, buf);
       }
    }
 
    if (dev->device->set_vol_immutable) {
-      dev->VolCatInfo.UseProtect = 1;
       /* Set volume as immutable */
       if (!dev->set_immutable(dev->getVolCatName(), &dev->errmsg)) {
          /* We may proceed with that but warn the user */
          Jmsg(dcr->jcr, M_WARNING, 0, _("Failed to set the volume %s on device %s as immutable, ERR=%s.\n"),
               dev->getVolCatName(), dev->print_name(), dev->errmsg);
       } else {
-         Jmsg(dcr->jcr, M_INFO, 0, _("Marking Volume \"%s\" as immutable\n"),
-              dev->getVolCatName());
+         Jmsg(dcr->jcr, M_INFO, 0, _("Marking Volume \"%s\" as immutable. Retention set to %s (%s).\n"),
+              dev->getVolCatName(), buf2, buf);
          events_send_msg(dcr->jcr, "SJ0003", EVENTS_TYPE_VOLUME, me->hdr.name, (intptr_t)dcr->jcr,
-                         "Mark Volume \"%s\" as immutable", dev->getVolCatName());;
+                         "Mark Volume \"%s\" as immutable. Retention set to %s (%s).", dev->getVolCatName(), buf2, buf);;
          dev->VolCatInfo.Protected = 1;
       }
    }
