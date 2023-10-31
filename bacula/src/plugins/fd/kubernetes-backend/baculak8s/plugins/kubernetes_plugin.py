@@ -52,6 +52,7 @@ from baculak8s.plugins.k8sbackend.service import *
 from baculak8s.plugins.k8sbackend.serviceaccounts import *
 from baculak8s.plugins.k8sbackend.statefulset import *
 from baculak8s.plugins.k8sbackend.storageclass import *
+from baculak8s.plugins.k8sbackend.volumesnapshotclass import get_snapshot_drivers_compatible
 from baculak8s.plugins.plugin import *
 from baculak8s.util.date_util import gmt_to_unix_timestamp
 from baculak8s.util.lambda_util import wait_until_resource_is_ready
@@ -191,7 +192,6 @@ class KubernetesPlugin(Plugin):
         logging.getLogger(client.rest.__package__).setLevel(logging.ERROR)
         urllib3.disable_warnings()
         logging.captureWarnings(True)
-
         response = self.__execute(lambda: self.coreapi.get_api_versions(), check_connection=False)
         if isinstance(response, dict) and "error" in response:
             logging.debug("ERROR response:{}".format(response))
@@ -534,7 +534,13 @@ class KubernetesPlugin(Plugin):
 
     # TODO: export/move all checks into k8sbackend
     def check_storage_compatibility_with_vsnapshot(self, storage_class_name):
-        return SNAPSHOT_DRIVER_COMPATIBLE in storage_class_name
+        logging.debug("Check Storage compatibility. {}".format(storage_class_name))
+        storage_provisioner = get_provisioner(self.storagev1api, storage_class_name)
+        logging.debug("Provisioner {}".format(storage_provisioner))
+        logging.debug('Compatible Drivers: {} '.format(get_snapshot_drivers_compatible(self.crd_api)))
+        if storage_provisioner in get_snapshot_drivers_compatible(self.crd_api):
+            return True
+        return False
 
     def check_pvc_compatiblity_with_vsnapshot(self, namespace, pvc_name):
         pvc = self.get_pvcdata_namespaced(namespace, pvc_name)

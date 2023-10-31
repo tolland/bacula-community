@@ -90,6 +90,12 @@ def storageclass_list_all_names(storagev1api):
     return sclist
 
 
+def get_provisioner(storagev1api, storage_name: str):
+    storageclass = storagev1api.patch_storage_class(storage_name, {})
+    if storageclass is not None:
+        return storageclass.provisioner
+    return None
+
 """
 {'allow_volume_expansion': True,
  'allowed_topologies': None,

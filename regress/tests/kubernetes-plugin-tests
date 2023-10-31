@@ -12,6 +12,11 @@
 #  resources to handle test and a available "plugintest" namespace.
 #
 
+#
+# I used minikube server with csi addon
+# minikube -p test-local stop && minikube -p test-local start && minikube -p test-local addons enable volumesnapshots && minikube -p test-local addons enable csi-hostpath-driver
+#
+
 # $ kubectl apply -f kubernetes-plugintest.yaml
 # namespace/plugintest created
 # secret/plugintest-secrets created
@@ -30,44 +35,58 @@
 # $ kubectl apply -f kubernetes-plugintest-csi-driver.yaml 
 # storageclass.storage.k8s.io/csi-hostpath-sc configured
 # persistentvolumeclaim/plugintest-persistent-volume-claim-csi created
+# persistentvolumeclaim/plugintest-persistent-volume-claim-csi-2 created
+# pod/plugintest-annotations-test created
 
 # $ kubectl -n plugintest get pods -o wide
-# NAME                                          READY   STATUS    RESTARTS   AGE   IP              NODE         NOMINATED NODE   READINESS GATES
-# plugintest-frontend-4mpdj                     1/1     Running   0          78s   10.244.10.217   test-local   <none>           <none>
-# plugintest-frontend-f85pr                     1/1     Running   0          78s   10.244.10.214   test-local   <none>           <none>
-# plugintest-frontend-hg5ft                     1/1     Running   0          78s   10.244.10.211   test-local   <none>           <none>
-# plugintest-nginx-deployment-568dfdd98-bclmb   1/1     Running   0          78s   10.244.10.216   test-local   <none>           <none>
-# plugintest-nginx-deployment-568dfdd98-hbz8w   1/1     Running   0          78s   10.244.10.218   test-local   <none>           <none>
-# plugintest-nginx-deployment-568dfdd98-xxkz2   1/1     Running   0          78s   10.244.10.215   test-local   <none>           <none>
-# plugintest-nginx-web-0                        1/1     Running   0          78s   10.244.10.219   test-local   <none>           <none>
-# plugintest-nginx-web-1                        1/1     Running   0          66s   10.244.10.220   test-local   <none>           <none>
-# plugintest-nginx-web-2                        1/1     Running   0          62s   10.244.10.221   test-local   <none>           <none>
-# plugintest1                                   1/1     Running   0          78s   10.244.10.210   test-local   <none>           <none>
-# plugintest2                                   1/1     Running   0          78s   10.244.10.212   test-local   <none>           <none>
-# plugintest3                                   1/1     Running   0          78s   10.244.10.213   test-local   <none>           <none>
+# NAME                                          READY   STATUS    RESTARTS   AGE   IP            NODE         NOMINATED NODE   READINESS GATES
+# plugintest-annotations-test                   0/1     Pending   0          27s   <none>        <none>       <none>           <none>
+# plugintest-frontend-2qrh6                     1/1     Running   0          40s   10.244.18.4   test-local   <none>           <none>
+# plugintest-frontend-9jpqf                     1/1     Running   0          40s   10.244.18.2   test-local   <none>           <none>
+# plugintest-frontend-bwdz4                     1/1     Running   0          40s   10.244.18.1   test-local   <none>           <none>
+# plugintest-nginx-deployment-568dfdd98-2h68n   1/1     Running   0          40s   10.244.18.7   test-local   <none>           <none>
+# plugintest-nginx-deployment-568dfdd98-ltb8v   1/1     Running   0          40s   10.244.18.6   test-local   <none>           <none>
+# plugintest-nginx-deployment-568dfdd98-lxqt9   1/1     Running   0          40s   10.244.18.5   test-local   <none>           <none>
+# plugintest-nginx-web-0                        0/1     Pending   0          40s   <none>        <none>       <none>           <none>
+# plugintest1                                   0/1     Pending   0          40s   <none>        <none>       <none>           <none>
+# plugintest2                                   1/1     Running   0          40s   10.244.18.3   test-local   <none>           <none>
+# plugintest3                                   0/1     Pending   0          40s   <none>        <none>       <none>           <none>
+
 
 # $ kubectl -n plugintest get svc -o wide
-# NAME                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE     SELECTOR
-# plugintest-nginx-service   ClusterIP   None             <none>        80/TCP     2m26s   app=plugintest-nginx-web
-# plugintest-subdomain       ClusterIP   10.100.124.195   <none>        1234/TCP   2m26s   name=plugintest
+# NAME                       TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE   SELECTOR
+# plugintest-nginx-service   ClusterIP   None           <none>        80/TCP     63s   app=plugintest-nginx-web
+# plugintest-subdomain       ClusterIP   10.97.43.130   <none>        1234/TCP   63s   name=plugintest
 
 # $ kubectl -n plugintest get pvc -o wide
 # NAME                                         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS      AGE     VOLUMEMODE
-# plugintest-persistent-volume-claim           Bound    pvc-781fa285-9cc4-449c-b3e2-850c704aabe4   1Gi        RWO            standard          2m59s   Filesystem
-# plugintest-persistent-volume-claim-csi       Bound    pvc-47265f3d-68ca-4fd7-9c55-af93f31f8a72   1Gi        RWO            csi-hostpath-sc   2m41s   Filesystem
-# plugintest-www-data-plugintest-nginx-web-0   Bound    pvc-60dd219e-4259-4149-befe-3b2230eb4dba   1Gi        RWO            standard          2m59s   Filesystem
-# plugintest-www-data-plugintest-nginx-web-1   Bound    pvc-5b666e3b-f728-41d2-a13c-2a31667b9136   1Gi        RWO            standard          2m47s   Filesystem
-# plugintest-www-data-plugintest-nginx-web-2   Bound    pvc-58464dd1-7884-4985-9ee8-6c9591f45d3c   1Gi        RWO            standard          2m43s   Filesystem
-# plugintest3-persistent-volume-claim          Bound    pvc-4dc9815f-f736-42fd-ae3e-3569ecb83e86   1Gi        RWO            standard          2m59s   Filesystem
+# plugintest-persistent-volume-claim           Bound    pvc-3381c472-5b3e-4b74-a999-24f3f7031a61   1Gi        RWO            standard          4m20s   Filesystem
+# plugintest-persistent-volume-claim-csi       Bound    pvc-9aecf542-5e7a-47c7-b9db-57a3b092bcf1   1Gi        RWO            csi-hostpath-sc   4m7s    Filesystem
+# plugintest-persistent-volume-claim-csi-2     Bound    pvc-9c38ea52-e9fd-48c2-a45b-2cba5908ae8c   1Gi        RWO            csi-hostpath-sc   4m7s    Filesystem
+# plugintest-www-data-plugintest-nginx-web-0   Bound    pvc-5c6ac739-fe67-476b-9711-282d8a376aa6   1Gi        RWO            standard          4m20s   Filesystem
+# plugintest-www-data-plugintest-nginx-web-1   Bound    pvc-0cd78b05-b0c8-433d-8533-b270c8cc685b   1Gi        RWO            standard          101s    Filesystem
+# plugintest-www-data-plugintest-nginx-web-2   Bound    pvc-ebdeac73-ff33-498c-8cd6-1d6c96b2c346   1Gi        RWO            standard          93s     Filesystem
+# plugintest3-persistent-volume-claim          Bound    pvc-7b906501-5bc6-469c-9e9f-87ee5db4fc07   1Gi        RWO            standard          4m20s   Filesystem
 
 # $ kubectl -n plugintest get rs -o wide
 # NAME                                    DESIRED   CURRENT   READY   AGE     CONTAINERS                 IMAGES                                 SELECTOR
-# plugintest-frontend                     3         3         3       3m21s   plugintest-frontend-test   gcr.io/google_samples/gb-frontend:v3   tier=frontend
-# plugintest-nginx-deployment-568dfdd98   3         3         3       3m21s   plugintest-nginx           nginx:latest                           app=plugintest-deployment,pod-template-hash=568dfdd98
+# plugintest-frontend                     3         3         3       4m41s   plugintest-frontend-test   gcr.io/google_samples/gb-frontend:v3   tier=frontend
+# plugintest-nginx-deployment-568dfdd98   3         3         3       4m41s   plugintest-nginx           nginx:latest                           app=plugintest-deployment,pod-template-hash=568dfdd98
+
 
 # $ kubectl -n plugintest get sts -o wide
 # NAME                   READY   AGE     CONTAINERS             IMAGES
-# plugintest-nginx-web   3/3     3m48s   plugintest-nginx-web   k8s.gcr.io/nginx-slim:0.8
+# plugintest-nginx-web   3/3     4m55s   plugintest-nginx-web   k8s.gcr.io/nginx-slim:0.8
+
+# $ kubectl -n plugintest get storageclass -o wide
+# NAME                 PROVISIONER                RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+# csi-hostpath-sc      hostpath.csi.k8s.io        Delete          Immediate           false                  94d
+# standard (default)   k8s.io/minikube-hostpath   Delete          Immediate           false                  94d
+
+# $ kubectl -n plugintest get volumesnapshotclasses -o wide
+# NAME                     DRIVER                DELETIONPOLICY   AGE
+# csi-hostpath-snapclass   hostpath.csi.k8s.io   Delete           94d
+
 
 TestName="kubernetes-plugin-test"
 JobName="PluginKubernetesTest"
