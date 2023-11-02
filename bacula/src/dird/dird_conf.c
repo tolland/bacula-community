@@ -1146,13 +1146,11 @@ void dump_resource(int type, RES *ares, void sendit(void *sock, const char *fmt,
             shstore?shstore->name():"*none*");
       }
       if (res->res_store.changer && res->res_store.changer != &res->res_store) {
-         sendit(sock, _("   Parent --> "));
-         dump_resource(-R_STORAGE, (RES *)res->res_store.changer, sendit, sock);
+         sendit(sock, _("   Parent=%s\n"), res->res_store.changer->hdr.name);
       }
-      if (recurse && res->res_store.shared_storage &&
+      if (res->res_store.shared_storage &&
           res->res_store.shared_storage != &res->res_store) {
-         sendit(sock, _("   Shared --> "));
-         dump_resource(-R_STORAGE, (RES *)res->res_store.shared_storage, sendit, sock);
+         sendit(sock, _("   Shared=%s\n"), res->res_store.shared_storage->hdr.name);
       }
       break;
 
