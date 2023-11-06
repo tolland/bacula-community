@@ -42,9 +42,7 @@ ADD_TEST(unittests:sha1-unittests "@regressdir@/tests/sha1-unittests")
 ADD_TEST(unittests:tags-unittests "@regressdir@/tests/tags-unittests")
 ADD_TEST(unittests:xattr-list-append-unittests "@regressdir@/tests/xattr-list-append-unittests")
 ADD_TEST(unittests:schedule-test "@regressdir@/tests/schedule-test")
-
 ADD_TEST(misc:btape-test "@regressdir@/tests/btape-test")
-
 ADD_TEST(misc:backup-to-null-crc32 "@regressdir@/tests/backup-to-null-crc32")
 ADD_TEST(misc:console-disable-job-test "@regressdir@/tests/console-disable-job-test")
 ADD_TEST(misc:console-acl-test "@regressdir@/tests/console-acl-test")
@@ -130,6 +128,7 @@ ADD_TEST(misc:bscan-many-volumes-test "@regressdir@/tests/bscan-many-volumes-tes
 ADD_TEST(misc:bscan-restore-objects-test "@regressdir@/tests/bscan-restore-objects-test")
 ADD_TEST(misc:bscan-plugin-objects-test "@regressdir@/tests/bscan-plugin-objects-test")
 ADD_TEST(misc:dbcheck-test "@regressdir@/tests/dbcheck-test")
+ADD_TEST(misc:expand-test "@regressdir@/tests/expand-test")
 ADD_TEST(misc:totp-auth-plugin-test "@regressdir@/tests/totp-auth-plugin-test")
 ADD_TEST(disk:maxfilesize-test "@regressdir@/tests/maxfilesize-test")
 ADD_TEST(disk:two-client-test "@regressdir@/tests/two-client-test")
