@@ -38,7 +38,8 @@ static const char *transfer_state_name[]  = {"created", "queued", "process", "do
    * funct : function to process
    * arg : argument passed to the function
    * cache_fname  : cache file name is duplicated in the transfer constructor
-   * volume_name  :  volume name is duplicated in the transfer constructor
+   * volume_name  : volume name is duplicated in the transfer constructor
+   * device_name  : device name is duplicated in the transfer constructor
    * part         : part index
    * driver       : pointer to the cloud_driver
    * dcr          : pointer to DCR
@@ -47,6 +48,7 @@ transfer::transfer(uint64_t    size,
                   transfer_engine* funct,
                   const char   *cache_fname,
                   const char   *volume_name,
+                  const char   *device_name,
                   uint32_t     part,
                   cloud_driver *driver,
                   uint32_t     JobId,
@@ -67,6 +69,7 @@ transfer::transfer(uint64_t    size,
    m_debug_retry(true),
    m_cache_fname(bstrdup(cache_fname)), /* cache fname is duplicated*/
    m_volume_name(bstrdup(volume_name)), /* volume name is duplicated*/
+   m_device_name(bstrdup(device_name)), /* device name is duplicated*/
    m_part(part),
    m_driver(driver),
    m_job_id(JobId),
@@ -98,6 +101,7 @@ transfer::~transfer()
    pthread_mutex_destroy(&m_mutex);
    pthread_mutex_destroy(&m_stat_mutex);
 
+   free(m_device_name);
    free(m_volume_name);
    free(m_cache_fname);
    if (m_use_count > 0) {
@@ -274,6 +278,7 @@ void transfer::append_api_status(OutputWriter &ow)
 
    if (m_state > TRANS_STATE_PROCESSED) {
          ow.get_output(OT_START_OBJ,
+                  OT_STRING,"device_name",            NPRTB(m_device_name),
                   OT_STRING,"volume_name",            NPRTB(m_volume_name),
                   OT_INT32, "part",                   m_part,
                   OT_INT32, "jobid",                  m_job_id,
@@ -287,6 +292,7 @@ void transfer::append_api_status(OutputWriter &ow)
                   OT_END);
    } else {
          ow.get_output(OT_START_OBJ,
+                  OT_STRING,"device_name",            NPRTB(m_device_name),
                   OT_STRING,"volume_name",            NPRTB(m_volume_name),
                   OT_INT32, "part",                   m_part,
                   OT_INT32, "jobid",                  m_job_id,
@@ -585,6 +591,7 @@ transfer *transfer_manager::get_xfer(uint64_t     size,
             transfer_engine *funct,
             POOLMEM      *cache_fname,
             const char   *volume_name,
+            const char   *device_name,
             uint32_t     part,
             cloud_driver *driver,
             uint32_t     JobId,
@@ -608,6 +615,7 @@ transfer *transfer_manager::get_xfer(uint64_t     size,
                        funct,
                        cache_fname,/* cache_fname is duplicated in the transfer constructor*/
                        volume_name, /* volume_name is duplicated in the transfer constructor*/
+                       device_name,/* device_name is duplicated in the transfer constructor*/
                        part,
                        driver,
                        JobId,

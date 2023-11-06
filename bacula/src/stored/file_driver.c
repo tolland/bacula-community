@@ -377,7 +377,7 @@ bool file_driver::move_cloud_part(const char *VolumeName, uint32_t apart , const
       rtn = true;
    } else {
       exists = 1;
-      transfer xfer(statbuf.st_size, NULL, cloud_source_name, VolumeName, apart, NULL, 0, NULL, NULL);
+      transfer xfer(statbuf.st_size, NULL, cloud_source_name, VolumeName, dev->name(), apart, NULL, 0, NULL, NULL);
       rtn = put_object(&xfer, cloud_source_name, cloud_dest_name, &upload_limit);
       Mmsg(err,"%s",rtn ? to:xfer.m_message);
    }

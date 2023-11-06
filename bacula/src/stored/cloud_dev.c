@@ -462,6 +462,7 @@ bool cloud_dev::upload_part_to_cloud(DCR *dcr, const char *VolumeName, uint32_t 
                                        upload_engine,
                                        cache_fname,/* cache_fname is duplicated in the transfer constructor*/
                                        VolumeName, /* VolumeName is duplicated in the transfer constructor*/
+                                       name(),     /* device name() is duplicated in the transfer constructor*/
                                        upart,
                                        driver,
                                        dcr->jcr->JobId,
@@ -568,6 +569,7 @@ transfer *cloud_dev::download_part_to_cache(DCR *dcr, const char *VolumeName, ui
                                  download_engine,
                                  cache_fname,/* cache_fname is duplicated in the transfer constructor*/
                                  VolumeName, /* VolumeName is duplicated in the transfer constructor*/
+                                 name(),     /* device name() is duplicated in the transfer constructor*/
                                  dpart,
                                  driver,
                                  dcr->jcr->JobId,

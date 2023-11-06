@@ -113,6 +113,7 @@ public:
    /* variables */
    char                *m_cache_fname;
    char                *m_volume_name;
+   char                *m_device_name;
    uint32_t             m_part;
    cloud_driver        *m_driver;
    uint32_t             m_job_id;
@@ -155,6 +156,7 @@ public:
             transfer_engine *funct,
             const char   *cache_fname,
             const char   *volume_name,
+            const char   *device_name,
             uint32_t     part,
             cloud_driver *driver,
             uint32_t     JobId,
@@ -295,6 +297,7 @@ public:
             transfer_engine *funct,
             POOLMEM      *cache_fname,
             const char   *volume_name,
+            const char   *device_name,
             uint32_t     part,
             cloud_driver *driver,
             uint32_t     JobId,
