@@ -133,6 +133,9 @@ static int job_item(JCR *jcr, int code,
       bsnprintf(buf, sizeof(buf), "%d", jcr->previous_jr.JobId); /* Previous JobId */
       str = buf;
       break;
+   case 15:			// Return the timestamp associated with the job name
+      str = jcr->Job + strlen(jcr->Job) - strlen("2023-10-12_20.27.20_59");
+      break;
    }
    *val_ptr = bstrdup(str);
    *val_len = strlen(str);
@@ -169,7 +172,7 @@ static struct s_built_in_vars built_in_vars[] = {
    { NT_("JobName"),   12, job_item},
    { NT_("PriorJobName"), 13, job_item},
    { NT_("PriorJobId"), 14, job_item},
-
+   { NT_("JobTimestamp"), 15, job_item},
    { NULL, 0, NULL}
 };
 
