@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2021-2023 Bacula Systems SA
+# License: BSD 2-Clause; see file LICENSE-FOSS
+#
+# Test the expand director code
+#
+TestName="expand-test"
+JobName=backup
+. scripts/functions
+
+scripts/cleanup
+scripts/copy-confs
+
+#
+# Zap out any schedule in default conf file so that
+#  it doesn't start during our test
+#
+outf="$tmp/sed_tmp"
+echo "s%  Schedule =%# Schedule =%g" >${outf}
+echo "s%  Label Format =%# Label Format =%g" >>${outf}
+cp $scripts/bacula-dir.conf $tmp/1
+sed -f ${outf} $tmp/1 >$scripts/bacula-dir.conf
+
+$bperl -e 'add_attribute("$conf/bacula-sd.conf", "LabelMedia", "yes", "Device")'
+$bperl -e 'add_attribute("$conf/bacula-dir.conf", "LabelFormat", "\"Vol.\${JobTimestamp}\"", "Pool")'
+
+change_jobname BackupClient1 $JobName
+start_test
+
+cat <<END_OF_DATA >$tmp/bconcmds
+@output /dev/null
+messages
+@$out $tmp/log1.out
+setdebug level=4 storage=File1
+run job=$JobName yes
+wait
+messages
+@$out $tmp/log2.out
+.jlist media pool=File
+@$out $tmp/log3.out
+.jlist jobs
+quit
+END_OF_DATA
+
+run_bacula
+check_for_zombie_jobs storage=File1
+stop_bacula
+
+j=`grep '{' $tmp/log3.out | perl -MJSON -e '$l = <>; $obj = JSON::decode_json($l); print $obj->{data}->[0]->{job};'`
+v=`echo $j | sed "s/$JobName/Vol/"`
+
+v1=`grep '{' $tmp/log2.out | perl -MJSON -e '$l = <>; $obj = JSON::decode_json($l); print $obj->{data}->[0]->{volumename}; exit (scalar(@{ $obj->{data} }) == 1);'`
+if [ $? != 1 ]; then
+    print_debug "ERROR: Should find 1 media in $tmp/log/2.out"
+    estat=1
+fi
+
+if [ $v1 != $v ]; then
+    print_debug "ERROR: Volume name should have the Job timestamp part at the end $v1 != $v"
+    estat=1
+fi
+
+end_test
