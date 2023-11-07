@@ -215,6 +215,7 @@ bail_out:
    if (save_adata) {
       dcr->set_adata();      /* switch back to what we entered with */
    }
+   Leave(100);
    return ok;                               /* device locked */
 }
 

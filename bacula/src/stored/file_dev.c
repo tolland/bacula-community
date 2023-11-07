@@ -87,6 +87,7 @@ bool DEVICE::rewind(DCR *dcr)
    file_addr = 0;
    if (m_fd < 0) {
       Mmsg1(errmsg, _("Rewind failed: device %s is not open.\n"), print_name());
+      Leave(dbglvl);
       return false;
    }
    if (is_file()) {
@@ -95,9 +96,11 @@ bool DEVICE::rewind(DCR *dcr)
          dev_errno = errno;
          Mmsg2(errmsg, _("lseek error on %s. ERR=%s.\n"),
             print_name(), be.bstrerror());
+         Leave(dbglvl);
          return false;
       }
    }
+   Leave(dbglvl);
    return true;
 }
 

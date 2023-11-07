@@ -309,10 +309,12 @@ bool tape_dev::eod(DCR *dcr)
    Enter(100);
    ok = DEVICE::eod(dcr);
    if (!ok) {
+      Leave(100);
       return false;
    }
 
 #if defined (__digital__) && defined (__unix__)
+   Leave(100);
    return fsf(VolCatInfo.VolCatFiles);
 #endif
 

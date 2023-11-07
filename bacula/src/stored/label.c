@@ -599,6 +599,7 @@ bool DEVICE::rewrite_volume_label(DCR *dcr, bool recycle)
    }
 
    if (!load_encryption_key(dcr, "LABEL", dcr->VolumeName, &VolHdr.EncCypherKeySize, VolHdr.EncCypherKey, &VolHdr.MasterKeyIdSize, VolHdr.MasterKeyId)) {
+      Leave(100);
       return false;
    }
    if (!write_volume_label_to_block(dcr)) {
@@ -873,6 +874,8 @@ void create_volume_header(DEVICE *dev, const char *VolName,
    if (chk_dbglvl(100)) {
       dev->dump_volume_label();
    }
+
+   Leave(130);
 }
 
 /*
@@ -949,6 +952,7 @@ bool write_session_label(DCR *dcr, int label)
    if (!check_for_newvol_or_newfile(dcr)) {
       Pmsg0(000, "ERR: !check_for_new_vol_or_newfile\n");
       dev->Unlock();
+      Leave(100);
       return false;
    }
 

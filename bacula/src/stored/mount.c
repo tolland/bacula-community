@@ -342,6 +342,7 @@ read_volume:
       dev->print_name());
 
    V(mount_mutex);
+   Leave(200);
    return true;
 
 bail_out:

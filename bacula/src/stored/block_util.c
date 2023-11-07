@@ -793,6 +793,7 @@ bool terminate_writing_volume(DCR *dcr)
    Enter(dbglvl);
 
    if (dev->is_ateot()) {
+      Leave(dbglvl);
       return ok;          /* already been here return now */
    }
 

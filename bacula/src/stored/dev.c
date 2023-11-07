@@ -129,6 +129,7 @@ bool DEVICE::open_device(DCR *dcr, int omode)
    ASSERT2(!adata, "Attempt to open adata dev");
    if (is_open()) {
       if (openmode == omode) {
+         Leave(dbglvl);
          return true;
       } else {
          Dmsg1(200, "Close fd=%d for mode change in open().\n", m_fd);
@@ -148,6 +149,7 @@ bool DEVICE::open_device(DCR *dcr, int omode)
    if (openmode == OPEN_READ_WRITE && has_cap(CAP_STREAM)) {
       openmode = OPEN_WRITE_ONLY;
    }
+   Leave(dbglvl);
    return false;
 }
 
@@ -377,8 +379,10 @@ bool DEVICE::mount(int timeout)
 {
    Enter(dbglvl);
    if (!is_mounted() && device->mount_command) {
+      Leave(dbglvl);
       return mount_file(1, timeout);
    }
+   Leave(dbglvl);
    return true;
 }
 
@@ -391,8 +395,10 @@ bool DEVICE::unmount(int timeout)
 {
    Enter(dbglvl);
    if (is_mounted() && requires_mount() && device->unmount_command) {
+      Leave(dbglvl);
       return mount_file(0, timeout);
    }
+   Leave(dbglvl);
    return true;
 }
 
@@ -963,6 +969,7 @@ bool DEVICE::eod(DCR *dcr)
       dev_errno = EBADF;
       Mmsg1(errmsg, _("Bad call to eod. Device %s not open\n"), print_name());
       Dmsg1(100, "%s", errmsg);
+      Leave(dbglvl);
       return false;
    }
 
