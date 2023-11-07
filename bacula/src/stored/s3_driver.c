@@ -373,6 +373,7 @@ static void responseCompleteCallback(
          pm_strcat(ctx->errMsg, oops->extraDetails[i].value);
       }
    }
+   Leave(dbglvl);
    return;
 }
 
@@ -490,7 +491,7 @@ get_out:
    } else {
       Dmsg1(dbglvl, "put_object ERROR: %s\n", ctx.errMsg);
    }
-
+   Leave(dbglvl);
    return ctx.status;
 }
 
@@ -505,6 +506,7 @@ static S3Status getObjectDataCallback(int buf_len, const char *buf,
       POOL_MEM msg;
       Mmsg(msg, _("Job cancelled.\n"));
       pm_strcat(ctx->errMsg, msg);
+      Leave(dbglvl);
       return S3StatusAbortedByCallback;
    }
    /* Write buffer to output file */
@@ -515,12 +517,14 @@ static S3Status getObjectDataCallback(int buf_len, const char *buf,
       Mmsg(msg, "%s Error writing output file: ERR=%s\n",
          ctx->caller, be.bstrerror());
       pm_strcat(ctx->errMsg, msg);
+      Leave(dbglvl);
       return S3StatusAbortedByCallback;
    }
    ctx->xfer->increment_processed_size(wbytes);
    if (ctx->limit) {
       ctx->limit->control_bwlimit(wbytes);
    }
+   Leave(dbglvl);
    return ((wbytes < buf_len) ?
             S3StatusAbortedByCallback : S3StatusOK);
 }
@@ -586,8 +590,18 @@ int s3_driver::get_cloud_object(transfer *xfer, const char *cloud_fname, const c
    }
 
 get_out:
-   if (retry) return CLOUD_DRIVER_COPY_PART_TO_CACHE_RETRY;
-   return (ctx.errMsg[0] == 0) ? CLOUD_DRIVER_COPY_PART_TO_CACHE_OK : CLOUD_DRIVER_COPY_PART_TO_CACHE_ERROR;
+   if (retry) 
+   {
+      Leave(dbglvl);
+      return CLOUD_DRIVER_COPY_PART_TO_CACHE_RETRY;
+   }
+   if (ctx.errMsg[0] == 0) {
+      Leave(dbglvl);
+      return CLOUD_DRIVER_COPY_PART_TO_CACHE_OK;
+   } else {
+      Leave(dbglvl);
+      return CLOUD_DRIVER_COPY_PART_TO_CACHE_ERROR;
+   }
 }
 
 bool s3_driver::move_cloud_part(const char *VolumeName, uint32_t apart, const char *to, cancel_callback *cancel_cb, POOLMEM *&err, int& exists)
@@ -670,6 +684,7 @@ static S3Status partsAndCopieslistBucketCallback(
          POOL_MEM msg;
          Mmsg(msg, _("Job cancelled.\n"));
          pm_strcat(ctx->errMsg, msg);
+         Leave(dbglvl);
          return S3StatusAbortedByCallback;
       }
    }
@@ -702,6 +717,7 @@ bool s3_driver::clean_cloud_volume(const char *VolumeName, cleanup_cb_type *cb, 
 
    if (strlen(VolumeName) == 0) {
       pm_strcpy(err, "Invalid argument");
+      Leave(dbglvl);
       return false;
    }
 
@@ -722,6 +738,7 @@ bool s3_driver::clean_cloud_volume(const char *VolumeName, cleanup_cb_type *cb, 
       if (ctx.status != S3StatusOK) {
          pm_strcpy(err, S3Errors[ctx.status]);
          bfree_and_null(ctx.nextMarker);
+         Leave(dbglvl);
          return false;
       }
    }
@@ -735,6 +752,7 @@ bool s3_driver::clean_cloud_volume(const char *VolumeName, cleanup_cb_type *cb, 
       }
       if (cancel_cb && cancel_cb->fct && cancel_cb->fct(cancel_cb->arg)) {
          Mmsg(err, _("Job cancelled.\n"));
+         Leave(dbglvl);
          return false;
       }
       /* don't forget to specify the volume name is the object path */
@@ -743,11 +761,13 @@ bool s3_driver::clean_cloud_volume(const char *VolumeName, cleanup_cb_type *cb, 
       S3_delete_object(&s3ctx, part, NULL, 0, &responseHandler, &ctx);
       if (ctx.status != S3StatusOK) {
          /* error message should have been filled within response cb */
+         Leave(dbglvl);
          return false;
       } else {
          Dmsg2(dbglvl, "clean_cloud_volume for %s: Unlink file %s.\n", VolumeName, part);
       }
    }
+   Leave(dbglvl);
    return true;
 }
 
@@ -784,6 +804,7 @@ bool s3_driver::truncate_cloud_volume(const char *VolumeName, ilist *trunc_parts
 get_out:
    free_pool_memory(cloud_fname);
    bfree_and_null(ctx.nextMarker);
+   Leave(dbglvl);
    return (err[0] == 0);
 }
 
@@ -825,6 +846,7 @@ bool s3_driver::copy_cache_part_to_cloud(transfer *xfer)
       --retry;
    } while (retry_put_object(status, retry) && (retry>0));
    free_pool_memory(cloud_fname);
+   Leave(dbglvl);
    return (status == S3StatusOK);
 }
 
@@ -838,6 +860,7 @@ int s3_driver::copy_cloud_part_to_cache(transfer *xfer)
    make_cloud_filename(cloud_fname, xfer->m_volume_name, xfer->m_part);
    int rtn = get_cloud_object(xfer, cloud_fname, xfer->m_cache_fname);
    free_pool_memory(cloud_fname);
+   Leave(dbglvl);
    return rtn;
 }
 
@@ -855,8 +878,10 @@ bool s3_driver::is_waiting_on_server(transfer *xfer)
    POOL_MEM cloud_fname(PM_FNAME);
    make_cloud_filename(cloud_fname.addr(), xfer->m_volume_name, xfer->m_part);
    if (m_glacier_driver) {
+      Leave(dbglvl);
       return m_glacier_driver->is_waiting_on_server(xfer, cloud_fname.addr());
    }
+   Leave(dbglvl);
    return false;
 }
 /*
@@ -977,8 +1002,10 @@ static S3Status partslistBucketCallback(
       POOL_MEM msg;
       Mmsg(msg, _("Job cancelled.\n"));
       pm_strcat(ctx->errMsg, msg);
+      Leave(dbglvl);
       return S3StatusAbortedByCallback;
    }
+   Leave(dbglvl);
    return S3StatusOK;
 }
 
@@ -994,6 +1021,7 @@ bool s3_driver::get_cloud_volume_parts_list(const char* VolumeName, ilist *parts
 
    if (!parts || strlen(VolumeName) == 0) {
       pm_strcpy(err, "Invalid argument");
+      Leave(dbglvl);
       return false;
    }
 
@@ -1009,10 +1037,12 @@ bool s3_driver::get_cloud_volume_parts_list(const char* VolumeName, ilist *parts
       if (ctx.status != S3StatusOK) {
          pm_strcpy(err, S3Errors[ctx.status]);
          bfree_and_null(ctx.nextMarker);
+         Leave(dbglvl);
          return false;
       }
    }
    bfree_and_null(ctx.nextMarker);
+   Leave(dbglvl);
    return true;
 }
 
@@ -1022,6 +1052,7 @@ bool s3_driver::get_one_cloud_volume_part(const char* part_path_name, ilist *par
 
    if (!parts || strlen(part_path_name) == 0) {
       pm_strcpy(err, "Invalid argument");
+      Leave(dbglvl);
       return false;
    }
 
@@ -1036,10 +1067,12 @@ bool s3_driver::get_one_cloud_volume_part(const char* part_path_name, ilist *par
    if (ctx.status != S3StatusOK) {
       pm_strcpy(err, S3Errors[ctx.status]);
       bfree_and_null(ctx.nextMarker);
+      Leave(dbglvl);
       return false;
    }
 
    bfree_and_null(ctx.nextMarker);
+   Leave(dbglvl);
    return true;
 }
 
@@ -1074,13 +1107,14 @@ static S3Status volumeslistBucketCallback(
       ctx->nextMarker = bstrdup(obj->key);
    }
 
-   Leave(dbglvl);
    if (ctx->cancel_cb && ctx->cancel_cb->fct && ctx->cancel_cb->fct(ctx->cancel_cb->arg)) {
       POOL_MEM msg;
       Mmsg(msg, _("Job cancelled.\n"));
       pm_strcat(ctx->errMsg, msg);
+      Leave(dbglvl);
       return S3StatusAbortedByCallback;
    }
+   Leave(dbglvl);
    return S3StatusOK;
 }
 
@@ -1096,6 +1130,7 @@ bool s3_driver::get_cloud_volumes_list(alist *volumes, cancel_callback *cancel_c
 
    if (!volumes) {
       pm_strcpy(err, "Invalid argument");
+      Leave(dbglvl);
       return false;
    }
 
@@ -1113,6 +1148,7 @@ bool s3_driver::get_cloud_volumes_list(alist *volumes, cancel_callback *cancel_c
       }
    }
    bfree_and_null(ctx.nextMarker);
+   Leave(dbglvl);
    return (err[0] == 0);
 }
 

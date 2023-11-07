@@ -441,6 +441,7 @@ bool cloud_dev::upload_part_to_cloud(DCR *dcr, const char *VolumeName, uint32_t 
             cache_fname, be.bstrerror());
          Dmsg1(dbglvl, "%s", errmsg);
          free_pool_memory(cache_fname);
+         Leave(dbglvl);
          return false;
       }
       file_size = statbuf.st_size;
@@ -448,6 +449,7 @@ bool cloud_dev::upload_part_to_cloud(DCR *dcr, const char *VolumeName, uint32_t 
       /* Nothing to do with this empty part */
       if (file_size == 0) {
          free_pool_memory(cache_fname);
+         Leave(dbglvl);
          return true; /* consider the transfer OK */
       }
 
@@ -489,7 +491,7 @@ bool cloud_dev::upload_part_to_cloud(DCR *dcr, const char *VolumeName, uint32_t 
        * uploaded, but we may call it to update VolCatParts or VolLastPartBytes.
        */
    }
-
+   Leave(dbglvl);
    return ret;
 }
 

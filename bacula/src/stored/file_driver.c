@@ -325,7 +325,7 @@ get_out:
    }
 
    free_pool_memory(vol_dir);
-
+   Leave(dbglvl);
    return ok;
 }
 
@@ -336,6 +336,7 @@ void file_driver::make_cloud_filename(POOLMEM *&filename,
    pm_strcpy(filename, hostName);
    cloud_driver::add_vol_and_part(filename, VolumeName, file, part);
    Dmsg1(dbglvl, "make_cloud_filename: %s\n", filename);
+   Leave(dbglvl);
 }
 
 void file_driver::make_cloud_filename(POOLMEM *&filename,
@@ -345,6 +346,7 @@ void file_driver::make_cloud_filename(POOLMEM *&filename,
    pm_strcpy(filename, hostName);
    cloud_driver::add_vol_and_part(filename, VolumeName, file);
    Dmsg1(dbglvl, "make_cloud_filename: %s\n", filename);
+   Leave(dbglvl);
 }
 
 /*
@@ -359,6 +361,7 @@ bool file_driver::copy_cache_part_to_cloud(transfer *xfer)
    Dmsg1(dbglvl, "objects_default_tier: %d\n", objects_default_tier);
    bool rtn = put_object(xfer, xfer->m_cache_fname, cloud_fname, &upload_limit);
    free_pool_memory(cloud_fname);
+   Leave(dbglvl);
    return rtn;
 }
 
@@ -383,6 +386,7 @@ bool file_driver::move_cloud_part(const char *VolumeName, uint32_t apart , const
    }
    free_pool_memory(cloud_dest_name);
    free_pool_memory(cloud_source_name);
+   Leave(dbglvl);
    return rtn;
 }
 
@@ -398,15 +402,19 @@ int file_driver::copy_cloud_part_to_cache(transfer *xfer)
    
    if (getenv("CLOUD_FILE_DRIVER_SIMULATE_DELAYED_TRANSFER") && xfer->m_debug_retry) {
       restore_cloud_object(xfer, cloud_fname.c_str());
+      Leave(dbglvl);
       return CLOUD_DRIVER_COPY_PART_TO_CACHE_RETRY;
    } else {
       int ret = put_object(xfer, cloud_fname.c_str(), xfer->m_cache_fname, &download_limit);
       if (ret) {
+         Leave(dbglvl);
          return CLOUD_DRIVER_COPY_PART_TO_CACHE_OK;
       } else {
+         Leave(dbglvl);
          return CLOUD_DRIVER_COPY_PART_TO_CACHE_ERROR;
       }
    }
+   Leave(dbglvl);
    return CLOUD_DRIVER_COPY_PART_TO_CACHE_OK;
 }
 
@@ -479,6 +487,7 @@ bool file_driver::get_cloud_volume_parts_list(const char* VolumeName, ilist *par
 
    if (parts == NULL || strlen(VolumeName) == 0) {
       pm_strcpy(err, "Invalid argument");
+      Leave(dbglvl);
       return false;
    }
 
@@ -589,6 +598,7 @@ get_out:
 
    free_pool_memory(vol_dir);
 
+   Leave(dbglvl);
    return ok;
 }
 
@@ -676,5 +686,6 @@ get_out:
 
    free_pool_memory(fullpath);
 
+   Leave(dbglvl);
    return ok;
 }
