@@ -1,0 +1,94 @@
+#!/bin/sh
+#
+# Copyright (C) 2000-2021 Kern Sibbald
+# Copyright (C) 2021-2023 Bacula Systems SA
+# License: BSD 2-Clause; see file LICENSE-FOSS
+#
+# Cloud test. We run backups and restore with the "truncate cache" command in-between
+#
+TestName="cloud-threads-test"
+JobName=NightlySave
+. scripts/functions
+
+require_cloud
+
+#config is required for cloud cleanup
+scripts/copy-test-confs
+scripts/cleanup
+
+FORCE_FILE_SET=${FORCE_FILE_SET:-"${cwd}/build"}
+echo "$FORCE_FILE_SET" >${cwd}/tmp/file-list
+
+start_test
+
+$bperl -e 'add_attribute("$conf/bacula-sd.conf", "MaximumPartSize", "1000000", "Device")'
+$bperl -e 'add_attribute("$conf/bacula-sd.conf", "MaximumUploadBandwidth", "1MB/s", "Cloud")'
+$bperl -e 'add_attribute("$conf/bacula-sd.conf", "MaximumDownloadBandwidth", "1MB/s", "Cloud")'
+$bperl -e 'add_attribute("$conf/bacula-sd.conf", "MaximumConcurrentUploads", "20", "Cloud")'
+$bperl -e 'add_attribute("$conf/bacula-sd.conf", "MaximumConcurrentDownloads", "20", "Cloud")'
+
+cat <<END_OF_DATA >${cwd}/tmp/bconcmds
+@output /dev/null
+messages
+@$out ${cwd}/tmp/log1.out
+label storage=File volume=Vol1
+END_OF_DATA
+
+# do label
+run_bacula
+
+cat <<END_OF_DATA >${cwd}/tmp/bconcmds
+@output /dev/null
+messages
+@$out ${cwd}/tmp/log1.out
+setdebug level=50 tags=cloud options=t trace=1 storage
+run job=$JobName level=Full yes
+wait
+list volumes
+llist volume=Vol1
+messages
+truncate cache volume=Vol1 storage=File
+END_OF_DATA
+
+run_bconsole
+
+cat <<END_OF_DATA >${cwd}/tmp/bconcmds-form
+@# 
+@# now do a restore
+@#
+@$out ${cwd}/tmp/log2.out
+setdebug level=50 tags=cloud options=t trace=1 storage
+@exec "ls -l ${cwd}/tmp/Vol1"
+restore where=${cwd}/tmp/bacula-restores storage=File jobid=@jobid@
+mark *
+done
+yes
+wait
+messages
+sql
+select * from JobMedia;
+
+@$out $tmp/log31.out
+cloud list storage=File
+@$out $tmp/log3.out
+cloud list volume=Vol1 storage=File
+quit
+END_OF_DATA
+
+ls -l tmp/Vol* >>${cwd}/tmp/log3.out
+ls -l ${cwd}/tmp/Vol1
+
+sleep 2
+check_for_zombie_jobs storage=File 
+stop_bacula
+
+check_two_logs
+
+# FIXME test parallelism
+
+$rscripts/diff.pl -s "$FORCE_FILE_SET" -d "$cwd/tmp/bacula-restores/$FORCE_FILE_SET"
+if test $? -ne 0; then
+    dstat=$?
+fi
+
+end_test
