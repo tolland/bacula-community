@@ -1,0 +1,244 @@
+#!/bin/sh
+#
+# Copyright (C) 2000-2021 Kern Sibbald
+# Copyright (C) 2021-2023 Bacula Systems SA
+# License: BSD 2-Clause; see file LICENSE-FOSS
+#
+# Not a regression test, rather a comparator of different upload strategies to AWS cloud
+#
+TestName="aws-upload-time-compare"
+JobName=NightlySave
+. scripts/functions
+
+require_cloud
+
+#config is required for cloud cleanup
+scripts/copy-test-confs
+scripts/cleanup
+
+FORCE_FILE_SET=${FORCE_FILE_SET:-"${cwd}/build"}
+echo "$FORCE_FILE_SET" >${cwd}/tmp/file-list
+
+NUM_TEST_PARTS=10
+
+start_test
+
+$bperl -e 'add_attribute("$conf/bacula-sd.conf", "MaximumPartSize", "10000000", "Device")'
+$bperl -e 'add_attribute("$conf/bacula-sd.conf", "MaximumConcurrentUploads", "10", "Cloud")'
+$bperl -e 'add_attribute("$conf/bacula-sd.conf", "TruncateCache", "No", "Cloud")'
+$bperl -e 'add_attribute("$conf/bacula-sd.conf", "Upload", "Manual", "Cloud")'
+
+cat <<END_OF_DATA >${cwd}/tmp/bconcmds
+@output /dev/null
+messages
+@$out ${cwd}/tmp/log1.out
+label storage=File volume=Vol1
+END_OF_DATA
+
+# do label
+run_bacula
+
+cat <<END_OF_DATA >${cwd}/tmp/bconcmds
+@output /dev/null
+messages
+@$out ${cwd}/tmp/log1.out
+@#setdebug level=500 storage
+run job=$JobName level=Full yes
+wait
+messages
+END_OF_DATA
+
+#run a backup to Vol1. It's our placeholder, but we'll substitute the result parts later
+run_bconsole
+ls -l ${cwd}/tmp/Vol1
+
+# use the cloud configuration information to setup aws cli
+region=$($bperl -e "get_attribute('$conf/bacula-sd.conf', 'Cloud', '$CLOUD_NAME', 'Region')") 
+export AWS_DEFAULT_REGION=$region
+access_key=$($bperl -e "get_attribute('$conf/bacula-sd.conf', 'Cloud', '$CLOUD_NAME', 'AccessKey')") 
+export AWS_ACCESS_KEY_ID=$access_key
+secret_key=$($bperl -e "get_attribute('$conf/bacula-sd.conf', 'Cloud', '$CLOUD_NAME', 'SecretKey')") 
+export AWS_SECRET_ACCESS_KEY=$secret_key
+BucketName=$($bperl -e "get_attribute('$conf/bacula-sd.conf', 'Cloud', '$CLOUD_NAME', 'BucketName')")
+path_to_parts=${cwd}/tmp/Vol1
+
+#generate fake random parts with #1 being the size
+generate_cache()
+{
+i=1
+while [ "$i" -le $NUM_TEST_PARTS ]; do
+    dd if=/dev/random of=$path_to_parts/part.$i bs=$1M count=1
+    i=$(( i + 1 ))
+done 
+}
+
+#upload a single part#arg1 with python
+cat <<END_OF_DATA >${cwd}/tmp/aws_python.py
+import sys
+from subprocess import Popen, PIPE
+part=sys.argv[1]
+objects_default_tier = "STANDARD"
+cmd = ["aws", "s3", "cp", "$path_to_parts/part.%s"%part, "s3://$BucketName/Vol1/part.%s"%part, "--storage-class", objects_default_tier, "--only-show-errors"]
+proc = Popen( cmd, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+output,err = proc.communicate()
+if output:
+    print(output)
+if err:
+    print(err)
+END_OF_DATA
+
+#Method 1: 10 processes running the above upload method in parallel
+cat <<END_OF_DATA >${cwd}/tmp/aws_python_comb
+#!/bin/bash
+for (( i=1; i<=$NUM_TEST_PARTS; i++ ))
+do
+python3 ${cwd}/tmp/aws_python.py \$i &
+done
+wait
+END_OF_DATA
+
+chmod 755 ${cwd}/tmp/aws_python_comb
+
+NUM_TEST_PARTS_PLUS_ONE=$NUM_TEST_PARTS+1
+#Method 2: 10 thread in parallel directly in python
+cat <<END_OF_DATA >${cwd}/tmp/aws_comb.py
+import sys
+from subprocess import Popen, PIPE
+from multiprocessing import Pool
+
+def upload(part):
+    objects_default_tier = "STANDARD"
+    cmd = ["aws", "s3", "cp", "$path_to_parts/part.%s"%part, "s3://$BucketName/Vol1/part.%s"%part, "--storage-class", objects_default_tier, "--only-show-errors"]
+    proc = Popen( cmd, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+    output,err = proc.communicate()
+    if output:
+        print(output)
+    if err:
+        print(err)
+if __name__ == "__main__":
+    # using multiprocessing
+    with Pool() as pool:
+        result = pool.map(upload, range(1,$NUM_TEST_PARTS_PLUS_ONE))
+END_OF_DATA
+
+#Method 3: Use aws cli recursivity
+cat <<END_OF_DATA >${cwd}/tmp/aws_recursive.py
+import sys
+from subprocess import Popen, PIPE
+
+objects_default_tier = "STANDARD"
+cmd = ["aws", "s3", "cp", "$path_to_parts", "s3://$BucketName/Vol1", "--storage-class", objects_default_tier, "--only-show-errors", "--recursive"]
+proc = Popen( cmd, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+output,err = proc.communicate()
+if output:
+    print(output)
+if err:
+    print(err)
+END_OF_DATA
+
+#Method 4: Use bacula method cloud upload volume=Vol1 
+cat <<END_OF_DATA >${cwd}/tmp/bconcmds
+@$out ${cwd}/tmp/log_uload.out
+cloud upload storage=File volume=Vol1
+wait
+messages
+quit
+END_OF_DATA
+
+# set default values for aws cli
+aws configure set default.s3.max_concurrent_requests $NUM_TEST_PARTS
+
+#remove all 
+rm ${cwd}/tmp/Vol1/part.*
+
+#part_size in MB
+for part_size in 2 5 24 50 100
+do
+    echo "generate parts: $part_size MB"
+    generate_cache $part_size > /dev/null 2>&1
+
+    high_multipart_threshold=$(($part_size + 1))
+    low_multipart_threshold=$(($part_size-1))
+
+    # Same with multipart threshold above part-size
+    echo "multipart_threshold ${high_multipart_threshold} MB"
+    aws configure set default.s3.multipart_threshold ${high_multipart_threshold}MB
+    
+    echo "Method#1 (sh comb)..."
+    start=$(date +%s)
+    ${cwd}/tmp/aws_python_comb
+    end=$(date +%s)
+    echo "...done"
+    echo "Method#1 duration: $(($end-$start))s"
+
+    aws s3 rm s3://$BucketName/Vol1 --recursive  > /dev/null 2>&1
+    
+    echo "Method#2 (python comb)..."
+    start=$(date +%s)
+    python3 ${cwd}/tmp/aws_comb.py
+    end=$(date +%s)
+    echo "...done"
+    echo "Method#2 duration: $(($end-$start))s"
+
+    aws s3 rm s3://$BucketName/Vol1 --recursive  > /dev/null 2>&1
+    
+    echo "Method#3 (aws cli recursive)..."
+    start=$(date +%s)
+    python3 ${cwd}/tmp/aws_recursive.py
+    end=$(date +%s)
+    echo "...done"
+    echo "Method#3 duration: $(($end-$start))s"
+    
+    aws s3 rm s3://$BucketName/Vol1 --recursive  > /dev/null 2>&1
+    
+    echo "Method#4 (bacula)..."
+    start=$(date +%s)
+    run_bconsole > /dev/null 2>&1
+    end=$(date +%s)
+    echo "...done"
+    echo "Method#4 duration: $(($end-$start))s"
+
+    # Same with multipart threshold under part-size
+    aws s3 rm s3://$BucketName/Vol1 --recursive  > /dev/null 2>&1
+
+    echo "multipart_threshold ${low_multipart_threshold} MB"
+    aws configure set default.s3.multipart_threshold ${low_multipart_threshold}MB
+    # apt-get install time, if /usr/bin/time doesn't exist
+    echo "Method#1 (sh comb)..."
+    start=$(date +%s)
+    ${cwd}/tmp/aws_python_comb
+    end=$(date +%s)
+    echo "...done"
+    echo "Method#1 duration: $(($end-$start))s"
+
+    aws s3 rm s3://$BucketName/Vol1 --recursive > /dev/null 2>&1
+    
+    echo "Method#2 (python comb)..."
+    start=$(date +%s)
+    python3 ${cwd}/tmp/aws_comb.py
+    end=$(date +%s)
+    echo "...done"
+    echo "Method#2 duration: $(($end-$start))s"
+
+    aws s3 rm s3://$BucketName/Vol1 --recursive > /dev/null 2>&1
+    
+    echo "Method#3 (aws cli recursive)..."
+    start=$(date +%s)
+    python3 ${cwd}/tmp/aws_recursive.py
+    end=$(date +%s)
+    echo "...done"
+    echo "Method#3 duration: $(($end-$start))s"
+    
+    aws s3 rm s3://$BucketName/Vol1 --recursive > /dev/null 2>&1
+    
+    echo "Method#4 (bacula)..."
+    start=$(date +%s)
+    run_bconsole > /dev/null 2>&1
+    end=$(date +%s)
+    echo "...done"
+    echo "Method#4 duration: $(($end-$start))s"
+
+    aws s3 rm s3://$BucketName/Vol1 --recursive > /dev/null 2>&1
+done
+
+end_test
