@@ -718,6 +718,7 @@ bail_out:
  *  %c = changer device name
  *  %d = changer drive index
  *  %f = Client's name
+ *  %i = JobId
  *  %j = Job name
  *  %l = archive control channel name
  *  %o = command
@@ -773,8 +774,12 @@ void edit_device_codes(DCR *dcr, POOLMEM **omsg, const char *imsg, const char *c
             sprintf(add, "%d", dcr->VolCatInfo.Slot);
             str = add;
             break;
+	 case 'i':
+	    sprintf(add, "%d", dcr->jcr ? dcr->jcr->JobId : 0);
+	    str = add;
+	    break;
          case 'j':                    /* Job name */
-            str = dcr->jcr->Job;
+            str = dcr->jcr ? dcr->jcr->Job : "";
             break;
          case 'v':
             if (dcr->dev->LoadedVolName[0]) {
