@@ -24,7 +24,7 @@ import logging
 import pathlib
 
 K8SOBJ_SNAPSHOT_GROUP = 'snapshot.storage.k8s.io'
-K8SOBJ_SNAPSHOT_VERSION = 'v1beta1'
+K8SOBJ_SNAPSHOT_VERSION = 'v1'
 K8SOBJ_SNAPSHOT_PLURAL = 'volumesnapshotclasses'
 
 def volumesnapshotclass_list_all(custom_api, filter_names=None):
