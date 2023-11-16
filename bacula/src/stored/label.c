@@ -414,9 +414,11 @@ bool DEVICE::write_volume_label(DCR *dcr, const char *VolName,
    Dmsg1(150, "Label type=%d\n", dev->label_type);
 
    if (!load_encryption_key(dcr, "LABEL", VolName, &VolHdr.EncCypherKeySize, VolHdr.EncCypherKey, &VolHdr.MasterKeyIdSize, VolHdr.MasterKeyId)) {
+      close(dcr);
       goto bail_out;
    }
    if (!write_volume_label_to_dev(dcr, VolName, PoolName, relabel, no_prelabel)) {
+      /* close(dcr); uncomment if you get mismatched label like in #10453 */
       goto bail_out;
    }
 
