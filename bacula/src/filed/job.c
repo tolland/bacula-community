@@ -2082,33 +2082,37 @@ static int set_options(findFOPTS *fo, const char *opts)
       case 'Z':                 /* compression */
          p++;                   /* skip Z */
          if (*p >= '0' && *p <= '9') {
-            fo->flags |= FO_COMPRESS;
-            fo->Compress_algo = COMPRESS_GZIP;
-            fo->Compress_level = *p - '0';
-         }
-         else if (*p == 'o') {
-            fo->flags |= FO_COMPRESS;
-            fo->Compress_algo = COMPRESS_LZO1X;
-            fo->Compress_level = 1; /* not used with LZO */
-         }
-         else if (*p >= 'r' && *p <= 'u') {
-            fo->flags |= FO_COMPRESS;
-            fo->Compress_algo = COMPRESS_ZSTD;
-            switch(*p) {
-            case 'u':
-               fo->Compress_level = 10;
-               break;
-            case 'r':
-               fo->Compress_level = 1;
-               break;
-            case 't':
-               fo->Compress_level = 19;
-               break;
-            case 's':
-            default:
-               fo->Compress_level = 3;
-               break;
-            }
+#ifdef HAVE_ZLIB
+	    fo->flags |= FO_COMPRESS;
+	    fo->Compress_algo = COMPRESS_GZIP;
+	    fo->Compress_level = *p - '0';
+#endif // HAVE_ZLIB
+	 } else if (*p == 'o') {
+#ifdef HAVE_LZO
+	    fo->flags |= FO_COMPRESS;
+	    fo->Compress_algo = COMPRESS_LZO1X;
+	    fo->Compress_level = 1; /* not used with LZO */
+#endif // HAVE_LZO
+      } else if (*p >= 'r' && *p <= 'u') {
+#ifdef HAVE_ZSTD
+	    fo->flags |= FO_COMPRESS;
+	    fo->Compress_algo = COMPRESS_ZSTD;
+	    switch(*p) {
+	    case 'u':
+	       fo->Compress_level = 10;
+	       break;
+	    case 'r':
+	       fo->Compress_level = 1;
+	       break;
+	    case 't':
+	       fo->Compress_level = 19;
+	       break;
+	    case 's':
+	    default:
+	       fo->Compress_level = 3;
+	       break;
+	    }
+#endif	// HAVE_ZSTD
          } else {
             Dmsg1(10, "Ignore unknown compression code Z%c in the FileSet\n", *p);
          }
