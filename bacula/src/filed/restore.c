@@ -1727,7 +1727,6 @@ bool flush_cipher(r_ctx &rctx, BFILE *bfd, uint64_t *addr, int flags, int32_t st
    char ec1[50];                      /* Buffer printing huge values */
    bool second_pass = false;
 
-again:
    /* Write out the remaining block and free the cipher context */
    cipher_ctx->buf = check_pool_memory_size(cipher_ctx->buf,
                         cipher_ctx->buf_len + cipher_ctx->block_size);
@@ -1747,6 +1746,7 @@ again:
 
    cipher_ctx->buf_len += decrypted_len;
 
+again:
    unser_crypto_packet_len(cipher_ctx);
    Dmsg1(500, "Crypto unser block size=%d\n", cipher_ctx->packet_len - CRYPTO_LEN_SIZE);
    wsize = cipher_ctx->packet_len - CRYPTO_LEN_SIZE;
