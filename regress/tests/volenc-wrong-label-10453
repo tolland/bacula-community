@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2023 Bacula Systems SA
+# License: BSD 2-Clause; see file LICENSE-FOSS
+#
+# prevent the key-manager to work and try to get
+# a volume with a mismatched label, 
+# usually TestVolume0001 with label TestVolume0006
+#
+
+TestName="/volenc-wrong-label-10453"
+JobName=backup
+. scripts/functions
+
+if [ "$FORCE_VOLENC" != "yes" ]; then
+    echo "Test $TestName disabled because FORCE_VOLENC is not set"
+    exit 0
+fi
+
+scripts/cleanup
+scripts/copy-test-confs
+echo "${cwd}/build/po" >${cwd}/tmp/file-list
+
+# enable auto labeling
+$bperl -e 'add_attribute("$conf/bacula-dir.conf", "Label Format", "TestVolume", "Pool", "Default")'
+
+$bin/install-key-manager.sh install
+
+# deny key-manager.py to run by blocking the config file
+chmod a-r $bin/key-manager.conf
+
+start_test
+
+cat <<END_OF_DATA >$tmp/bconcmds
+@output /dev/null
+messages
+@$out $tmp/log0.out
+@#setdebug level=100 storage=File
+run job=Simple yes
+@# let the job try to create a volume
+@sleep 10
+messages
+@# before to canel it
+cancel jobid=1
+@sleep 10
+@# fix the key-manager.conf and let see if we get a valid backup and no mismatched volumes
+@exec "chmod a+r $bin/key-manager.conf"
+@$out $tmp/log1.out
+run job=Simple yes
+wait
+messages
+@# 
+@# now do a restore
+@#
+@$out $tmp/log2.out  
+@#setdebug level=4 storage=File
+restore where=$tmp/bacula-restores select all done
+yes
+@sleep 10
+@# if the volume is wrong the restore will fail and wait for a mount
+cancel jobid=3
+wait
+messages
+quit
+END_OF_DATA
+
+run_bacula
+check_for_zombie_jobs storage=File
+stop_bacula
+check_two_logs
+
+# if $tmp/TestVolume0001 has a volume label, it must be TestVolume0001
+grep -a -q TestVolume000 $tmp/TestVolume0001 || ! grep -a -q TestVolume0001 $tmp/TestVolume0001
+if [ $? != 0 ] ; then
+   echo "Wrong volume label in $tmp/TestVolume0001 !!!"
+   bstat=1
+fi
+
+end_test
+
