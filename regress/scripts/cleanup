@@ -19,7 +19,7 @@ rm -rf ${working}/*.bsr ${working}/log*.sd
 rm -rf ${working}/*.trace ${working}/*.traceback ${working}/*.state
 rm -rf ${working}/@*
 rm -rf ${working}/*
-rm -rf ${tmp}disk-changer
+rm -rf ${tmp}/disk-changer
 rm -f ${cwd}/bin/plugins/test-plugin-fd.so
 rm -rf ${cwd}/mnt
 rm -rf ${bin}/keydir
