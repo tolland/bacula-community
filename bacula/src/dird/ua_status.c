@@ -1581,18 +1581,16 @@ static void list_running_jobs(UAContext *ua)
       ua->send_msg("%s", ow.end_group());
    }
 
-   if (njobs == 0) {
-      /* Note the following message is used in regress -- don't change */
-      ua->send_msg(_("No Jobs running.\n====\n"));
-      Dmsg0(200, "leave list_run_jobs()\n");
-      return;
-   } else {
-      /* display a closing header */
-      if (!ua->api) {
+   if (!ua->api) {
+      if (njobs == 0) {
+	 /* Note the following message is used in regress -- don't change */
+	 ua->send_msg(_("No Jobs running.\n====\n"));
+	 return;;
+      } else {
+	 /* display a closing header */
          ua->send_msg("====\n");
       }
    }
-   Dmsg0(200, "leave list_run_jobs()\n");
 }
 
 static void list_terminated_jobs(UAContext *ua)
