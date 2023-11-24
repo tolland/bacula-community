@@ -92,6 +92,12 @@ class APISettings extends BaculumAPIPage {
 		$this->BconsolePath->Text = $this->config['bconsole']['bin_path'];
 		$this->BconsoleConfigPath->Text = $this->config['bconsole']['cfg_path'];
 		$this->BconsoleUseSudo->Checked = ($this->config['bconsole']['use_sudo'] == 1);
+		if (key_exists('interpret_bacula_errors', $this->config['bconsole'])) {
+			$this->BconsoleInterpretBaculaErrors->Checked = ($this->config['bconsole']['interpret_bacula_errors'] == 1);
+		} else {
+			// Default value if option not specified
+			$this->BconsoleInterpretBaculaErrors->Checked = true;
+		}
 	}
 
 	private function loadConfigSettings() {
@@ -423,7 +429,8 @@ class APISettings extends BaculumAPIPage {
 			'enabled' => ($this->BconsoleEnabled->Checked ? 1 : 0),
 			'bin_path' => $this->BconsolePath->Text,
 			'cfg_path' => $this->BconsoleConfigPath->Text,
-			'use_sudo' => ($this->BconsoleUseSudo->Checked ? 1 : 0)
+			'use_sudo' => ($this->BconsoleUseSudo->Checked ? 1 : 0),
+			'interpret_bacula_errors' => ($this->BconsoleInterpretBaculaErrors->Checked ? 1 : 0)
 		];
 		$this->config['bconsole'] = $cfg;
 		$this->getModule('api_config')->setConfig($this->config);

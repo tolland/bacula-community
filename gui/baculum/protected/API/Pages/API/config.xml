@@ -59,6 +59,7 @@
 		<module id="delete" class="Baculum\API\Modules\Delete" />
 		<module id="list" class="Baculum\API\Modules\BList" />
 		<module id="time" class="Baculum\API\Modules\TimeManager" />
+		<module id="bacula_error" class="Baculum\API\Modules\BaculaError" />
 		<!-- changer command modules -->
 		<module id="changer_command" class="Baculum\API\Modules\ChangerCommand" />
 		<!-- plugin modules -->

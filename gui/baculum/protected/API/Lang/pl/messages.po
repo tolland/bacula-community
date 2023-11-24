@@ -697,3 +697,6 @@ msgstr "Dedykowana konfiguracja Bconsole"
 
 msgid "Audit log:"
 msgstr "Audit log:"
+
+msgid "Interpret Bacula errors:"
+msgstr "Interpret Bacula errors:"

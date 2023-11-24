@@ -185,7 +185,26 @@ class Bconsole extends APIModule {
 			}
 		}
 		$output = array_values($output);
-		return (object)array('output' => $output, 'exitcode' => (integer)$exitcode);
+		$result = [
+			'output' => $output,
+			'exitcode' => (integer)$exitcode
+		];
+		if (key_exists('interpret_bacula_errors', $this->config) && $this->config['interpret_bacula_errors'] == 1) {
+			$berror = $this->getModule('bacula_error')->checkForErrors($output);
+			if ($berror['error'] != 0) {
+				$result = [
+					'output' => sprintf(
+						'Error: %s, BaculaCode: %s, APIError: %s, Output: %s',
+						$berror['errmsg'],
+						$berror['code'],
+						$berror['error'],
+						implode(PHP_EOL, $output)
+					),
+					'exitcode' => $berror['error']
+				];
+			}
+		}
+		return (object)$result;
 	}
 
 	public function bconsoleCommand($director, array $command, $ptype = null, $without_cmd = false) {

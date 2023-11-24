@@ -205,6 +205,7 @@ class APIInstallWizard extends BaculumAPIPage {
 		$cfg_data['bconsole']['bin_path'] = $this->BconsolePath->Text;
 		$cfg_data['bconsole']['cfg_path'] = $this->BconsoleConfigPath->Text;
 		$cfg_data['bconsole']['use_sudo'] = (integer)($this->UseSudo->Checked === true);
+		$cfg_data['bconsole']['interpret_bacula_errors'] = 1; // it is enabled by default;
 		$cfg_data['jsontools']['enabled'] = (integer)($this->ConfigYes->Checked === true);
 		$cfg_data['jsontools']['use_sudo'] = (integer)($this->BJSONUseSudo->Checked === true);
 		$cfg_data['jsontools']['bconfig_dir'] = $this->BConfigDir->Text;
