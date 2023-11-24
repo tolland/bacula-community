@@ -8,6 +8,7 @@
 		<!-- tools modules -->
 		<module id="bconsole" class="Baculum\API\Modules\Bconsole" />
 		<module id="json_tools" class="Baculum\API\Modules\JSONTools" />
+		<module id="bacula_error" class="Baculum\API\Modules\BaculaError" />
 		<!-- config modules -->
 		<module id="api_config" class="Baculum\API\Modules\APIConfig" />
 		<module id="device_config" class="Baculum\API\Modules\DeviceConfig" />
