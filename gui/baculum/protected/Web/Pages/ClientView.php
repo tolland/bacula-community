@@ -252,9 +252,10 @@ class ClientView extends BaculumWebPage {
 	}
 
 	public function status($sender, $param) {
-		$raw_status = $this->getModule('api')->get(
+		$rst = $this->getModule('api')->get(
 			['clients', $this->getClientId(), 'status']
-		)->output;
+		);
+		$raw_status = $rst->error == 0 ? $rst->output : [$rst->output];
 		$this->ClientLog->Text = implode(PHP_EOL, $raw_status);
 
 		$query_str = '?output=json&type=header';

@@ -127,9 +127,10 @@ class StorageView extends BaculumWebPage {
 	}
 
 	public function status($sender, $param) {
-		$raw_status = $this->getModule('api')->get(
+		$rst = $this->getModule('api')->get(
 			['storages', $this->getStorageId(), 'status']
-		)->output;
+		);
+		$raw_status = $rst->error == 0 ? $rst->output : [$rst->output];
 		$this->StorageLog->Text = implode(PHP_EOL, $raw_status);
 
 		$query_str = '?output=json&type=header';
