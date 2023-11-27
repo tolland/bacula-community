@@ -138,19 +138,22 @@ class PluginCoreDiskPerf extends ConsoleOutputQueryPage {
 	 * @return array parsed output
 	 */
 	private function getItemRows(array $output) {
+		$cnt = 0;
 		$out = [];
-		$pattern = '/^perf (?P<path>.+)? write=(?P<write>[a-zA-Z0-9\/]+) read=(?P<read>[a-zA-Z0-9\/]+) no_cache=(?P<no_cache>[a-z]+)$/i';
+		$ret = [];
 		for ($i = 0; $i < count($output); $i++) {
-			// perf /tmp write=1707MiB/s read=4067MiB/s no_cache=fadvise
-			if (preg_match($pattern, $output[$i], $match) === 1) {
-				$out[] = [
-					'path' => $match['path'],
-					'write' => $match['write'],
-					'read' => $match['read'],
-					'no_cache' => $match['no_cache']
-				];
+			if ((empty($output[$i]) || $output[$i] == ']') && $cnt < 2) {
+				$cnt++;
+			}
+			if (!empty($output[$i])) {
+				$item = $this->parseOutputKeyValue([$output[$i]]);
+				$out = array_merge($out, $item);
+			} elseif ($cnt == 2 && count($out) > 2) {
+				$ret[] = $out;
+				$out = [];
+				$cnt = 0;
 			}
 		}
-		return $out;
+		return $ret;
 	}
 }
