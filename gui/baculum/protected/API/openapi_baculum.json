@@ -10406,6 +10406,47 @@
 				]
 			}
 		},
+		"/api/v2/plugins/core/{storageid}/storage/scsilist": {
+			"get": {
+				"tags": ["plugins"],
+				"summary": "List SCSI tape devices on the storage daemon host.",
+				"description": "List SCSI tape devices on the storage daemon host.",
+				"responses": {
+					"200": {
+						"description": "List SCSI tape devices on the storage daemon host.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"output": {
+											"type": "array",
+											"items": {
+												"description": "SCSI tape devices on the storage daemon host.",
+												"type": "string"
+											}
+										},
+										"error": {
+											"type": "integer",
+											"description": "Error code",
+											"enum": [0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 20, 150, 1000]
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/StorageId"
+					},
+					{
+						"$ref": "#/components/parameters/Output"
+					}
+				]
+			}
+		},
 		"/api/v2/plugins/m365/{clientid}/tenants": {
 			"get": {
 				"tags": ["plugins"],
