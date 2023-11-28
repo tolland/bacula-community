@@ -343,9 +343,9 @@ class JobPodBacula(Job, metaclass=ABCMeta):
         # Check if pvc is compatible with vsnapshot
         if not self._plugin.check_pvc_compatiblity_with_vsnapshot(namespace, pvc.get('name')):
             return None, pvc
-
+        logging.debug('Origin pvcdata FileInfo:\n{}'.format(pvc.get('fi')))
         self._io.send_info(VSNAPSHOT_BACKUP_COMPATIBLE_INFO.format(pvc.get('name')))
-        vsnapshot = self._plugin.create_vsnapshot(namespace, pvc.get('name'))
+        vsnapshot = self._plugin.create_vsnapshot(namespace, pvc)
         if isinstance(vsnapshot, dict) and 'error' in vsnapshot:
             self._handle_error(CANNOT_CREATE_VSNAPSHOT_ERR.format(parse_json_descr(vsnapshot)))
             return None, None

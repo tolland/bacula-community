@@ -224,13 +224,13 @@ class BackupJob(EstimationJob):
             if backupmode == BaculaBackupMode.Snapshot:
                 vsnapshot, pvc_from_vsnap = self.handle_create_vsnapshot_backup(namespace, pvcname)
                 logging.debug("The vsnapshot created from pvc {} is: {}".format(pvcname, vsnapshot))
-                logging.debug("The pvc create from vsnapshot {} is: {}".format(vsnapshot, pvc_from_vsnap))
+                logging.debug("The pvc create from vsnapshot {} is: {}. FI: {}".format(vsnapshot, pvc_from_vsnap, pvc_from_vsnap.get('fi')))
                 if vsnapshot == None:
                     logging.debug(CHANGE_BACKUP_MODE_FOR_INCOMPATIBLITY_PVC.format(pvcname))
                     # backupmode = BaculaBackupMode.Clone
                     self._io.send_info(CHANGE_BACKUP_MODE_FOR_INCOMPATIBLITY_PVC.format(pvcname))
                 else:
-                    pvc = pvc_from_vsnap.get("name")
+                    pvc = pvc_from_vsnap
                     pvcname = pvc_from_vsnap.get("name")
 
             logging.debug("handling vol after snapshot/clone: {}".format(pvcname))
@@ -248,19 +248,24 @@ class BackupJob(EstimationJob):
         # iterate on requested volumes for backup
         logging.debug("iterate over requested vols for backup: {}".format(handledvolumes))
         for volumes in handledvolumes:
+            logging.debug('Volume in handlevolumes:\n{}'.format(volumes))
             pvc = volumes['pvc']
             pvcname = volumes['pvcname']
             # get pvcdata for this volume
             """
             PVCDATA:plugintest-pvc-alone:{'name': 'plugintest-pvc-alone-baculaclone-lfxrra', 'node_name': None, 'storage_class_name': 'ocs-storagecluster-cephfs', 'capacity': '1Gi', 'fi': <baculak8s.entities.file_info.FileInfo object at 0x7fc3c08bc668>}
             """
-            pvcdata = self._plugin.get_pvcdata_namespaced(namespace, pvcname, pvc)
+            pvcdata = self._plugin.get_pvcdata_namespaced(namespace, pvcname, pvcname)
             if isinstance(pvcdata, dict) and 'error' in pvcdata:
                 self._handle_error(PVCDATA_GET_ERROR.format(parse_json_descr(pvcdata)))
 
             else:
-                logging.debug('PVCDATA:{}:{}'.format(pvc, pvcdata))
-                logging.debug('PVCDATA FI.name:{}'.format(pvcdata.get('fi').name))
+                # Modify the name in FileInfo because we need save the file like original name 
+                # and not the new pvc (from vsnapshot) name.
+                if volumes.get('vsnapshot') is not None:
+                    logging.debug('We change the name of FileInfo to adapt the original pvc name with the new pvc name')
+                    pvcdata.get('fi').set_name(pvc.get('fi').name)
+
                 if len(pvcdata) > 0:
                     status = self.process_pvcdata(namespace, pvcdata, True)
 

@@ -802,9 +802,12 @@ class KubernetesPlugin(Plugin):
             return False
         return status.get('readyToUse')
 
-    def create_vsnapshot(self, namespace, pvcname):
-        logging.info("Creating vsnapshot of pvc `{}`".format(pvcname))
-        snapshot = prepare_create_snapshot_body(namespace, pvcname, self._params.get('jobid'))
+    def create_vsnapshot(self, namespace, pvc):
+        pvcname = pvc.get('name')
+        logging.info("Creating vsnapshot of pvc `{}`".format(pvc))
+        storage_provisioner =  get_provisioner(self.storagev1api, pvc.get('storage_class_name'))
+        snapshot = prepare_create_snapshot_body(self.crd_api, namespace, pvcname, self._params.get('jobid'), storage_provisioner)
+        logging.debug("Body to create vsnapshot:\n`{}`\n".format(snapshot))
         response = self.__execute(lambda: self.crd_api.create_namespaced_custom_object(**snapshot, pretty=True))
         if isinstance(response, dict) and "error" in response:
             return response
@@ -825,6 +828,7 @@ class KubernetesPlugin(Plugin):
 
     def create_pvc_from_vsnapshot(self, namespace, pvcdata):
         new_pvc = prepare_pvc_from_vsnapshot_body(namespace, pvcdata, self._params.get('jobid'))
+        logging.debug("Body to create pvc from vsnapshot: `{}`".format(new_pvc))
         response = self.create_pvc_clone(namespace, new_pvc)
         if isinstance(response, dict) and 'error' in response:
             return response

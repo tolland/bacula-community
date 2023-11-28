@@ -17,16 +17,17 @@
 #
 #   Bacula(R) is a registered trademark of Kern Sibbald.
 #
+import logging
 
 SNAPSHOT_DRIVER_COMPATIBLE='csi'
 
 K8SOBJ_SNAPSHOT_GROUP = 'snapshot.storage.k8s.io'
-K8SOBJ_SNAPSHOT_VERSION = 'v1beta1'
+K8SOBJ_SNAPSHOT_VERSION = 'v1'
+K8SOBJ_SNAPSHOTCLASS_PLURAL = 'volumesnapshotclasses'
 K8SOBJ_SNAPSHOT_PLURAL = 'volumesnapshots'
 K8SOBJ_SNAPSHOT_KIND = 'VolumeSnapshot'
 K8SOBJ_SNAPSHOT_NAME_TEMPLATE = 'bacula-vsnap-{pvc}-{jobid}'
 BACKUP_PVC_FROM_SNAPSHOT_TEMPLATE = 'bacula-pvcfs-{pvc}-{jobid}'
-K8SOBJ_SNAPSHOT_CLASS = 'csi-hostpath-snapclass'
 
 def csi_snapshots_read_namespaced(crd_api, namespace, name):
     return crd_api.get_namespaced_custom_object(K8SOBJ_SNAPSHOT_GROUP, K8SOBJ_SNAPSHOT_VERSION, namespace, K8SOBJ_SNAPSHOT_PLURAL, name)
@@ -51,8 +52,20 @@ def csi_snapshots_namespaced_names(crd_api, namespace, labels=""):
         }
     return snapdict
 
+def get_volume_snapshot_class_name(crd_api, pvc_storageclass_provisioner):
+    volume_snapshot_classes = crd_api.list_cluster_custom_object(K8SOBJ_SNAPSHOT_GROUP, K8SOBJ_SNAPSHOT_VERSION, K8SOBJ_SNAPSHOTCLASS_PLURAL, watch=False)
+    logging.debug("Provisioner of PVC Storage class:\n{}".format(pvc_storageclass_provisioner))
+    logging.debug("VolumeSnapshotClasses available:\n {}".format(volume_snapshot_classes))
+    for snap in volume_snapshot_classes.get('items'):
+        if pvc_storageclass_provisioner == snap.get('driver'):
+            logging.debug("VolumesnapshotClass selected:\n{}".format(snap.get('metadata').get('name')))
+            return snap.get('metadata').get('name')
+    raise ValueError("VolumeSnapshotClass not found for this provisioner: {}. Please contact with Bacula support".format(pvc_storageclass_provisioner))
 
-def prepare_create_snapshot_body(namespace, pvc_name, jobid):
+
+
+def prepare_create_snapshot_body(crd_api, namespace, pvc_name, jobid, pvc_storageclass_provisioner):
+    volumeSnapshotClassName = get_volume_snapshot_class_name(crd_api, pvc_storageclass_provisioner)
     return {
         "group": K8SOBJ_SNAPSHOT_GROUP,
         "version": K8SOBJ_SNAPSHOT_VERSION,
@@ -66,7 +79,7 @@ def prepare_create_snapshot_body(namespace, pvc_name, jobid):
                 "namespace": namespace
             },
             "spec": {
-                "volumeSnapshotClassName": K8SOBJ_SNAPSHOT_CLASS,
+                "volumeSnapshotClassName": volumeSnapshotClassName,
                 "source": {
                     "persistentVolumeClaimName": pvc_name
                 }
@@ -99,7 +112,7 @@ def prepare_pvc_from_vsnapshot_body(namespace, pvcdata, jobid):
                 'kind': K8SOBJ_SNAPSHOT_KIND,
                 'apiGroup': K8SOBJ_SNAPSHOT_GROUP
             },
-            'accessModes': ['ReadOnlyMany'],
+            'accessModes': ['ReadWriteOnce'],
             'resources': { 'requests': {'storage': pvcdata.get('capacity')}}
         }
     }

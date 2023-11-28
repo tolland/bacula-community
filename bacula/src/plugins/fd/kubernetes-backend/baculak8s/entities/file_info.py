@@ -64,6 +64,11 @@ class FileInfo(object):
                     str(self.objtype),
                     self.objcache is not None)
 
+
+    def set_name(self, name: str):
+        self.name = name
+
+
     def is_bucket(self):
         return self.type == DIRECTORY and not self.name
 
