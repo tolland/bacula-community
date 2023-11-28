@@ -834,33 +834,74 @@ void close_bootstrap_file(bootstrap_info &info)
 struct bsr_vol_list {
    hlink link;
    int job_num;  /* remember when the volume was used, this is not a JobId */
+   uint32_t VolSessionTime, VolSessionId;
    char volume[1];
 };
 
 /* Generate a list of split position in the BSR to break any cycle
  * returns true if a cycle was detected
- * When a volume appears in multiple sequence into a BSR, interleaved with other
- * volumes this can be a problem because the SD mount each volume only once and
- * reads the all content and this modify the order of the restore of the
- * different parts.
- * We need to split the BSR into parts that the SD will not be able to "optimize"
- * with each volume appearing only in one sequence.
+ *
+ * When a volume appears multiple time into a BSR, interleaved with other
+ * volumes, this can be a problem because the SD mount each volume only once and
+ * reads all the part. This can break the initial order defined in the BSR.
+ *
+ * We need to split the BSR into parts that the SD optimization can handle
+ * without creating troubles.
+ *
  * The function detect when a volume is interleaved with other volume and
  * split the BSR at the beginning of a job that reuse a volume.
  *
- * But We need to reset the list of volume between each split!
+ * We need to reset the list of volume between each split!
  * When the BSR is split there is no need to remember for the volumes that
  * are in the previous part. Read the BSR in one pass and resetting the list
  * of volumes is difficult as we do the split in hindsight.
  * Instead of modifying the list we remember when a volume has been
  * seen for the last time (the job_num) and to know if a volume matter
  * we compare it with the last_split_job_num that is the first job_num
- * in the new list
+ * in the new list.
  *
- * Since #10086 the code also detect when the BSR is going backward in the same volume
- * This can happens when two incremental jobs run in //
+ * Since #10086 the code also detect when the BSR is going backward in the same
+ * volume (there is not volume interleaving, but jobs share the same area inside
+ * the same volume). This can happens when two incremental jobs run in //.
+ *
  * As the BSR is written job by job the split is enough, no need to reorganize
  * the BSR an move all the parts of the first job before the second one.
+ *
+ * The only case that this function cannot solve is the end of a job is written
+ * before the beginning inside the same volume. This could happens in a copy job
+ * if not copying the volume in the wrong order.
+ *
+ * It is possible to split the BSR at multiple place, I split it at the beginning
+ * of the job where  the problem is detected.
+ *
+ * For example:
+ * number are jobs, letters are volumes
+ * 1 A
+ * ---
+ * 2 B
+ * 2 A
+ * 3 A
+ * Here I must split between 1A & 2B to be sure that 2A will be read after 2B
+ * else the file that span 2B & 2A will never be fully restored as the blocks
+ * should have been read just after 1A and befor 2B by the SD
+ *
+ * Another example
+ * 1 A start=0 end=1000
+ * ---
+ * 2 A start=0 end=2000
+ * 3 A start=3000 end=4000
+ * Here I must split between 1A & 2A to avoid that pieces of file in 1A to be
+ * mixed with piece of file in 2A. The SD cannot restore multiple files
+ * at once and simply push all the blocks in the file descriptor that is open
+ * and open a new one when it get new ATTRIBUTES
+ *
+ * Another example, 1 is full, jobs 2, 3 & 4 are incremental that run in //
+ * 1 A
+ * 2 B start=0 end=1000
+ * 3 C
+ * 4 B start=0 end=2000
+ * I must split between 3C & 4B to avoid to include blocks of 4B while restoring
+ * 2B. But this is handled by the 1st example
  */
 bool split_bsr_loop(JCR *jcr, bootstrap_info &info)
 {
@@ -868,6 +909,7 @@ bool split_bsr_loop(JCR *jcr, bootstrap_info &info)
    FILE *bs = info.bs;
    bsr_vol_list *p = NULL;
    htable volumes(p, &p->link, 100);   // list of volume that have already been used
+   bsr_vol_list *item;                 // the current volume
 
    POOL_MEM storage(PM_NAME);
    POOL_MEM volume(PM_NAME), last_volume(PM_NAME);
@@ -877,13 +919,12 @@ bool split_bsr_loop(JCR *jcr, bootstrap_info &info)
    uint64_t VolAddrStart, VolAddrEnd;
    uint64_t prevVolAddrStart = 0, prevVolAddrEnd = 0;
 
-   boffset_t start_section_offset; // the offset of the beginning of the section
-   boffset_t start_job_off; // the offset of the first section of the job
-
+   boffset_t start_section_offset = 0; // the offset of the beginning of the section
+   boffset_t start_job_off = 0; // the offset of the beginning of the first section of the job
    bool first = true;
-   bool after_eof = false;   // used to handle the after EOF inside the loop
-   int job_num = 1;            // internal job numbering from 1..N
-   int last_split_job_num = 1; // the jobs that are >= matter
+   bool after_eof = false;     // used to handle the after EOF inside the loop
+   int job_num = 0;            // internal job numbering from 0,1..N
+   int last_split_job_num = 0; // the volumes that matter in "volumes" have a job_num >= last_split_job_num
 
    if (info.split_list == NULL) {
       info.split_list = New(alist(100, owned_by_alist));
@@ -892,6 +933,7 @@ bool split_bsr_loop(JCR *jcr, bootstrap_info &info)
       boffset_t cur_off = ftello(bs); // off of the line
       after_eof = (bfgets(ua->cmd, bs) == NULL);
       if (!after_eof) {
+         Dmsg1(100, "BSR: > %s", ua->cmd);
          parse_ua_args(ua);
          if (ua->argc != 1) {
             continue; // @ERIC we do the same in check_for_new_storage()
@@ -899,66 +941,84 @@ bool split_bsr_loop(JCR *jcr, bootstrap_info &info)
       }
       if (after_eof || strcasecmp(ua->argk[0], "Storage") == 0) {
          if (first) {
+            /* read the first part until the beginning of the next one or the end of the BSR */
+            Dmsg1(100, "BSR: ------------------------ off=%lld\n", cur_off);
             first = false;
          } else {
-            /* We have reached the end of a part or the end of the BSR file */
+            /* We are at the beginning of a new part (just after the Storage=) or at the end of the BSR file */
+            bool is_new_job = (prevVolSessionTime != VolSessionTime || prevVolSessionId != VolSessionId);
             bool same_volume = (strcmp(last_volume.c_str(), volume.c_str()) == 0);
+            if (is_new_job) {
+               /* This is a new job */
+               job_num++;
+               start_job_off = start_section_offset;
+               prevVolSessionTime = VolSessionTime;
+               prevVolSessionId = VolSessionId;
+               Dmsg5(100, "BSR: ------------------------ off=%lld (jobnum=%d starts at off=%lld and is sess=%lu:%lu) ============ \n", cur_off, job_num, start_job_off, VolSessionTime, VolSessionId);
+            } else {
+               Dmsg4(100, "BSR: ------------------------ off=%lld in jobnum=%d sess=%lu:%lu ------------ \n", cur_off, job_num, VolSessionTime, VolSessionId);
+            }
             if (!same_volume) {
-               /* look if the volume has already been used before */
-               bsr_vol_list *item = (bsr_vol_list *)volumes.lookup(volume.c_str());
+               /* look if the volume has already been seen before */
+               item = (bsr_vol_list *)volumes.lookup(volume.c_str());
                if (item == NULL) {
                   /* this is the first time we see this volume */
                   item = (bsr_vol_list *)volumes.hash_malloc(strlen(volume.c_str())+sizeof(bsr_vol_list));
                   strcpy(item->volume, volume.c_str());
                   item->job_num = job_num; /* remember when the volume was used */
+                  item->VolSessionTime = VolSessionTime;
+                  item->VolSessionId = VolSessionId;
                   volumes.insert(item->volume, item);
-
+                  Dmsg2(120, "BSR: insert volume %s jobnum=%d\n", item->volume, item->job_num);
                } else {
                   /* we already know about this volume, but is it used in the current part of the BSR? */
                   if (item->job_num >= last_split_job_num) {
-                     /* the volume is used in this part, we need to split the BSR into a new part */
+                     /* the volume is used again in this part, we need to split the BSR into a new part */
                      boffset_t *p = (boffset_t *)malloc(sizeof(boffset_t));
                      *p = start_job_off;
                      info.split_list->append(p);
-                     last_split_job_num = job_num; /* ignore volumes too old */
+                     Dmsg8(20, "BSR: Split the BSR at off=%lld at the beginning of jobnum=%d sess=%lu:%lu because volume %s is previously used by jobnum=%d sess=%lu:%lu\n",
+                                *p, job_num, VolSessionTime, VolSessionId, volume.c_str(), item->job_num, item->VolSessionTime, item->VolSessionId);
+                     last_split_job_num = job_num; /* ignore volumes in older parts */
                   }
-                  item->job_num = job_num; /* remember when the volume was used */
+                  item->job_num = job_num; /* remember when the volume was LAST used */
+                  item->VolSessionTime = VolSessionTime;
+                  item->VolSessionId = VolSessionId;
+                  Dmsg2(120, "BSR: update volume %s job_num=%d\n", item->volume, item->job_num);
                }
+            } else {
+               item->job_num = job_num; /* remember when the volume was LAST used */
+               item->VolSessionTime = VolSessionTime;
+               item->VolSessionId = VolSessionId;
+               Dmsg2(120, "BSR: update volume %s job_num=%d\n", item->volume, item->job_num);
             }
-            bool is_new_job = (prevVolSessionTime != VolSessionTime || prevVolSessionId != VolSessionId);
             /* check if we are going backward on the same volume */
             if (same_volume && VolAddrStart < prevVolAddrEnd) {
                if (is_new_job) {
                   /* this is a new job, then we expect that 2 jobs (probably 2 incremental ones)
                    * ran at the same time on the same Device and wrote on the same volume
-                   * The user should avoid that!
+                   * The user should avoid that! But we can split :-)
                    */
+                  boffset_t *p = (boffset_t *)malloc(sizeof(boffset_t));
+                  *p = start_job_off;
+                  info.split_list->append(p);
+                  Dmsg5(20, "BSR: Split the BSR at off=%lld at the beginning of jobnum=%d sess=%lu:%lu because volume %s needs to be rewound\n",
+                        *p, job_num, VolSessionTime, VolSessionId, volume.c_str());
+                  last_split_job_num = job_num; /* ignore volumes too old */
                } else {
-                  /* This is unexpected */
-                  Dmsg3(0, "Error BSR going backward on the Volume=%s on the Session=%lu:%lu\n", volume.c_str(), VolSessionTime, VolSessionId);
+                  /* This is unexpected that the same job is going backward into a volume!*/
+                  Dmsg3(0, "BSR: Error going backward on the Volume=%s on the Session=%lu:%lu\n", volume.c_str(), VolSessionTime, VolSessionId);
                }
-               /* we need to split the BSR into a new part */
-               boffset_t *p = (boffset_t *)malloc(sizeof(boffset_t));
-               *p = start_job_off;
-               info.split_list->append(p);
-               last_split_job_num = job_num; /* ignore volumes too old */
-            }
-            if (is_new_job) {
-               /* This is a new job */
-               job_num++;
-               start_job_off = start_section_offset;
-               prevVolSessionId = VolSessionId;
-               prevVolSessionTime = VolSessionTime;
             }
             last_volume.strcpy(volume.c_str());
             prevVolAddrStart = VolAddrStart;
             prevVolAddrEnd = VolAddrEnd;
             (void) prevVolAddrStart; // not used
-            start_section_offset = cur_off;
          }
          if (after_eof) {
             break;
          }
+         start_section_offset = cur_off;
          storage.strcpy(ua->argv[0]);
       }
       if (strcasecmp(ua->argk[0], "Volume") == 0) {
