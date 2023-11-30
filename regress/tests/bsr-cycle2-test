@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2023 Bacula Systems SA
+# License: BSD 2-Clause; see file LICENSE-FOSS
+#
+#
+# Test the BSR cycle detection and split code
+# I run 1 full and 3 incremental jobs on one single volume TestVolume001
+# then I set startblock in jobmedia to zero for job2 and job4
+#
+# after editing the jobmedia table looks like this:
+# +------------+-------+---------+------------+-----------+-----------+---------+------------+----------+----------+
+# | JobMediaId | JobId | MediaId | FirstIndex | LastIndex | StartFile | EndFile | StartBlock | EndBlock | VolIndex |
+# +------------+-------+---------+------------+-----------+-----------+---------+------------+----------+----------+
+# | 2          | 1     | 1       | 1          | 3131      | 0         | 0       | 255        | 96446016 | 2        |
+# | 3          | 2     | 1       | 1          | 1         | 0         | 0       | 0          | 96995714 | 1        |
+# | 4          | 3     | 1       | 1          | 1         | 0         | 0       | 96995715   | 97659274 | 1        |
+# | 5          | 4     | 1       | 1          | 1         | 0         | 0       | 0          | 97659820 | 1        |
+# +------------+-------+---------+------------+-----------+-----------+---------+------------+----------+----------+
+# I cannot restore job1 & job2 together because they share the same area
+# then job2 and job3 can be restored together but not job4 because it share the same area with job3 (and job2)
+# then the split is as folow: job1 | job2 & job3 | job4
+#
+# I check that TestVolume001 is loaded 3 times by the restore
+#
+
+TestName="bsr-cycle2-test"
+JobName=backup
+. scripts/functions
+
+scripts/cleanup
+scripts/copy-test-confs
+echo "${cwd}/build" >${cwd}/tmp/file-list
+
+start_test
+
+cat <<END_OF_DATA >$tmp/bconcmds
+@output /dev/null
+messages
+@$out $tmp/log1.out
+setdebug level=4 storage=File
+setdebug level=1 client
+label storage=File volume=TestVolume001
+run job=Simple yes
+wait
+messages
+@exec "touch $cwd/build/po/fr.po"
+run job=Simple yes
+wait
+messages
+@exec "touch $cwd/build/po/es.po"
+run job=Simple yes
+wait
+messages
+@exec "touch $cwd/build/po/en.po"
+run job=Simple yes
+wait
+messages
+
+sql
+select * from jobmedia;
+UPDATE jobmedia SET startblock = 0 WHERE jobid = 2 or jobid = 4;
+select * from jobmedia;
+
+@# 
+@# now do a restore
+@#
+@$out $tmp/log2.out  
+setdebug level=4 storage=File
+@# use dir level=20 to get the detail of the split of the BSR
+@# use dir level=100 to get all the detail of the split including the BSR itself
+setdebug level=100 dir
+restore where=$tmp/bacula-restores select all done
+yes
+wait
+messages
+quit
+END_OF_DATA
+
+run_bacula
+check_for_zombie_jobs storage=File
+stop_bacula
+check_two_logs
+
+count=`grep 'Ready to read from volume "TestVolume001"' $tmp/log2.out | wc -l`
+expected="3"
+if [ $count != $expected ] ; then
+   print_debug "expect to mount TestVolume001 $expected at restore time (got $count)"
+   estat=1
+fi
+
+end_test
+
