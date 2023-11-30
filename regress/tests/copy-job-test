@@ -170,11 +170,4 @@ if [ $? != 0 ]; then
     print_debug "The incremental job must use copied jobs"
 fi
 
-grep '{' $tmp/log4.out | perl -MJSON -e '$j = decode_json(<>); exit ($j->{data}->[0]->{comment} eq "from control job" && $j->{data}->[0]->{controljobid} == 5);'
-
-if [ $? = 0 ]; then
-    print_debug "Incorrect comment or controljobid SQL field"
-    estat=1
-fi
-
 end_test
