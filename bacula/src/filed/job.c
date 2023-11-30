@@ -2082,11 +2082,11 @@ static int set_options(findFOPTS *fo, const char *opts)
       case 'Z':                 /* compression */
          p++;                   /* skip Z */
          if (*p >= '0' && *p <= '9') {
-#ifdef HAVE_ZLIB
+#ifdef HAVE_ZLIB_H
 	    fo->flags |= FO_COMPRESS;
 	    fo->Compress_algo = COMPRESS_GZIP;
 	    fo->Compress_level = *p - '0';
-#endif // HAVE_ZLIB
+#endif // HAVE_ZLIB_H
 	 } else if (*p == 'o') {
 #ifdef HAVE_LZO
 	    fo->flags |= FO_COMPRESS;
