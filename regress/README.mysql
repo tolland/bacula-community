@@ -1,0 +1,35 @@
+Here is my tricks to run regression scripts with mysql
+on ubuntu 22.04 with mysql 8.0.
+
+Notice that in the initialisation of the regress environement for mysql
+there is a mix of use of the command "mysql" (using the unix user privilege)
+and "mysql -u root" (using the root privilege) both without passwords.
+
+First I create a mysql user that match my unix user without any password,
+with enough privilege to create a database and some tables
+
+$ whoami
+bac
+$ sudo mysql
+mysql> create user 'bac'@'localhost';
+Query OK, 0 rows affected (0.03 sec)
+mysql> grant all privileges on *.* to 'bac'@'localhost';
+Query OK, 0 rows affected (0.02 sec)
+
+Second I remove the password for the mysql user 'root'.
+
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';
+Query OK, 0 rows affected (0.02 sec)
+mysql> quit;
+
+notice that I change my authentication from 'auth_socket' to
+'mysql_native_password' and second I set the password to the
+empty string ''.
+
+Finally I use a different user than my unix user in bacula config file :
+
+# DB parameters
+db_name="regress"
+db_user="regress"
+db_password="bacula"
+
