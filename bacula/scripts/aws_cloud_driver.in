@@ -47,7 +47,8 @@ def vol_ls():
          logging.error("vol_ls got error {0}".format(err))
          sys.stderr.write(err)
       if output:
-         output = "\n".join(list(filter(None, [line.rsplit(' ',2)[2].strip() for line in output.replace(cloud_path, '').replace('/','').splitlines()])))
+         # expected output format will be "VolName1\nVolName2\nVolName3\n"
+         output = "\n".join(list(filter(None, [line.rsplit(' ',2)[2].strip() for line in output.replace(cloud_path, '').replace('/','').splitlines()]))) + "\n"
          # forward out stds
          logging.info("vol_ls got ouput")
          logging.info("vol_ls outputing {0}".format(output))
@@ -84,7 +85,8 @@ def ls():
          sizes = [line.rsplit(' ',2)[1].strip() for line in output.splitlines()]
          #names
          names = [line.rsplit(' ',2)[2].strip() for line in output.splitlines()]
-         output = "\n".join(["name:{0},mtime:{1},size:{2}".format(n,t,s) for n, t, s in zip(names, mtimes, sizes)])
+         # expected output format will be "name:Name1,mtime:Time1,size:Size1\nname:Name2,mtime:Time2,size:Size2\nname:Name3,mtime:Time3,size:Size3\n"
+         output = "\n".join(["name:{0},mtime:{1},size:{2}".format(n,t,s) for n, t, s in zip(names, mtimes, sizes)]) + "\n"
          # forward out stds
          logging.info("ls outputing {0}".format(output))
          sys.stdout.write(output)
@@ -172,7 +174,8 @@ def upload():
          sizes = [line.rsplit(' ',2)[1].strip() for line in output.splitlines() if line.endswith(part)]
          #names
          names = [line.rsplit(' ',2)[2].strip() for line in output.splitlines() if line.endswith(part)]
-         output = "\n".join(["name:{0},mtime:{1},size:{2}".format(n,t,s) for n, t, s in zip(names, mtimes, sizes)])
+         # expected output format will be "name:Name1,mtime:Time1,size:Size1\nname:Name2,mtime:Time2,size:Size2\nname:Name3,mtime:Time3,size:Size3\n"
+         output = "\n".join(["name:{0},mtime:{1},size:{2}".format(n,t,s) for n, t, s in zip(names, mtimes, sizes)]) + "\n"
          # forward out stds
          logging.info("ls outputing {0}".format(output))
          sys.stdout.write(output)
