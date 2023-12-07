@@ -9214,6 +9214,15 @@
 						}
 					},
 					{
+						"name": "type",
+						"in": "query",
+						"required": false,
+						"description": "Job type letter. Possible multiple values like: BCg or Ccg",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
 						"name": "jobids",
 						"in": "query",
 						"required": false,

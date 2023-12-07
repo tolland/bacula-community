@@ -37,6 +37,7 @@ class ObjectsOverview extends BaculumAPIServer {
 		$misc = $this->getModule('misc');
 		$limit = $this->Request->contains('limit') && $misc->isValidInteger($this->Request['limit']) ? (int)$this->Request['limit'] : 0;
 		$offset = $this->Request->contains('offset') && $misc->isValidInteger($this->Request['offset']) ? (int)$this->Request['offset'] : 0;
+		$jobtype = $this->Request->contains('type') && $misc->areValidJobTypes($this->Request['type']) ? $this->Request['type'] : null;
 		$objecttype = $this->Request->contains('objecttype') && $misc->isValidName($this->Request['objecttype']) ? $this->Request['objecttype'] : null;
 		$objectname = $this->Request->contains('objectname') && $misc->isValidNameExt($this->Request['objectname']) ? $this->Request['objectname'] : null;
 		$objectcategory = $this->Request->contains('objectcategory') && $misc->isValidName($this->Request['objectcategory']) ? $this->Request['objectcategory'] : null;
@@ -126,6 +127,13 @@ class ObjectsOverview extends BaculumAPIServer {
 			$object_params['Object.ObjectStatus'] = [];
 			$object_params['Object.ObjectStatus'][] = [
 				'vals' => $objectstatus
+			];
+		}
+		if (!empty($jobtype)) {
+			$general_params['Job.Type'] = [];
+			$general_params['Job.Type'][] = [
+				'operator' => 'IN',
+				'vals' => str_split($jobtype),
 			];
 		}
 		if (!empty($jobname)) {

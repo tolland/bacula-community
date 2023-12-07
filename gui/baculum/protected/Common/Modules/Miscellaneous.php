@@ -226,6 +226,24 @@ class Miscellaneous extends TModule {
 		return key_exists($job_type, $this->job_types);
 	}
 
+	/**
+	 * Validate more than one job type.
+	 *
+	 * @param string $job_types job types ex. 'BCg'
+	 * @return true if all provided job types are valid, otherwise false
+	 */
+	public function areValidJobTypes($job_types) {
+		$types = str_split($job_types);
+		$valid = true;
+		for ($i = 0; $i < count($types); $i++) {
+			if (!$this->isValidJobType($types[$i])) {
+				$valid = false;
+				break;
+			}
+		}
+		return $valid;
+	}
+
 	public function isValidName($name) {
 		return (preg_match('/^[\w:\.\-\s]{1,127}$/', $name) === 1);
 	}
