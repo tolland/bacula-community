@@ -167,6 +167,13 @@ class Clients extends BaculumAPIServer {
 					$jobs,
 					$mode
 				);
+
+				if ($type === ClientManager::CLIENT_TYPE_REACHABLE) {
+					$clients_unreached['clients'] = [];
+				} elseif ($type === ClientManager::CLIENT_TYPE_UNREACHABLE) {
+					$clients_reached['clients'] = [];
+				}
+
 				$clients = [
 					'reachable' => $clients_reached,
 					'unreachable' => $clients_unreached
