@@ -286,6 +286,8 @@ bool generic_driver::init(CLOUD *cloud, POOLMEM *&err) {
 }
 
 /* helper to handler close_bpipe error code */
+/* be.code(stat) extracts the actual error code returned by the driver script */
+/* the pipe-specific errors are concated to the err string */
 int handle_error(int stat, POOLMEM *&err)
 {
    berrno be;

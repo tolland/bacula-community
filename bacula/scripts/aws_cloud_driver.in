@@ -155,6 +155,7 @@ def upload():
       # sort out only exception errors since progress is reported into stderr (yuck!)
       if err:
          sys.stderr.write(err)
+      ret = proc.returncode
       cmd = ["aws", "s3", "ls", os.path.join(cloud_path, volume, part)]
       if endpoint_url:
          cmd += ["--endpoint-url", endpoint_url]
@@ -179,7 +180,8 @@ def upload():
          # forward out stds
          logging.info("ls outputing {0}".format(output))
          sys.stdout.write(output)
-      return proc.returncode
+      ret = ret + proc.returncode
+      return ret
    except Exception as e:
       exc = traceback.format_exception_only(type(e), e)[0]
       sys.stderr.write(exc)
@@ -197,7 +199,6 @@ def move():
       proc = Popen( cmd, stdout=PIPE, stderr=PIPE, universal_newlines=True)
       output,err = proc.communicate()
       logging.debug("move proc communicate output:{0} , err:{1}".format(output,err))
-      ret = proc.returncode
       if not err:
          sys.stdout.write("{0}\0".format(local_part))
          return 0
@@ -207,6 +208,7 @@ def move():
             return 0
          logging.error("move got error {0}".format(err))
          sys.stderr.write(err)
+      return proc.returncode
    except Exception as e:
       exc = traceback.format_exception_only(type(e), e)[0]
       sys.stderr.write(exc)
