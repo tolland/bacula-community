@@ -1007,7 +1007,7 @@ bool split_bsr_loop(JCR *jcr, bootstrap_info &info)
                   last_split_job_num = job_num; /* ignore volumes too old */
                } else {
                   /* This is unexpected that the same job is going backward into a volume!*/
-                  Dmsg3(0, "BSR: Error going backward on the Volume=%s on the Session=%lu:%lu\n", volume.c_str(), VolSessionTime, VolSessionId);
+                  Dmsg3(20, "BSR: Error going backward on the Volume=%s on the Session=%lu:%lu\n", volume.c_str(), VolSessionTime, VolSessionId);
                }
             }
             last_volume.strcpy(volume.c_str());
@@ -1035,7 +1035,7 @@ bool split_bsr_loop(JCR *jcr, bootstrap_info &info)
          char *p = strchr(ua->argv[0], '-');
          if (p == NULL) {
             /* error */
-            Dmsg1(0, "Error VolAddr is expected to be a range: \"%s\"\n", ua->argv[0]);
+            Dmsg1(20, "Error VolAddr is expected to be a range: \"%s\"\n", ua->argv[0]);
             VolAddrStart = str_to_uint64(ua->argv[0]);
             VolAddrEnd = VolAddrStart;
          } else {
