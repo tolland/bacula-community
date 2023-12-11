@@ -15,10 +15,19 @@ if [ "$TARGET" == ALL ]; then
 fi
 
 if [ "$TARGET" != "" ]; then
+    ret=0
     cd ..
     git diff-tree --no-commit-id --name-only -r ${TARGET}..HEAD > /tmp/file.list.$$
     if grep -E c$ /tmp/file.list.$$ > /dev/null
     then
         grep -E '[ch]$' /tmp/file.list.$$ | xargs cppcheck --quiet --enable=all --std=c++11 --force --suppress=unreadVariable --suppress=unusedFunction --suppress=cstyleCast --language=c++
+        ret=$(($ret + $?))
     fi
+    while read file; do
+        if file $file | grep Python > /dev/null ; then
+            pylint $file
+            ret=$(($ret + $?))
+        fi
+    done < /tmp/file.list.$$
+    exit $ret
 fi
