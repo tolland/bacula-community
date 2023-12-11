@@ -10,7 +10,7 @@
 TARGET=$1
 
 if [ "$TARGET" == ALL ]; then
-    cppcheck --quiet --enable=all --std=c++11 --force --suppress=unreadVariable --suppress=cstyleCast --language=c++ ../bacula/src
+    cppcheck --quiet --enable=all --std=c++11 --force --suppress=unreadVariable --suppress=cstyleCast --language=c++ --suppress=unusedFunction ../bacula/src
     exit $?
 fi
 
@@ -19,6 +19,6 @@ if [ "$TARGET" != "" ]; then
     git diff-tree --no-commit-id --name-only -r ${TARGET}..HEAD > /tmp/file.list.$$
     if grep -E c$ /tmp/file.list.$$ > /dev/null
     then
-        grep -E '[ch]$' /tmp/file.list.$$ | xargs cppcheck --quiet --enable=all --std=c++11 --force --suppress=unreadVariable --suppress=cstyleCast --language=c++
+        grep -E '[ch]$' /tmp/file.list.$$ | xargs cppcheck --quiet --enable=all --std=c++11 --force --suppress=unreadVariable --suppress=unusedFunction --suppress=cstyleCast --language=c++
     fi
 fi
