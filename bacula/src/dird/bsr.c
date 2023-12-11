@@ -916,7 +916,7 @@ bool split_bsr_loop(JCR *jcr, bootstrap_info &info)
 
    uint32_t VolSessionId, VolSessionTime;
    uint32_t prevVolSessionId = 0, prevVolSessionTime = 0;
-   uint64_t VolAddrStart, VolAddrEnd;
+   uint64_t VolAddrStart = 0, VolAddrEnd = 0;
    uint64_t prevVolAddrStart = 0, prevVolAddrEnd = 0;
 
    boffset_t start_section_offset = 0; // the offset of the beginning of the section
