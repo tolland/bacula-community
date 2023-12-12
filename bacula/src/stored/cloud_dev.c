@@ -278,11 +278,31 @@ transfer_state upload_engine(transfer *tpkt)
          tpkt->m_job_id, tpkt->m_driver);
 
       if (tpkt->m_do_cache_truncate && tpkt->m_part!=1) {
-         if (unlink(tpkt->m_cache_fname) != 0) {
+         bool allow_truncate = false;
+         uint64_t cloud_size = 0;
+         if (tpkt->m_state == TRANS_STATE_DONE && tpkt->m_res_size != 0 && tpkt->m_res_mtime != 0) {
+            /* so far so good for truncation */
+            /* double check if the cache size matches the transfer size */
+            struct stat statbuf;
+            if (lstat(tpkt->m_cache_fname, &statbuf) == -1) {
                berrno be;
-               Dmsg2(dbglvl, "Truncate cache option after upload. Unable to delete %s. ERR=%s\n", tpkt->m_cache_fname, be.bstrerror());
+               Dmsg2(dbglvl, "Failed to stat cache file %s. ERR=%s\n", tpkt->m_cache_fname, be.bstrerror());
+               allow_truncate = false;
+            } else {
+               /* if sizes do match, we can truncate */
+               cloud_size = (uint64_t)statbuf.st_size;
+               allow_truncate = (cloud_size == tpkt->m_res_size);
+            }
+         }
+         if (allow_truncate) {
+            if (unlink(tpkt->m_cache_fname) != 0) {
+               berrno be;
+               Dmsg2(dbglvl, "Truncate cache option after upload. Unable to truncate %s. ERR=%s\n", tpkt->m_cache_fname, be.bstrerror());
+            } else {
+               Dmsg1(dbglvl, "Truncate cache option after upload. %s OK\n", tpkt->m_cache_fname);
+            }
          } else {
-            Dmsg1(dbglvl, "Truncate cache option after upload. Unlink file %s\n", tpkt->m_cache_fname);
+            Dmsg4(dbglvl, "Truncate cache option after upload skipped. %s state=%d cache size=%lld cloud size =%lld\n", tpkt->m_cache_fname, tpkt->m_state, tpkt->m_res_size, cloud_size);
          }
       }
    }
@@ -2469,15 +2489,32 @@ bool cloud_dev::end_of_job(DCR *dcr, uint32_t truncate)
          Jmsg(dcr->jcr, (tpkt->m_state == TRANS_STATE_ERROR) ? M_ERROR : M_INFO, 0, "%s%s", prefix, umsg.c_str());
          Dmsg1(dbglvl, "%s", umsg.c_str());
          bool do_truncate = (truncate==TRUNC_AT_ENDOFJOB) || (truncate==TRUNC_CONF_DEFAULT && trunc_opt==TRUNC_AT_ENDOFJOB);
-         if (tpkt->m_state != TRANS_STATE_DONE) {
-            Mmsg(dcr->jcr->StatusErrMsg, _("Upload to Cloud failed"));
-         } else if (do_truncate && tpkt->m_part!=1) {
-            /* else -> don't remove the cache file if the upload failed */
-            if (unlink(tpkt->m_cache_fname) != 0) {
-               berrno be;
-               Dmsg2(dbglvl, "Truncate cache option at end of job. Unable to delete %s. ERR=%s\n", tpkt->m_cache_fname, be.bstrerror());
+         if (do_truncate && tpkt->m_part!=1) {
+            bool allow_truncate = false;
+            uint64_t cloud_size = 0;
+            if (tpkt->m_state == TRANS_STATE_DONE && tpkt->m_res_size != 0 && tpkt->m_res_mtime != 0) {
+               /* so far so good for truncation */
+               /* double check if the cache size matches the transfer size */
+               struct stat statbuf;
+               if (lstat(tpkt->m_cache_fname, &statbuf) == -1) {
+                  berrno be;
+                  Dmsg2(dbglvl, "Failed to stat cache file %s. ERR=%s\n", tpkt->m_cache_fname, be.bstrerror());
+                  allow_truncate = false;
+               } else {
+                  /* if sizes do match, we can truncate */
+                  cloud_size = (uint64_t)statbuf.st_size;
+                  allow_truncate = (cloud_size == tpkt->m_res_size);
+               }
+            }
+            if (allow_truncate) {
+               if (unlink(tpkt->m_cache_fname) != 0) {
+                  berrno be;
+                  Dmsg2(dbglvl, "Truncate cache option at end of job. Unable to truncate cache part %s. ERR=%s\n", tpkt->m_cache_fname, be.bstrerror());
+               } else {
+                  Dmsg1(dbglvl, "Truncate cache option at end of job. Truncated cache part %s OK\n", tpkt->m_cache_fname);
+               }
             } else {
-               Dmsg1(dbglvl, "Truncate cache option at end of job. Unlink file %s\n", tpkt->m_cache_fname);
+               Dmsg4(dbglvl, "Truncate cache option at end of job skipped. %s state=%d cache size=%lld cloud size =%lld\n", tpkt->m_cache_fname, tpkt->m_state, tpkt->m_res_size, cloud_size);
             }
          }
 
