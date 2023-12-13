@@ -81,8 +81,10 @@ def namespaces_list_all_names(corev1api):
 def namespaces_restore(corev1api, file_info, file_content):
     ns = encoder_load(file_content, file_info.name)
     metadata = prepare_metadata(ns.metadata)
+    projectid = None
     # Populate annotations about projectId
-    projectid = ns.metadata.annotations.get('field.cattle.io/projectId', None)
+    if ns.metadata.annotations is not None:
+        projectid = ns.metadata.annotations.get('field.cattle.io/projectId', None)
     if projectid is not None:
         ann = {'field.cattle.io/projectId': projectid}
         if metadata.annotations is not None:
