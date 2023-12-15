@@ -1228,6 +1228,16 @@ bool generic_driver::get_cloud_volume_parts_list(const char* volume_name, ilist 
    pcb.arg = (void*)&arg;
    int ret = call_fct("ls", volume_name, "part.", &pcb, NULL, cancel_cb, err);
    free_pool_memory(*arg.remain);
+   /* 1 is the generic return code for path not found, except for was driver that always return 0 */
+   if (ret == 1) {
+      err = strip_trailing_junk(err);
+      pm_strcat(err, " Cloud volume ");
+      pm_strcat(err, volume_name);
+      pm_strcat(err, " not found.\n");
+      /* the volume could not be found in the cloud: it's possible to list a Volume on cloud that doesn't exist. 
+         Accept it as an OK behavior */
+      return true;
+   }
    return (ret == 0);
 }
 
