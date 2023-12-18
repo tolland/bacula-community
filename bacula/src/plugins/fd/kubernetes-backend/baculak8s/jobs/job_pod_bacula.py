@@ -60,7 +60,7 @@ CANNOT_START_CONNECTIONSERVER = "Cannot start ConnectionServer. Err={}"
 
 VSNAPSHOT_BACKUP_COMPATIBLE_INFO = "The pvc `{}` is compatible with volume snapshot backup. Doing backup with this technology."
 PVC_FROM_SNAPSHOT_CREATED = "The pvc `{}` was created from volume snapshot from pvc `{}`."
-CREATING_PVC_FROM_VSNAPSHOT = "Creating pvc `{}` volume snapshot from pvc `{}`."
+CREATING_PVC_FROM_VSNAPSHOT = "Creating pvc from volume snapshot of pvc `{}`."
 FINISHED_PVC_FROM_VSNAPSHOT = "Finished pvc `{}` volume snapshot from pvc `{}`."
 class JobPodBacula(Job, metaclass=ABCMeta):
     """
@@ -352,7 +352,7 @@ class JobPodBacula(Job, metaclass=ABCMeta):
             self._handle_error(CANNOT_CREATE_VSNAPSHOT_ERR.format(parse_json_descr(vsnapshot)))
             return None, None
         # Create pvc from volume snapshot
-        self._io.send_info(CREATING_PVC_FROM_VSNAPSHOT.format(new_pvc.get('name'), pvc.get('name')))
+        self._io.send_info(CREATING_PVC_FROM_VSNAPSHOT.format(pvc.get('name')))
         new_pvc = self._plugin.create_pvc_from_vsnapshot(namespace, pvc)
         if isinstance(new_pvc, dict) and 'error' in new_pvc:
             self._handle_error(CANNOT_CREATE_PVC_SNAPSHOT_ERR.format(parse_json_descr(new_pvc)))
