@@ -982,7 +982,7 @@
 						"name": "enabled",
 						"in": "query",
 						"required": false,
-						"description": "Enabled clients filter. It does not work with 'name' parameter.",
+						"description": "Enabled clients filter. It has meaning only if 'output=json'. It is ignored if 'name' parameter is used.",
 						"schema": {
 							"type": "integer"
 						}
@@ -5552,6 +5552,16 @@
 					},
 					{
 						"$ref": "#/components/parameters/Offset"
+					},
+					{
+						"name": "content",
+						"in": "query",
+						"description": "Content property value. There is possible to provide whole content value or only a part",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"pattern": "[a-zA-Z0-9:.-_ ]+"
+						}
 					}
 				]
 			}
