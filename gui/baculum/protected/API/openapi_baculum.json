@@ -977,6 +977,15 @@
 					},
 					{
 						"$ref": "#/components/parameters/Output"
+					},
+					{
+						"name": "enabled",
+						"in": "query",
+						"required": false,
+						"description": "Enabled clients filter. It does not work with 'name' parameter.",
+						"schema": {
+							"type": "integer"
+						}
 					}
 				]
 			}

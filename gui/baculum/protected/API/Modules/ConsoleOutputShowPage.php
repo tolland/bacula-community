@@ -69,11 +69,12 @@ abstract class ConsoleOutputShowPage extends ConsoleOutputPage {
 	 * Parse 'show' type command output for all resources given type.
 	 *
 	 * @param array $output 'show' command output
+	 * @param array $filters filters in [key => value, ...] form
 	 * @return array parsed output
 	 */
-	protected function parseOutputAll(array $output) {
+	protected function parseOutputAll(array $output, array $filters = []) {
 		$ret = $part = [];
-		$section = '';
+		$skip = false;
 		for ($i = 0; $i < count($output); $i++) {
 			$scount = preg_match('/^[A-Za-z]+: name=.+/i', $output[$i]);
 			$mcount = preg_match_all('/(?<=\s)\w+=.*?(?=\s+\w+=.*?|$)/i', $output[$i], $matches);
@@ -88,10 +89,17 @@ abstract class ConsoleOutputShowPage extends ConsoleOutputPage {
 			for ($j = 0; $j < count($matches[0]); $j++) {
 				list($key, $value) = explode('=', $matches[0][$j], 2);
 				$key = strtolower($key);
+				if (key_exists($key, $filters) && $filters[$key] != $value) {
+					// filter values that do not match
+					$skip = true;
+				}
 				if ($i > 0 && $scount == 1 && count($part) > 0) {
-					$ret[] = $part;
+					if (!$skip) {
+						$ret[] = $part;
+					}
 					$part = [];
 					$scount = 0;
+					$skip = false;
 				}
 				if (key_exists($key, $part)) {
 					/*
@@ -104,8 +112,11 @@ abstract class ConsoleOutputShowPage extends ConsoleOutputPage {
 			}
 		}
 		if (count($part) > 0) {
-			$ret[] = $part;
+			if (!$skip) {
+				$ret[] = $part;
+			}
 			$part = [];
+			$skip = false;
 		}
 		return $ret;
 	}

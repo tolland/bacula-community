@@ -34,7 +34,9 @@ use Baculum\Common\Modules\Errors\ClientError;
 class ClientsShow extends ConsoleOutputShowPage {
 
 	public function get() {
+		$misc = $this->getModule('misc');
 		$out_format = $this->Request->contains('output') && $this->isOutputFormatValid($this->Request['output']) ? $this->Request['output'] : ConsoleOutputPage::OUTPUT_FORMAT_RAW;
+		$enabled = $this->Request->contains('enabled') && $misc->isValidBoolean($this->Request['enabled']) ? (int) $this->Request['enabled'] : null;
 		$result = $this->getModule('bconsole')->bconsoleCommand(
 			$this->director,
 			['.client'],
@@ -59,8 +61,13 @@ class ClientsShow extends ConsoleOutputShowPage {
 		}
 		$params = [];
 		if (is_string($client)) {
-			$params = ['client' => $client];
+			$params['client'] = $client;
 		}
+		$filters = [];
+		if (is_int($enabled)) {
+			$filters['enabled'] = $enabled;
+		}
+
 		$out = (object)[
 			'output' => [],
 			'exitcode' => 0
@@ -68,7 +75,7 @@ class ClientsShow extends ConsoleOutputShowPage {
 		if ($out_format === ConsoleOutputPage::OUTPUT_FORMAT_RAW) {
 			$out = $this->getRawOutput($params);
 		} elseif($out_format === ConsoleOutputPage::OUTPUT_FORMAT_JSON) {
-			$out = $this->getJSONOutput($params);
+			$out = $this->getJSONOutput($params, $filters);
 		}
 		$this->output = $out->output;
 		$this->error = $out->exitcode;
@@ -97,9 +104,10 @@ class ClientsShow extends ConsoleOutputShowPage {
 	 * Get show client output in JSON format.
 	 *
 	 * @param array $params command parameters
+	 * @param array $filter filters in [key => value, ...] form
 	 * @return StdClass object with output and exitcode
 	 */
-	protected function getJSONOutput($params = []) {
+	protected function getJSONOutput($params = [], $filters = []) {
 		$result = (object)[
 			'output' => [],
 			'exitcode' => 0
@@ -110,7 +118,7 @@ class ClientsShow extends ConsoleOutputShowPage {
 			if (key_exists('client', $params)) {
 				$result->output = $this->parseOutput($output->output);
 			} else {
-				$result->output = $this->parseOutputAll($output->output);
+				$result->output = $this->parseOutputAll($output->output, $filters);
 			}
 		}
 		$result->exitcode = $output->exitcode;
