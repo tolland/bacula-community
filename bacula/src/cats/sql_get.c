@@ -267,7 +267,7 @@ bool BDB::bdb_get_job_record(JCR *jcr, JOB_DBR *jr)
 "Type,Level,ClientId,Job.Name AS Name,PriorJobId,RealEndTime,JobId,FileSetId,"
 "SchedTime,RealStartTime,ReadBytes,HasBase,PurgedFiles,PriorJob,Comment,"
 "Reviewed,isVirtualFull,WriteStorageId,LastReadstorageId,StatusInfo,LastReadDevice,WriteDevice,Encrypted, Client.Name AS Client "
-"FROM Job JOIN CLient USING (ClientId) WHERE PriorJob='%s' ORDER BY Type ASC LIMIT 1", esc);
+"FROM Job JOIN Client USING (ClientId) WHERE PriorJob='%s' ORDER BY Type ASC LIMIT 1", esc);
       } else {
          Mmsg0(errmsg, _("No Job found\n"));
          bdb_unlock();
