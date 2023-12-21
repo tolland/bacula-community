@@ -1123,6 +1123,16 @@ bool generic_driver::clean_cloud_volume(const char *VolumeName, cleanup_cb_type 
    /* list everything in the volume VolumeName */
    int ret = call_fct("ls", VolumeName, "", &pcb, NULL, cancel_cb, err);
    free_pool_memory(*arg.remain);
+   /* 1 is the generic return code for path not found, except for was driver that always return 0 */
+   if (ret == 1) {
+      err = strip_trailing_junk(err);
+      pm_strcat(err, " Cloud volume ");
+      pm_strcat(err, VolumeName);
+      pm_strcat(err, " not found.\n");
+      /* the volume could not be found in the cloud: it's possible to list a Volume on cloud that doesn't exist. 
+         Accept it as an OK behavior */
+      return true;
+   }
 
    int rtn=0;
    char *part = NULL;
