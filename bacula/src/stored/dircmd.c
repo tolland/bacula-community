@@ -840,7 +840,7 @@ static bool cloud_list_cmd(JCR *jcr)
    } else {
       ilist parts(100, not_owned_by_alist);
       if (!dcr->dev->get_cloud_volume_parts_list(dcr, volname, &parts, errmsg)) {
-         dir->fsend(_("3900 Error cannot get cloud parts list. ERR=%s\n"), errmsg);
+         dir->fsend(_("3900 Error cannot get cloud Volume list. ERR=%s\n"), errmsg);
          free_dcr(dcr);
          goto bail_out;
       }

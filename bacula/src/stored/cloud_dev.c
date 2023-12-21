@@ -1622,7 +1622,7 @@ bool cloud_dev::probe_cloud_proxy(DCR *dcr,const char *VolName, bool force)
       cancel_cb.arg = dcr;
       if (!driver->get_cloud_volume_parts_list(VolName, &cloud_parts, &cancel_cb, errmsg)) {
          Dmsg2(dbglvl, "Cannot get cloud sizes for Volume=%s Err=%s\n", VolName, errmsg);
-         /* Non critical error: it's possible that no part exist on cloud of even that the volume doesn't exist or has been sweeped */
+         return false;
       }
 
       /* then, add the content of cloud_parts in the proxy table */
@@ -2783,7 +2783,9 @@ bool cloud_dev::upload_cache(DCR *dcr, const char *VolumeName, uint32_t truncate
    cancel_cb.fct = DCR_cancel_cb;
    cancel_cb.arg = dcr;
    if (!driver->get_cloud_volume_parts_list(VolumeName, &cloud_parts, &cancel_cb, err)) {
-      Qmsg2(dcr->jcr, M_WARNING, 0, "Non-critical error while listing volume parts for volume %s. %s\n", VolumeName, err);
+      Qmsg2(dcr->jcr, M_ERROR, 0, "Error while uploading parts for volume %s. %s\n", VolumeName, err);
+      ret = false;
+      goto bail_out;
    }
 
    if (!get_cache_volume_parts_list(dcr, VolumeName, &cache_parts)) {
@@ -2812,17 +2814,13 @@ bool cloud_dev::upload_cache(DCR *dcr, const char *VolumeName, uint32_t truncate
       Mmsg(fname, "%s/part.%d", vol_dir, i);
       Dmsg1(dbglvl, "Do upload of %s\n", fname);
       bool do_truncate = (truncate==TRUNC_AFTER_UPLOAD) || (truncate==TRUNC_CONF_DEFAULT && (trunc_opt == TRUNC_AFTER_UPLOAD));
-      if (cache_parts[i]) {
-         if (!upload_part_to_cloud(dcr, VolumeName, i, do_truncate)) {
-            if (errmsg[0]) {
-               Qmsg(dcr->jcr, M_ERROR, 0, "%s", errmsg);
-            }
-            ret = false;
-         } else {
-            Qmsg(dcr->jcr, M_INFO, 0, "Uploaded cache %s\n", fname);
+      if (!upload_part_to_cloud(dcr, VolumeName, i, do_truncate)) {
+         if (errmsg[0]) {
+            Qmsg(dcr->jcr, M_ERROR, 0, "%s", errmsg);
          }
+         ret = false;
       } else {
-         Qmsg(dcr->jcr, M_WARNING, 0, "Part %s not found in cache. Upload skipped.\n", fname);
+         Qmsg(dcr->jcr, M_INFO, 0, "Uploaded cache %s\n", fname);
       }
    }
 bail_out:

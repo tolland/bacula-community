@@ -92,6 +92,9 @@ def ls():
          # forward out stds
          logging.info("ls outputing {0}".format(output))
          sys.stdout.write(output)
+      if proc.returncode == 1:
+         # possible to ls unexisting path. In this case, return code will be 1.
+         return 0
       return proc.returncode
    except Exception as e:
       exc = traceback.format_exception_only(type(e), e)[0]
