@@ -10252,10 +10252,54 @@
 				]
 			}
 		},
+		"/api/v2/plugins/client/names": {
+			"get": {
+				"tags": ["plugins"],
+				"summary": "Get unique client plugin list from all clients",
+				"description": "Get unique client plugin list from all clients for current director.",
+				"responses": {
+					"200": {
+						"description": "List unique client plugin list from all clients for current director",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"output": {
+											"type": "array",
+											"items": {
+												"description": "Unique client plugin list",
+												"type": "string"
+											}
+										},
+										"error": {
+											"type": "integer",
+											"description": "Error code",
+											"enum": [0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 1000]
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "extended",
+						"in": "query",
+						"description": "Extended list with plugin versions. Note it displays multiple the same client names if version for each of them is different.",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
 		"/api/v2/plugins/core/{storageid}/storage/ls": {
 			"get": {
 				"tags": ["plugins"],
-				"summary": "List files and directories on the storage daemon host",,
+				"summary": "List files and directories on the storage daemon host",
 				"description": "Get list of files and directories on the storage daemon host.",
 				"responses": {
 					"200": {

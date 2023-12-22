@@ -22,7 +22,8 @@
 
 namespace Baculum\API\Modules;
 
-use Prado\Data\ActiveRecord\TActiveRecordCriteria;
+use Baculum\API\Modules\Database;
+use PDO;
 
 /**
  * Client manager module.
@@ -170,6 +171,66 @@ FROM
 			$result = (object)array_shift($result);
 		}
 		return $result;
+	}
+
+	/**
+	 * Get unique client plugin list from all clients for given director.
+	 *
+	 * @param array $criteria SQL criteria to get job list
+	 * @param bool $extended extended mode, if true it returns plugin versions too
+	 * @return array unique client plugin list
+	 */
+	public function getClientsPlugins($criteria, $extended = false) {
+		$plugins = [];
+		$params['Client.Plugins'] = [];
+		$params['Client.Plugins'][] = [
+			'operator' => '!=',
+			'vals' => ''
+		];
+		$where = Database::getWhere($criteria);
+		$db_params = $this->getModule('api_config')->getConfig('db');
+		if ($db_params['type'] === Database::PGSQL_TYPE) {
+			$sql = '
+				SELECT
+					DISTINCT regexp_split_to_table(Plugins, \',\') AS plugins
+				FROM
+					Client
+				' . $where['where'];
+			$statement = Database::runQuery($sql, $where['params']);
+			$result = $statement->fetchAll(PDO::FETCH_COLUMN);
+			$plugins = $result;
+		} elseif ($db_params['type'] === Database::MYSQL_TYPE) {
+			$sql = '
+				SELECT
+					Plugins AS plugins
+				FROM
+					Client
+					' . $where['where'];
+			$statement = Database::runQuery($sql, $where['params']);
+			$result = $statement->fetchAll(PDO::FETCH_OBJ);
+			for ($i = 0; $i < count($result); $i++) {
+				$spl = explode(',', $result[$i]->plugins);
+				$plugins = array_merge($plugins, $spl);
+			}
+		}
+		$items = [];
+		for ($i = 0; $i < count($plugins); $i++) {
+			if (preg_match('/^(?P<plugin>[\w\-]+)\((?P<version>[\d\.]+)\)$/', $plugins[$i], $match) === 1) {
+				if ($extended) {
+					$items[] = [
+						'plugin' => $match['plugin'],
+						'version' => $match['version']
+					];
+				} else {
+					$items[$match['plugin']] = $match['plugin'];
+				}
+			}
+		}
+		if (!$extended) {
+			$items = array_values($items);
+			sort($items);
+		}
+		return $items;
 	}
 }
 ?>
