@@ -105,7 +105,7 @@ class PluginCoreDirFileList extends ConsoleOutputQueryPage {
 				'.query',
 				'plugin="core: dirname=\"' . $params['path'] . '\"' . $extra . '"',
 				'storage="' . $params['storage'] . '"',
-				'parameter="dirlist"'
+				'parameter="filename"'
 			],
 			null,
 			true
