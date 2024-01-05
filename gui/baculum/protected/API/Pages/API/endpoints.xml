@@ -130,6 +130,8 @@
 	<!-- schedule endpoints -->
 	<url ServiceParameter="Schedules" pattern="api/v2/schedules/resnames/" />
 	<url ServiceParameter="ScheduleStatus" pattern="api/v2/schedules/status/" />
+	<!-- jobdefs endpoints -->
+	<url ServiceParameter="JobDefsResNames" pattern="api/v2/jobdefs/resnames/" />
 	<!-- Bacula config module endpoints -->
 	<url ServiceParameter="Config" pattern="api/v2/config/" />
 	<url ServiceParameter="Config" pattern="api/v2/config/{component_type}/" parameters.component_type="[a-z]+" />
