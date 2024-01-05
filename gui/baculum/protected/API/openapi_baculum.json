@@ -10432,6 +10432,15 @@
 						"$ref": "#/components/parameters/StorageId"
 					},
 					{
+						"name": "path",
+						"in": "query",
+						"description": "Path to create.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
 						"$ref": "#/components/parameters/Output"
 					}
 				]
