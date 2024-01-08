@@ -74,7 +74,6 @@ class VolumeManager extends APIModule {
 			self::VOLTYPE_DEDUP_OLD_DEV,
 			self::VOLTYPE_VALIGNED_DEV,
 			self::VOLTYPE_VDEDUP_DEV,
-			self::VOLTYPE_CLOUD_DEV,
 			self::VOLTYPE_DEDUP_DEV
 		];
 	}
