@@ -37,6 +37,7 @@
 		<module id="json_tools" class="Baculum\API\Modules\JSONTools" />
 		<module id="bvfs" class="Baculum\API\Modules\BVFS" />
 		<module id="blstat" class="Baculum\API\Modules\BLStat" />
+		<module id="aws_tool" class="Baculum\API\Modules\AWSCliTool" />
 		<!-- config modules -->
 		<module id="api_config" class="Baculum\API\Modules\APIConfig" />
 		<module id="bacula_config" class="Baculum\API\Modules\BaculaConfig" />

@@ -149,6 +149,10 @@
 	<!-- Basic user endpoints -->
 	<url ServiceParameter="BasicUsers" pattern="api/v2/basic/users/" />
 	<url ServiceParameter="BasicUser" pattern="api/v2/basic/users/{id}/" parameters.id="[a-zA-Z0-9]+" />
+	<!-- cloud provider endpoints -->
+	<!-- Amazon (AWS) -->
+	<url ServiceParameter="AWSListBuckets" pattern="api/v2/cloud/aws/buckets/list" />
+
 	<!-- Plugins -->
 	<url ServiceParameter="ClientPluginNames" pattern="api/v2/plugins/client/names/" />
 	<url ServiceParameter="PluginCoreDirFileList" pattern="api/v2/plugins/core/{id}/storage/ls/" parameters.id="\d+" />

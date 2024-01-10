@@ -256,6 +256,14 @@ class Miscellaneous extends TModule {
 		return (preg_match('/^[\w\-]+$/', $state) === 1);
 	}
 
+	public function isValidLogin($login) {
+		return (preg_match('/^\w+$/', $login) === 1);
+	}
+
+	public function isValidSecret($secret) {
+		return (preg_match('/^[\s\S]+$/u', $secret) === 1);
+	}
+
 	public function isValidInteger($num) {
 		return (preg_match('/^\d+$/', $num) === 1);
 	}
@@ -328,6 +336,9 @@ class Miscellaneous extends TModule {
 		return filter_var($email, FILTER_VALIDATE_EMAIL);
 	}
 
+	public function isValidURL($url) {
+		return filter_var($url, FILTER_VALIDATE_URL);
+	}
 	public function isValidColumn($column) {
 		return (preg_match('/^[\w+.]+$/i', $column) === 1);
 	}
