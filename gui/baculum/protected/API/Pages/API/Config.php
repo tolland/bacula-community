@@ -20,6 +20,7 @@
  * Bacula(R) is a registered trademark of Kern Sibbald.
  */
 
+use Baculum\API\Modules\BaculaConfig;
 use Baculum\API\Modules\BaculumAPIServer;
 use Baculum\Common\Modules\Errors\AuthorizationError;
 use Baculum\Common\Modules\Errors\BaculaConfigError;
@@ -39,6 +40,8 @@ class Config extends BaculumAPIServer {
 		$resource_type = $this->Request->contains('resource_type') ? $this->Request['resource_type'] : null;
 		$resource_name = $this->Request->contains('resource_name') ? $this->Request['resource_name'] : null;
 		$apply_jobdefs = $this->Request->contains('apply_jobdefs') && $misc->isValidBoolean($this->Request['apply_jobdefs']) ? (bool)$this->Request['apply_jobdefs'] : null;
+		$filter_directive = $this->Request->contains('filter_directive') && $misc->isValidName($this->Request['filter_directive']) ? $this->Request['filter_directive'] : null;
+		$filter_value = $this->Request->contains('filter_value') && $this->Request['filter_value'] ? $this->Request['filter_value'] : null;
 		$opts = [];
 		if ($apply_jobdefs) {
 			$opts['apply_jobdefs'] = $apply_jobdefs;
@@ -65,6 +68,13 @@ class Config extends BaculumAPIServer {
 			$this->output = BaculaConfigError::MSG_ERROR_CONFIG_DOES_NOT_EXIST;
 			$this->error = BaculaConfigError::ERROR_CONFIG_DOES_NOT_EXIST;
 		} else {
+			if (is_string($filter_directive) && is_string($filter_value)) {
+				$config['output'] = BaculaConfig::filterResources(
+					$config['output'],
+					$filter_directive,
+					$filter_value
+				);
+			}
 			$this->output = $config['output'];
 			$this->error = $config['exitcode'];
 		}

@@ -112,5 +112,73 @@ class BaculaConfig extends ConfigFileModule {
 		}
 		return $ret;
 	}
+
+	/**
+	 * Filter resources in Bacula configuration output.
+	 *
+	 * @param array $config Bacula configuration
+	 * @param string $key (sub)directive name in dot notation to sepratate sub-resources
+	 * @param string|integer|boolean $value directive value to filter
+	 * @return array filtered configuration output
+	 */
+	public static function filterResources(array $config, $key, $value) {
+		$assoc_keys = array_filter(array_keys($config), 'is_string');
+		if (count($config) > 0 && count($assoc_keys) > 0) {
+			// It works only with list of resources, not with single resource
+			return $config;
+		}
+		$cond = explode('.', $key);
+		$nest_idx = 0;
+		$config_new = [];
+		for ($i = 0; $i < count($config); $i++) {
+			if (self::findDirective($config[$i], $cond, $value, $nest_idx, false)) {
+				$config_new[] = $config[$i];
+			}
+		}
+		return $config_new;
+	}
+
+	/**
+	 * Find directive with given value in output.
+	 *
+	 * @param array $resource piece of the Bacula configuration
+	 * @param array $cond list with condition sub-directives
+	 * @param integer $nest_idx Bacula configu subresource nest index, as deeper as index bigger
+	 * @param boolean $inc determine if increment nest index (for sub-resources it should be true)
+	 * @return boolean true if searched value was found in Bacula configuration, otherwise false
+	 */
+	private static function findDirective(array $resource, array $cond, $value, &$nest_idx, $inc = true) {
+		if ($inc) {
+			$nest_idx++;
+		}
+		$found = false;
+		foreach ($resource as $key => $val) {
+			if (is_string($key) && $key !== $cond[$nest_idx]) {
+				// skip names that are not included in the condition
+				continue;
+			}
+			if (is_string($key) && is_array($val)) {
+				// single object, iterate on it
+				$found = self::findDirective($val, $cond, $value, $nest_idx);
+				if ($found == true) {
+					break;
+				}
+			} elseif (is_int($key) && is_array($val)) {
+				// list of objects, itereate on all of them
+				$found = self::findDirective($val, $cond, $value, $nest_idx, false);
+				if ($found == true) {
+					break;
+				}
+			} elseif (fnmatch($value, $val)) {
+				// found scalar key=val directive value
+				$found = true;
+				break;
+			}
+		}
+		if ($inc) {
+			$nest_idx--;
+		}
+		return $found;
+	}
 }
 ?>

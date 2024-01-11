@@ -6375,6 +6375,24 @@
 					},
 					{
 						"$ref": "#/components/parameters/ApplyJobDefs"
+					},
+					{
+						"name": "filter_directive",
+						"in": "query",
+						"description": "Dot seprated configuration sub-resource names to search, ex. Fileset.Include.Options.Signature or Fileset.Name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "filter_value",
+						"in": "query",
+						"description": "Directive value to find. The wildcard pattern is supported.",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
 					}
 				]
 			},
@@ -6462,6 +6480,24 @@
 					},
 					{
 						"$ref": "#/components/parameters/ApplyJobDefs"
+					},
+					{
+						"name": "filter_directive",
+						"in": "query",
+						"description": "Dot seprated configuration sub-resource names to search, ex. Fileset.Include.Options.Signature or Fileset.Name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "filter_value",
+						"in": "query",
+						"description": "Directive value to find. The wildcard pattern is supported.",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
 					}
 				]
 			},
