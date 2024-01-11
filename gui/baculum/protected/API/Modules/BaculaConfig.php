@@ -125,9 +125,13 @@ class BaculaConfig extends ConfigFileModule {
 		$assoc_keys = array_filter(array_keys($config), 'is_string');
 		if (count($config) > 0 && count($assoc_keys) > 0) {
 			// It works only with list of resources, not with single resource
-			return $config;
+			return [];
 		}
 		$cond = explode('.', $key);
+		if (count($cond) < 2) {
+			// It does not work with values in first nest
+			return [];
+		}
 		$nest_idx = 0;
 		$config_new = [];
 		for ($i = 0; $i < count($config); $i++) {
