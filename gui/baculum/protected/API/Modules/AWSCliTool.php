@@ -166,12 +166,24 @@ class AWSCliTool extends APIModule {
 		$sudo = $this->getSudo($use_sudo);
 		$cmd = $this->getCmd($sudo, $bin, $params);
 		exec($cmd, $output, $exitcode);
+		$cmd_s = self::stripOutput([$cmd]);
 		$this->getModule('logging')->log(
 			Logging::CATEGORY_EXECUTE,
-			Logging::prepareOutput($cmd, $output)
+			Logging::prepareOutput(
+				implode('', $cmd_s),
+				$output
+			)
 		);
 		$result = $this->prepareResult($output, $exitcode);
 		return $result;
+	}
+
+	private static function stripOutput(array $output) {
+		for ($i = 0; $i < count($output); $i++) {
+			$output[$i] = preg_replace('/AWS_ACCESS_KEY_ID="(\w)+?"/', 'AWS_ACCESS_KEY_ID="xxxxxxxxxx"', $output[$i]);
+			$output[$i] = preg_replace('/AWS_SECRET_ACCESS_KEY="([\s\S])+?"/', 'AWS_SECRET_ACCESS_KEY="xxxxxxxxxx"', $output[$i]);
+		}
+		return $output;
 	}
 
 	/**
