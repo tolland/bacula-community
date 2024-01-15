@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Bacula interface to mtx autoloader
-# (By Lars Köller, lars+bacula@koellers.net)
+# (By Lars KÃ¶ller, lars+bacula@koellers.net)
 #
 # Modified by Jesse D. Guardiani (jesse@wingnet.net) in Feb 2004
 # to be more error resistant and compatible with my 4 tape SONY

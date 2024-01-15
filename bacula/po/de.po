@@ -13,7 +13,7 @@ msgstr ""
 "Language-Team: \n"
 "Language: German\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
@@ -129,7 +129,7 @@ msgstr ""
 #: src/qt-console/tray-monitor/tray_conf.cpp:315
 #, fuzzy, c-format
 msgid "\"%s\" directive is required in \"%s\" resource, but not found.\n"
-msgstr "%s item wird in %s resource benötigt, wurde aber nicht gefunden.\n"
+msgstr "%s item wird in %s resource benÃ¶tigt, wurde aber nicht gefunden.\n"
 
 #: src/qt-console/bcomm/dircomm.cpp:88
 #, c-format
@@ -213,7 +213,7 @@ msgid ""
 "Authorization problem: Remote server at \"%s:%d\" did not advertise required "
 "TLS support.\n"
 msgstr ""
-"Authorisationsproblem: Entfernter Server hat benötigte TLS Unterstützung "
+"Authorisationsproblem: Entfernter Server hat benÃ¶tigte TLS UnterstÃ¼tzung "
 "nicht angeboten.\n"
 
 #: src/qt-console/bcomm/dircomm_auth.cpp:141
@@ -237,16 +237,16 @@ msgid ""
 "during the TLS handshake.\n"
 "For help, please see "
 msgstr ""
-"Kann mit  File daemon on \"%s:%d\" nicht authentisieren. Mögliche Ursachen:\n"
+"Kann mit  File daemon on \"%s:%d\" nicht authentisieren. MÃ¶gliche Ursachen:\n"
 "Passworte oder Namen nicht gleich oder\n"
-"Maximum Concurrent Jobs überschritten auf dem FD oder\n"
+"Maximum Concurrent Jobs Ã¼berschritten auf dem FD oder\n"
 "FD Netzwerk durcheinander (Daemon neustarten).\n"
-"Für Hilfe bitte unter http://www.bacula.org/rel-manual/faq."
+"FÃ¼r Hilfe bitte unter http://www.bacula.org/rel-manual/faq."
 "html#AuthorizationErrors nachsehen.\n"
 
 #: src/qt-console/main.cpp:160 src/qt-console/tray-monitor/tray-monitor.cpp:364
 msgid "Cryptography library initialization failed.\n"
-msgstr "Initialisierung der Verschlüsselungsbibliothek fehlgeschlagen.\n"
+msgstr "Initialisierung der VerschlÃ¼sselungsbibliothek fehlgeschlagen.\n"
 
 #: src/qt-console/main.cpp:164
 #, c-format
@@ -273,19 +273,19 @@ msgstr ""
 "Usage: dird [-f -s] [-c config_file] [-d debug_level] [config_file]\n"
 "       -c <file>   setze Konfigurationsdatei auf Datei\n"
 "       -dnn        setze debug level auf nn\n"
-"       -f          starte im Vordergrund (für debugging Zwecke)\n"
+"       -f          starte im Vordergrund (fÃ¼r debugging Zwecke)\n"
 "       -g          groupid\n"
 "       -r <job>    starte <job> jetzt\n"
 "       -s          no signals\n"
 "       -t          test - Konfiguration Lesen und beenden\n"
 "       -u          userid\n"
-"       -v          ausführliche Benutzer Meldungen\n"
+"       -v          ausfÃ¼hrliche Benutzer Meldungen\n"
 "       -?          diese Meldung ausgeben.\n"
 "\n"
 
 #: src/qt-console/main.cpp:221 src/qt-console/main.cpp:251
 msgid "TLS required but not configured in Bacula.\n"
-msgstr "TLS benötigt aber nicht konfiguriert in Bacula.\n"
+msgstr "TLS benÃ¶tigt aber nicht konfiguriert in Bacula.\n"
 
 #: src/qt-console/main.cpp:229
 #, fuzzy, c-format
@@ -294,9 +294,9 @@ msgid ""
 "defined for Director \"%s\" in %s. At least one CA certificate store is "
 "required.\n"
 msgstr ""
-"Weder \"TLS CA Certificate\"  noch \"TLS CA Certificate Dir\" sind für "
+"Weder \"TLS CA Certificate\"  noch \"TLS CA Certificate Dir\" sind fÃ¼r "
 "Director \"%s\" in %s definert. Mindestens ein CA certificate store wird "
-"benötigt wenn \"TLS Verify Peer\" eingesetzt wird.\n"
+"benÃ¶tigt wenn \"TLS Verify Peer\" eingesetzt wird.\n"
 
 #: src/qt-console/main.cpp:238
 #, c-format
@@ -312,7 +312,7 @@ msgid ""
 "defined for Console \"%s\" in %s.\n"
 msgstr ""
 "Weder \"TLS CA Certificate\" noch \"TLS CA Certificate Dir\" sind definiert "
-"fürStorage \"%s\" in %s.\n"
+"fÃ¼rStorage \"%s\" in %s.\n"
 
 #: src/qt-console/tray-monitor/authenticate.cpp:116
 #: src/qt-console/tray-monitor/authenticate.cpp:186
@@ -322,11 +322,11 @@ msgid ""
 "Most likely the passwords do not agree.\n"
 "For help, please see "
 msgstr ""
-"Kann mit  File daemon on \"%s:%d\" nicht authentisieren. Mögliche Ursachen:\n"
+"Kann mit  File daemon on \"%s:%d\" nicht authentisieren. MÃ¶gliche Ursachen:\n"
 "Passworte oder Namen nicht gleich oder\n"
-"Maximum Concurrent Jobs überschritten auf dem FD oder\n"
+"Maximum Concurrent Jobs Ã¼berschritten auf dem FD oder\n"
 "FD Netzwerk durcheinander (Daemon neustarten).\n"
-"Für Hilfe bitte unter http://www.bacula.org/rel-manual/faq."
+"FÃ¼r Hilfe bitte unter http://www.bacula.org/rel-manual/faq."
 "html#AuthorizationErrors nachsehen.\n"
 
 #: src/qt-console/tray-monitor/authenticate.cpp:128
@@ -346,7 +346,7 @@ msgid ""
 "Authorization problem: Remote server did not advertise required TLS "
 "support.\n"
 msgstr ""
-"Authorisationsproblem: Entfernter Server hat benötigte TLS Unterstützung "
+"Authorisationsproblem: Entfernter Server hat benÃ¶tigte TLS UnterstÃ¼tzung "
 "nicht angeboten.\n"
 
 #: src/qt-console/tray-monitor/authenticate.cpp:210
@@ -375,7 +375,7 @@ msgstr ""
 #: src/qt-console/tray-monitor/conf.cpp:171
 #, fuzzy, c-format
 msgid "The TLS CA Certificate File should be a PEM file for resource %s"
-msgstr "\"TLS Certificate\" Datei nicht für Director definiert \"%s\" in %s.\n"
+msgstr "\"TLS Certificate\" Datei nicht fÃ¼r Director definiert \"%s\" in %s.\n"
 
 #: src/qt-console/tray-monitor/conf.cpp:182
 #, c-format
@@ -385,7 +385,7 @@ msgstr ""
 #: src/qt-console/tray-monitor/conf.cpp:193
 #, fuzzy, c-format
 msgid "The TLS Certificate File should be a file for resource %s"
-msgstr "\"TLS Certificate\" Datei nicht für Director definiert \"%s\" in %s.\n"
+msgstr "\"TLS Certificate\" Datei nicht fÃ¼r Director definiert \"%s\" in %s.\n"
 
 #: src/qt-console/tray-monitor/conf.cpp:204
 #, c-format
@@ -439,13 +439,13 @@ msgstr ""
 "Usage: dird [-f -s] [-c config_file] [-d debug_level] [config_file]\n"
 "       -c <file>   setze Konfigurationsdatei auf Datei\n"
 "       -dnn        setze debug level auf nn\n"
-"       -f          starte im Vordergrund (für debugging Zwecke)\n"
+"       -f          starte im Vordergrund (fÃ¼r debugging Zwecke)\n"
 "       -g          groupid\n"
 "       -r <job>    starte <job> jetzt\n"
 "       -s          no signals\n"
 "       -t          test - Konfiguration Lesen und beenden\n"
 "       -u          userid\n"
-"       -v          ausführliche Benutzer Meldungen\n"
+"       -v          ausfÃ¼hrliche Benutzer Meldungen\n"
 "       -?          diese Meldung ausgeben.\n"
 "\n"
 
@@ -463,7 +463,7 @@ msgstr ""
 #: src/qt-console/tray-monitor/tray-ui.h:115
 #, fuzzy, c-format
 msgid "Failed to initialize TLS context for \"%s\".\n"
-msgstr "Konnte TLS context für Storage \"%s\" in %s nicht initialisieren.\n"
+msgstr "Konnte TLS context fÃ¼r Storage \"%s\" in %s nicht initialisieren.\n"
 
 #: src/qt-console/tray-monitor/tray-ui.h:350
 #, fuzzy
@@ -686,7 +686,7 @@ msgstr ""
 #: src/win32/libwin32/service.cpp:569
 #, fuzzy
 msgid "Could not lock database"
-msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "Director authorization problem at \"%s:%d\"\n"
@@ -696,7 +696,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Abfrage gescheitert: %s: ERR=%s\n"
 
 #~ msgid "A user name for MySQL must be supplied.\n"
-#~ msgstr "Ein Benutzername für MySQL muss angegeben werden.\n"
+#~ msgstr "Ein Benutzername fÃ¼r MySQL muss angegeben werden.\n"
 
 #~ msgid "Unable to initialize DB lock. ERR=%s\n"
 #~ msgstr "Kann DB lock nicht initialisieren. ERR=%s\n"
@@ -710,14 +710,14 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr ""
 #~ "Kann Verbindung zu MySQL Server nicht aufbauen. \n"
 #~ "Datenbank=%s Benutzer=%s\n"
-#~ "Der Datenbankserver  läuft möglicherweise nicht oder das Passwort ist "
+#~ "Der Datenbankserver  lÃ¤uft mÃ¶glicherweise nicht oder das Passwort ist "
 #~ "nicht korrekt.\n"
 
 #~ msgid "Attribute create error. %s"
 #~ msgstr "Attribute create error. %s"
 
 #~ msgid "A user name for PostgreSQL must be supplied.\n"
-#~ msgstr "Ein Benutzername für PostgreSQL muss angegeben werden.\n"
+#~ msgstr "Ein Benutzername fÃ¼r PostgreSQL muss angegeben werden.\n"
 
 #~ msgid "error fetching row: %s\n"
 #~ msgstr "Fehler beim holen von Zeile: %s\n"
@@ -730,7 +730,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr ""
 #~ "Kann Verbindung zu  PostgreSQL Server nicht aufbauen.\n"
 #~ "Datenbank=%s  Benutzer=%s\n"
-#~ "Der Datenbankserver läuft möglicherweise nicht oder das Passwort ist "
+#~ "Der Datenbankserver lÃ¤uft mÃ¶glicherweise nicht oder das Passwort ist "
 #~ "nicht korrekt.\n"
 
 #, fuzzy
@@ -763,11 +763,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "insert %s failed:\n"
 #~ "%s\n"
 #~ msgstr ""
-#~ "einfügen %s gescheitert:\n"
+#~ "einfÃ¼gen %s gescheitert:\n"
 #~ "%s\n"
 
 #~ msgid "Insertion problem: affected_rows=%s\n"
-#~ msgstr "Problem beim Einfügen: affected_rows=%s\n"
+#~ msgstr "Problem beim EinfÃ¼gen: affected_rows=%s\n"
 
 #~ msgid ""
 #~ "update %s failed:\n"
@@ -784,22 +784,22 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "delete %s failed:\n"
 #~ "%s\n"
 #~ msgstr ""
-#~ "löschen von %s fehlgeschlagen:\n"
+#~ "lÃ¶schen von %s fehlgeschlagen:\n"
 #~ "%s\n"
 
 #~ msgid "Path length is zero. File=%s\n"
-#~ msgstr "Pfadlänge ist null. Datei=%s\n"
+#~ msgstr "PfadlÃ¤nge ist null. Datei=%s\n"
 
 #~ msgid "No results to list.\n"
 #~ msgstr "Keine Ergebnisse zu \"list\" Kommando.\n"
 
 #, fuzzy
 #~ msgid "Could not init database batch connection\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "Could not open database \"%s\": ERR=%s\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #~ msgid "Create DB Job record %s failed. ERR=%s\n"
 #~ msgstr "Erzeugung von DB Job Eintrag %s fehlgeschlagen. ERR=%s\n"
@@ -853,7 +853,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Erzeugung des DB Client Eintrags %s fehlgeschlagen. ERR=%s\n"
 
 #~ msgid "More than one Path!: %s for path: %s\n"
-#~ msgstr "Mehr als ein Pfad!: %s für Pfad: %s\n"
+#~ msgstr "Mehr als ein Pfad!: %s fÃ¼r Pfad: %s\n"
 
 #~ msgid "Create db Path record %s failed. ERR=%s\n"
 #~ msgstr "Erzeugung des db Path Eintrags %s fehlgeschlagen. ERR=%s\n"
@@ -874,16 +874,16 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Erzeugung des db File Eintrags %s fehlgeschlagen. ERR=%s"
 
 #~ msgid "More than one Filename! %s for file: %s\n"
-#~ msgstr "Mehr als ein Dateiname! %s für Datei: %s\n"
+#~ msgstr "Mehr als ein Dateiname! %s fÃ¼r Datei: %s\n"
 
 #~ msgid "Error fetching row for file=%s: ERR=%s\n"
-#~ msgstr "Fehler beim Holen der Zeile für Datei=%s: ERR=%s\n"
+#~ msgstr "Fehler beim Holen der Zeile fÃ¼r Datei=%s: ERR=%s\n"
 
 #~ msgid "Create db Filename record %s failed. ERR=%s\n"
 #~ msgstr "Erzeugung des db Filename Eintrags %s fehlgeschlagen. ERR=%s\n"
 
 #~ msgid "Attempt to put non-attributes into catalog. Stream=%d\n"
-#~ msgstr "Versuche \"non-attributes\" in catalog einzufügen. Stream=%d\n"
+#~ msgstr "Versuche \"non-attributes\" in catalog einzufÃ¼gen. Stream=%d\n"
 
 #, fuzzy
 #~ msgid "Create db Object record %s failed. ERR=%s"
@@ -934,18 +934,18 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Unbekannter Job level=%d\n"
 
 #~ msgid "No Job found for: %s.\n"
-#~ msgstr "Kein Job gefunden für: %s.\n"
+#~ msgstr "Kein Job gefunden fÃ¼r: %s.\n"
 
 #~ msgid "No Job found for: %s\n"
-#~ msgstr "Keinen Job gefunden für: %s\n"
+#~ msgstr "Keinen Job gefunden fÃ¼r: %s\n"
 
 #~ msgid "Request for Volume item %d greater than max %d or less than 1\n"
 #~ msgstr ""
-#~ "Anforderung von \"Volume item\" %d größer als Max %d oder weniger als 1\n"
+#~ "Anforderung von \"Volume item\" %d grÃ¶ÃŸer als Max %d oder weniger als 1\n"
 
 #, fuzzy
 #~ msgid "No Volume record found for item %d.\n"
-#~ msgstr "Kein Volume Eintrag gefunden für item %d.\n"
+#~ msgstr "Kein Volume Eintrag gefunden fÃ¼r item %d.\n"
 
 #~ msgid "Error fetching row: %s\n"
 #~ msgstr "Fehler beim holen der Zeile: %s\n"
@@ -956,13 +956,13 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "File record for PathId=%s FilenameId=%s not found.\n"
-#~ msgstr "File Eintrag für PathId=%s FilenameId=%s nicht gefunden.\n"
+#~ msgstr "File Eintrag fÃ¼r PathId=%s FilenameId=%s nicht gefunden.\n"
 
 #~ msgid "File record not found in Catalog.\n"
 #~ msgstr "File Eintrag nicht im Catalog gefunden.\n"
 
 #~ msgid "More than one Filename!: %s for file: %s\n"
-#~ msgstr "Mehr als einen Dateinamen gefunden! : %s für Datei: %s\n"
+#~ msgstr "Mehr als einen Dateinamen gefunden! : %s fÃ¼r Datei: %s\n"
 
 #, fuzzy
 #~ msgid "Get DB Filename record %s found bad record: %d\n"
@@ -984,16 +984,16 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Path record: %s nicht in Catalog gefunden.\n"
 
 #~ msgid "No Job found for JobId %s\n"
-#~ msgstr "Kein Job für JobId %s gefunden\n"
+#~ msgstr "Kein Job fÃ¼r JobId %s gefunden\n"
 
 #~ msgid "No volumes found for JobId=%d\n"
-#~ msgstr "Keine volumes für JobId=%d gefunden\n"
+#~ msgstr "Keine volumes fÃ¼r JobId=%d gefunden\n"
 
 #~ msgid "Error fetching row %d: ERR=%s\n"
 #~ msgstr "Fehler beim Holen von Zeile %d: ERR=%s\n"
 
 #~ msgid "No Volume for JobId %d found in Catalog.\n"
-#~ msgstr "Kein Volume für JobId %d in Catalog gefunden.\n"
+#~ msgstr "Kein Volume fÃ¼r JobId %d in Catalog gefunden.\n"
 
 #~ msgid "Pool id select failed: ERR=%s\n"
 #~ msgstr "Pool id select fehlgeschlagen: ERR=%s\n"
@@ -1060,14 +1060,14 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Media record for Volume name \"%s\" not found.\n"
-#~ msgstr "Media Eintrag für Volume \"%s\" nicht gefunden.\n"
+#~ msgstr "Media Eintrag fÃ¼r Volume \"%s\" nicht gefunden.\n"
 
 #~ msgid "Media record for MediaId=%u not found in Catalog.\n"
-#~ msgstr "Media Eintrag für MediaId=%u in Catalog nicht gefunden.\n"
+#~ msgstr "Media Eintrag fÃ¼r MediaId=%u in Catalog nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "Media record for Volume Name \"%s\" not found in Catalog.\n"
-#~ msgstr "Media Eintrag für Vol=%s in Catalog nicht gefunden.\n"
+#~ msgstr "Media Eintrag fÃ¼r Vol=%s in Catalog nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "More than one Snapshot!: %s\n"
@@ -1079,7 +1079,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Snapshot record for Snapshot name \"%s\" not found.\n"
-#~ msgstr "Media Eintrag für Volume \"%s\" nicht gefunden.\n"
+#~ msgstr "Media Eintrag fÃ¼r Volume \"%s\" nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "More than one Result!: %s\n"
@@ -1092,7 +1092,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Datenbank %s existiert nicht, bitte erzeugen.\n"
 
 #~ msgid "Unable to open Database=%s. ERR=%s\n"
-#~ msgstr "Kann Datenbank=%s.nicht öffen. ERR=%s\n"
+#~ msgstr "Kann Datenbank=%s.nicht Ã¶ffen. ERR=%s\n"
 
 #~ msgid "unknown"
 #~ msgstr "unbekannt"
@@ -1112,12 +1112,12 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "during the TLS handshake.\n"
 #~ "For help, please see "
 #~ msgstr ""
-#~ "Kann mit  File daemon on \"%s:%d\" nicht authentisieren. Mögliche "
+#~ "Kann mit  File daemon on \"%s:%d\" nicht authentisieren. MÃ¶gliche "
 #~ "Ursachen:\n"
 #~ "Passworte oder Namen nicht gleich oder\n"
-#~ "Maximum Concurrent Jobs überschritten auf dem FD oder\n"
+#~ "Maximum Concurrent Jobs Ã¼berschritten auf dem FD oder\n"
 #~ "FD Netzwerk durcheinander (Daemon neustarten).\n"
-#~ "Für Hilfe bitte unter http://www.bacula.org/rel-manual/faq."
+#~ "FÃ¼r Hilfe bitte unter http://www.bacula.org/rel-manual/faq."
 #~ "html#AuthorizationErrors nachsehen.\n"
 
 #, fuzzy
@@ -1146,15 +1146,15 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot open file %s for input. ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Cannot open file %s for output. ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Cannot popen(\"%s\", \"r\"): ERR=%s\n"
-#~ msgstr "Kann Ausdruck\"%s\"nicht auflösen: ERR=%s\n"
+#~ msgstr "Kann Ausdruck\"%s\"nicht auflÃ¶sen: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "@exec error: ERR=%s\n"
@@ -1169,7 +1169,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Error getting Job record for Job report: ERR=%s"
-#~ msgstr "Fehler beim Holen des job Eintrags für den job Bericht: %s"
+#~ msgstr "Fehler beim Holen des job Eintrags fÃ¼r den job Bericht: %s"
 
 #~ msgid "Admin OK"
 #~ msgstr "Admin OK"
@@ -1199,11 +1199,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "For help, please see: "
 #~ msgstr ""
 #~ "Director kann sich nicht an Storage daemon an \"%s:%d\" authentisieren. "
-#~ "Mögliche Ursachen:\n"
+#~ "MÃ¶gliche Ursachen:\n"
 #~ "Passworte oder Namen nicht gleich oder\n"
-#~ "Maximum Concurrent Jobs überschritten am SD oder\n"
+#~ "Maximum Concurrent Jobs Ã¼berschritten am SD oder\n"
 #~ "SD Netzwerk durcheinander (daemon neustarten).\n"
-#~ "Für Hilfe bitte unter http://www.bacula.org/rel-manual/faq."
+#~ "FÃ¼r Hilfe bitte unter http://www.bacula.org/rel-manual/faq."
 #~ "html#AuthorizationErrors nachsehen.\n"
 
 #, fuzzy
@@ -1239,19 +1239,19 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "FD networking messed up (restart daemon).\n"
 #~ "For help, please see: "
 #~ msgstr ""
-#~ "Kann mit  File daemon on \"%s:%d\" nicht authentisieren. Mögliche "
+#~ "Kann mit  File daemon on \"%s:%d\" nicht authentisieren. MÃ¶gliche "
 #~ "Ursachen:\n"
 #~ "Passworte oder Namen nicht gleich oder\n"
-#~ "Maximum Concurrent Jobs überschritten auf dem FD oder\n"
+#~ "Maximum Concurrent Jobs Ã¼berschritten auf dem FD oder\n"
 #~ "FD Netzwerk durcheinander (Daemon neustarten).\n"
-#~ "Für Hilfe bitte unter http://www.bacula.org/rel-manual/faq."
+#~ "FÃ¼r Hilfe bitte unter http://www.bacula.org/rel-manual/faq."
 #~ "html#AuthorizationErrors nachsehen.\n"
 
 #~ msgid ""
 #~ "Authorization problem: FD \"%s:%s\" did not advertise required TLS "
 #~ "support.\n"
 #~ msgstr ""
-#~ "Authorisationsproblem: FD \"%s:%s\" hat erforderliche TLS Unterstützung "
+#~ "Authorisationsproblem: FD \"%s:%s\" hat erforderliche TLS UnterstÃ¼tzung "
 #~ "nicht angeboten.\n"
 
 #, fuzzy
@@ -1277,17 +1277,17 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "File daemon auf \"%s:%d\" hat Hello Kommando abgelehnt\n"
 
 #~ msgid "UA Hello from %s:%s:%d is invalid. Len=%d\n"
-#~ msgstr "UA Hello von %s:%s:%d ist ungültig. Len=%d\n"
+#~ msgstr "UA Hello von %s:%s:%d ist ungÃ¼ltig. Len=%d\n"
 
 #~ msgid "UA Hello from %s:%s:%d is invalid. Got: %s\n"
-#~ msgstr "UA Hello von %s:%s:%d ist ungültig. Erhalten: %s\n"
+#~ msgstr "UA Hello von %s:%s:%d ist ungÃ¼ltig. Erhalten: %s\n"
 
 #~ msgid ""
 #~ "Authorization problem: Remote client did not advertise required TLS "
 #~ "support.\n"
 #~ msgstr ""
 #~ "Authorisationsproblem: Entfernter Klient hat die erforderte "
-#~ "TLSUnterstützung nicht angezeigt.\n"
+#~ "TLSUnterstÃ¼tzung nicht angezeigt.\n"
 
 #~ msgid "Authorization problem: Remote client requires TLS.\n"
 #~ msgstr "Authorisationsproblem: Entfernter Klient erfordert TLS.\n"
@@ -1307,7 +1307,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "End auto prune.\n"
 #~ "\n"
 #~ msgstr ""
-#~ "Ende automatische Säuberung.\n"
+#~ "Ende automatische SÃ¤uberung.\n"
 #~ "\n"
 
 #~ msgid "Pool resource"
@@ -1338,14 +1338,14 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Netzwerkfehler mit FD bei %s: ERR=%s\n"
 
 #~ msgid "No Job status returned from FD.\n"
-#~ msgstr "FD hat keinen Jobstatus zurückgegeben.\n"
+#~ msgstr "FD hat keinen Jobstatus zurÃ¼ckgegeben.\n"
 
 #, fuzzy
 #~ msgid "Error getting Client record for Job report: ERR=%s"
-#~ msgstr "Fehler beim holen des Datensatzes für Volume \"%s\": ERR=%s"
+#~ msgstr "Fehler beim holen des Datensatzes fÃ¼r Volume \"%s\": ERR=%s"
 
 #~ msgid "Error getting Media record for Volume \"%s\": ERR=%s"
-#~ msgstr "Fehler beim holen des Datensatzes für Volume \"%s\": ERR=%s"
+#~ msgstr "Fehler beim holen des Datensatzes fÃ¼r Volume \"%s\": ERR=%s"
 
 #, fuzzy
 #~ msgid "Backup OK -- %s"
@@ -1418,7 +1418,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "  Startzeit:              %s\n"
 #~ "  Endzeit:                %s\n"
 #~ "  Verstrichene Zeit:      %s\n"
-#~ "  Priorität:              %d\n"
+#~ "  PrioritÃ¤t:              %d\n"
 #~ "  FD Dateien geschrieben: %s\n"
 #~ "  SD Dateien geschrieben: %s\n"
 #~ "  FD Bytes geschrieben:   %s (%sB)\n"
@@ -1426,7 +1426,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "  Geschwindigkeit:        %.1f KB/s\n"
 #~ "  Software Kompression:   %s\n"
 #~ "  VSS:                    %s\n"
-#~ "  Verschlüsselung:        %s\n"
+#~ "  VerschlÃ¼sselung:        %s\n"
 #~ "  Volume Name(n):         %s\n"
 #~ "  Volume Session Id:      %d\n"
 #~ "  Volume Session Zeit:    %d\n"
@@ -1448,7 +1448,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Could not open WriteBootstrap file:\n"
 #~ "%s: ERR=%s\n"
 #~ msgstr ""
-#~ "Konnte  WriteBootstrap nicht öffnen. Datei:\n"
+#~ "Konnte  WriteBootstrap nicht Ã¶ffnen. Datei:\n"
 #~ "%s: ERR=%s\n"
 
 #, fuzzy
@@ -1477,13 +1477,13 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: dird [-f -s] [-c config_file] [-d debug_level] [config_file]\n"
 #~ "       -c <file>   setze Konfigurationsdatei auf Datei\n"
 #~ "       -dnn        setze debug level auf nn\n"
-#~ "       -f          starte im Vordergrund (für debugging Zwecke)\n"
+#~ "       -f          starte im Vordergrund (fÃ¼r debugging Zwecke)\n"
 #~ "       -g          groupid\n"
 #~ "       -r <job>    starte <job> jetzt\n"
 #~ "       -s          no signals\n"
 #~ "       -t          test - Konfiguration Lesen und beenden\n"
 #~ "       -u          userid\n"
-#~ "       -v          ausführliche Benutzer Meldungen\n"
+#~ "       -v          ausfÃ¼hrliche Benutzer Meldungen\n"
 #~ "       -?          diese Meldung ausgeben.\n"
 #~ "\n"
 
@@ -1502,17 +1502,17 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "\"TLS Certificate\" file not defined for Director \"%s\" in %s.\n"
-#~ msgstr "\"TLS Key\" Datei nicht für Director definiert \"%s\" in %s.\n"
+#~ msgstr "\"TLS Key\" Datei nicht fÃ¼r Director definiert \"%s\" in %s.\n"
 
 #~ msgid "\"TLS Key\" file not defined for Director \"%s\" in %s.\n"
-#~ msgstr "\"TLS Key\" Datei nicht für Director definiert \"%s\" in %s.\n"
+#~ msgstr "\"TLS Key\" Datei nicht fÃ¼r Director definiert \"%s\" in %s.\n"
 
 #~ msgid "\"TLS Certificate\" file not defined for Console \"%s\" in %s.\n"
 #~ msgstr ""
-#~ "\"TLS Certificate\" Datei nicht definiert für Console \"%s\" in %s.\n"
+#~ "\"TLS Certificate\" Datei nicht definiert fÃ¼r Console \"%s\" in %s.\n"
 
 #~ msgid "\"TLS Key\" file not defined for Console \"%s\" in %s.\n"
-#~ msgstr "\"TLS Key\" Datei nicht definiert für Console \"%s\" in %s.\n"
+#~ msgstr "\"TLS Key\" Datei nicht definiert fÃ¼r Console \"%s\" in %s.\n"
 
 #~ msgid ""
 #~ "Neither \"TLS CA Certificate\" or \"TLS CA Certificate Dir\" are defined "
@@ -1520,30 +1520,30 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "when using \"TLS Verify Peer\".\n"
 #~ msgstr ""
 #~ "Weder \"TLS CA Certificate\" noch \"TLS CA Certificate Dir\" sind "
-#~ "definiert fürConsole \"%s\" in %s. Mindestens ein CA certificate store "
-#~ "wird benötigt beiEinsatz von \"TLS Verify Peer\".\n"
+#~ "definiert fÃ¼rConsole \"%s\" in %s. Mindestens ein CA certificate store "
+#~ "wird benÃ¶tigt beiEinsatz von \"TLS Verify Peer\".\n"
 
 #~ msgid "Failed to initialize TLS context for File daemon \"%s\" in %s.\n"
 #~ msgstr ""
-#~ "Konnte TLS context für File daemon \"%s\" in %s nicht initialisieren.\n"
+#~ "Konnte TLS context fÃ¼r File daemon \"%s\" in %s nicht initialisieren.\n"
 
 #~ msgid ""
 #~ "Neither \"TLS CA Certificate\" or \"TLS CA Certificate Dir\" are defined "
 #~ "for File daemon \"%s\" in %s.\n"
 #~ msgstr ""
 #~ "Weder \"TLS CA Certificate\" noch \"TLS CA Certificate Dir\" sind "
-#~ "definiert für File daemon \"%s\" in %s.\n"
+#~ "definiert fÃ¼r File daemon \"%s\" in %s.\n"
 
 #~ msgid "No Job records defined in %s\n"
 #~ msgstr "Keine Job records definiert in %s\n"
 
 #~ msgid "Hey something is wrong. p=0x%lu\n"
-#~ msgstr "Hey etwas läuft schief. p=0x%lu\n"
+#~ msgstr "Hey etwas lÃ¤uft schief. p=0x%lu\n"
 
 #~ msgid ""
 #~ "\"%s\" directive in Job \"%s\" resource is required, but not found.\n"
 #~ msgstr ""
-#~ "\"%s\" Directive in Job \"%s\" resource wird benötigt, wurde aber nicht "
+#~ "\"%s\" Directive in Job \"%s\" resource wird benÃ¶tigt, wurde aber nicht "
 #~ "gefunden.\n"
 
 #~ msgid "Too many items in Job resource\n"
@@ -1564,7 +1564,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #, fuzzy
 #~ msgid "No files found to read. No bootstrap file written.\n"
 #~ msgstr ""
-#~ "Keine Dateien für Wiederherstellung/Migration gefunden. Keine Bootstrap "
+#~ "Keine Dateien fÃ¼r Wiederherstellung/Migration gefunden. Keine Bootstrap "
 #~ "Datei geschrieben.\n"
 
 #~ msgid "Error writing bsr file.\n"
@@ -1576,7 +1576,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "   Volume(s)                 Storage(s)                SD Device(s)\n"
 #~ "===========================================================================\n"
 #~ msgstr ""
-#~ "Der Job wird folgendes benötigen:\n"
+#~ "Der Job wird folgendes benÃ¶tigen:\n"
 #~ "   Volume(s)                 Storage(s)                SD Device(s)\n"
 #~ "===========================================================================\n"
 
@@ -1584,10 +1584,10 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Keine Volumes zum Wiederherstellen gefunden.\n"
 
 #~ msgid "1990 Invalid Catalog Request: %s"
-#~ msgstr "1990 Ungültige Catalog Anfrage: %s"
+#~ msgstr "1990 UngÃ¼ltige Catalog Anfrage: %s"
 
 #~ msgid "Invalid Catalog request; DB not open: %s"
-#~ msgstr "Ungültige Catalog Anfrage; DB nicht offen: %s"
+#~ msgstr "UngÃ¼ltige Catalog Anfrage; DB nicht offen: %s"
 
 #~ msgid "1901 No Media.\n"
 #~ msgstr "1901 Keine Medien.\n"
@@ -1609,16 +1609,16 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "1997 Volume \"%s\" Nicht in Catalog.\n"
 
 #~ msgid "Unable to get Media record for Volume %s: ERR=%s\n"
-#~ msgstr "Konnte Media record für Volume %s nicht holen: ERR=%s\n"
+#~ msgstr "Konnte Media record fÃ¼r Volume %s nicht holen: ERR=%s\n"
 
 #~ msgid "1991 Catalog Request for vol=%s failed: %s"
-#~ msgstr "1991 Catalog Anfrage für vol=%s fehlgeschlagen: %s"
+#~ msgstr "1991 Catalog Anfrage fÃ¼r vol=%s fehlgeschlagen: %s"
 
 #, fuzzy
 #~ msgid ""
 #~ "Attempt to set Volume Files from %u to %u for Volume \"%s\". Ignored.\n"
 #~ msgstr ""
-#~ "Volume Files bei %u werden auf %u für Volumen \"%s\" gesetzt. Dies ist "
+#~ "Volume Files bei %u werden auf %u fÃ¼r Volumen \"%s\" gesetzt. Dies ist "
 #~ "nicht Korrekt.\n"
 
 #~ msgid "Catalog error updating Media record. %s"
@@ -1635,7 +1635,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "1991 Update JobMedia Fehler\n"
 
 #~ msgid "Invalid Catalog request: %s"
-#~ msgstr "Ungültige Catalog Anfrage: %s"
+#~ msgstr "UngÃ¼ltige Catalog Anfrage: %s"
 
 #, fuzzy
 #~ msgid "Attribute create error: ERR=%s"
@@ -1652,7 +1652,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgid ""
 #~ "Catalog error updating file digest. Unsupported digest stream type: %d"
 #~ msgstr ""
-#~ "Catalog Fehler beim Aktualisieren des file digest. Nicht unterstützter "
+#~ "Catalog Fehler beim Aktualisieren des file digest. Nicht unterstÃ¼tzter "
 #~ "digest stream typ: %d"
 
 #, fuzzy
@@ -1664,24 +1664,24 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "1994 Invalid Catalog Update: %s"
-#~ msgstr "1991 Ungültige Catalog Aktualisierung: %s"
+#~ msgstr "1991 UngÃ¼ltige Catalog Aktualisierung: %s"
 
 #~ msgid "Invalid Catalog Update; DB not open: %s"
-#~ msgstr "Ungültige Catalog Aktualisierung; DB nicht geöffnet: %s"
+#~ msgstr "UngÃ¼ltige Catalog Aktualisierung; DB nicht geÃ¶ffnet: %s"
 
 #, fuzzy
 #~ msgid ""
 #~ "fread attr spool error. Wanted %ld bytes, maximum permitted 10000000 "
 #~ "bytes\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "fread attr spool error. Wanted %ld bytes but got %lld ERR=%s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "fread attr spool error. ERR=%s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid ""
@@ -1711,13 +1711,13 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: dird [-f -s] [-c config_file] [-d debug_level] [config_file]\n"
 #~ "       -c <file>   setze Konfigurationsdatei auf Datei\n"
 #~ "       -dnn        setze debug level auf nn\n"
-#~ "       -f          starte im Vordergrund (für debugging Zwecke)\n"
+#~ "       -f          starte im Vordergrund (fÃ¼r debugging Zwecke)\n"
 #~ "       -g          groupid\n"
 #~ "       -r <job>    starte <job> jetzt\n"
 #~ "       -s          no signals\n"
 #~ "       -t          test - Konfiguration Lesen und beenden\n"
 #~ "       -u          userid\n"
-#~ "       -v          ausführliche Benutzer Meldungen\n"
+#~ "       -v          ausfÃ¼hrliche Benutzer Meldungen\n"
 #~ "       -?          diese Meldung ausgeben.\n"
 #~ "\n"
 
@@ -1729,14 +1729,14 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "zu viele offene reload Anforderungen, Anforderung ignoriert.\n"
 
 #~ msgid "Out of reload table entries. Giving up.\n"
-#~ msgstr "Keine reload table Einträge übrig. Gebe auf.\n"
+#~ msgstr "Keine reload table EintrÃ¤ge Ã¼brig. Gebe auf.\n"
 
 #~ msgid "Resetting previous configuration.\n"
-#~ msgstr "Vorherige Konfiguration zurückgesetzt.\n"
+#~ msgstr "Vorherige Konfiguration zurÃ¼ckgesetzt.\n"
 
 #~ msgid "Failed to initialize TLS context for Director \"%s\" in %s.\n"
 #~ msgstr ""
-#~ "Konnte TLS context für Director nicht initialisieren \"%s\" in %s.\n"
+#~ "Konnte TLS context fÃ¼r Director nicht initialisieren \"%s\" in %s.\n"
 
 #, fuzzy
 #~ msgid "PoolType required in Pool resource \"%s\".\n"
@@ -1751,7 +1751,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Keine \"Next Pool\" Spezifikation in Pool \"%s\" gefunden.\n"
 
 #~ msgid "Could not open Catalog \"%s\", database \"%s\".\n"
-#~ msgstr "Konnte Catalog \"%s\", database \"%s\" nicht öffnen.\n"
+#~ msgstr "Konnte Catalog \"%s\", database \"%s\" nicht Ã¶ffnen.\n"
 
 #, fuzzy
 #~ msgid "Could not create storage record for %s\n"
@@ -1764,7 +1764,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #, fuzzy
 #~ msgid "Failed to initialize TLS context for Storage \"%s\" in %s.\n"
 #~ msgstr ""
-#~ "Konnte TLS context für Director nicht initialisieren \"%s\" in %s.\n"
+#~ "Konnte TLS context fÃ¼r Director nicht initialisieren \"%s\" in %s.\n"
 
 #~ msgid "Could not compile regex pattern \"%s\" ERR=%s\n"
 #~ msgstr "Konnte regex pattern \"%s\" nicht kompilieren ERR=%s\n"
@@ -2073,13 +2073,13 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Konnte config Resource %s , referenziert in Zeile %d : %s nicht finden\n"
 
 #~ msgid "Expected a Migration Job Type keyword, got: %s"
-#~ msgstr " Migration Job Type  Schlüsselwort erwartet, erhalten: %s"
+#~ msgstr " Migration Job Type  SchlÃ¼sselwort erwartet, erhalten: %s"
 
 #~ msgid "Expected a Job Type keyword, got: %s"
-#~ msgstr "Job Type Schlüsselwort erwartet, erhalten: %s"
+#~ msgstr "Job Type SchlÃ¼sselwort erwartet, erhalten: %s"
 
 #~ msgid "Expected a Job Level keyword, got: %s"
-#~ msgstr "Job Level Schlüsselwort erwartet, erhalten: %s"
+#~ msgstr "Job Level SchlÃ¼sselwort erwartet, erhalten: %s"
 
 #~ msgid "Expected a Restore replacement option, got: %s"
 #~ msgstr "Restore replacement Option erwartet, erhalten: %s"
@@ -2095,13 +2095,13 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Geschweifte Klammer auf erwartet, erhalten: %s"
 
 #~ msgid "Expecting keyword, got: %s\n"
-#~ msgstr "Schlüsselwort erwartet, erhalten:%s\n"
+#~ msgstr "SchlÃ¼sselwort erwartet, erhalten:%s\n"
 
 #~ msgid "expected an equals, got: %s"
 #~ msgstr "Erwartete ein \"ist gleich\", erhalten: %s"
 
 #~ msgid "Keyword %s not permitted in this resource"
-#~ msgstr "Schlüsselwort %s ist in dieser Ressource nicht erlaubt."
+#~ msgstr "SchlÃ¼sselwort %s ist in dieser Ressource nicht erlaubt."
 
 #~ msgid "Count not update counter %s: ERR=%s\n"
 #~ msgstr "Konnte counter %s: nicht aktualisieren: ERR=%s\n"
@@ -2119,11 +2119,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Cannot unescape string: ERR=%s\n"
 
 #~ msgid "Cannot expand expression \"%s\": ERR=%s\n"
-#~ msgstr "Kann Ausdruck\"%s\"nicht auflösen: ERR=%s\n"
+#~ msgstr "Kann Ausdruck\"%s\"nicht auflÃ¶sen: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Cannot destroy var context: ERR=%s\n"
-#~ msgstr "kann Variable context nicht zerstören: ERR=%s\n"
+#~ msgstr "kann Variable context nicht zerstÃ¶ren: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Client: "
@@ -2136,7 +2136,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Fehler beim Aktualisieren des Client Eintrags. ERR=%s\n"
 
 #~ msgid "FD gave bad response to JobId command: %s\n"
-#~ msgstr "FD hat fehlerhafte Antwort auf JobId Kommando zurückgegeben: %s\n"
+#~ msgstr "FD hat fehlerhafte Antwort auf JobId Kommando zurÃ¼ckgegeben: %s\n"
 
 #~ msgid ", since="
 #~ msgstr ", seit="
@@ -2144,7 +2144,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgid ""
 #~ "No prior or suitable Full backup found in catalog. Doing FULL backup.\n"
 #~ msgstr ""
-#~ "Kein vorheriges oder passendes Full backup in catalog gefunden. Führe "
+#~ "Kein vorheriges oder passendes Full backup in catalog gefunden. FÃ¼hre "
 #~ "FULL backup durch.\n"
 
 #~ msgid " (upgraded from %s)"
@@ -2155,7 +2155,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "No prior or suitable Full backup found in catalog. Doing Virtual FULL "
 #~ "backup.\n"
 #~ msgstr ""
-#~ "Kein vorheriges oder passendes Full backup in catalog gefunden. Führe "
+#~ "Kein vorheriges oder passendes Full backup in catalog gefunden. FÃ¼hre "
 #~ "FULL backup durch.\n"
 
 #, fuzzy
@@ -2163,7 +2163,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "No prior or suitable Differential backup found in catalog. Doing "
 #~ "Differential backup.\n"
 #~ msgstr ""
-#~ "Kein vorheriges oder passendes Full backup in catalog gefunden. Führe "
+#~ "Kein vorheriges oder passendes Full backup in catalog gefunden. FÃ¼hre "
 #~ "FULL backup durch.\n"
 
 #~ msgid "Prior failed job found in catalog. Upgrading to %s.\n"
@@ -2183,7 +2183,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Fehler beim Start des Programms: %s. ERR=%s\n"
 
 #~ msgid "Cannot open included file: %s. ERR=%s\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Client \"%s\" RunScript failed.\n"
@@ -2191,7 +2191,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "RestoreObject failed.\n"
-#~ msgstr "Wiederherstellung läuft..."
+#~ msgstr "Wiederherstellung lÃ¤uft..."
 
 #, fuzzy
 #~ msgid "ComponentInfo failed.\n"
@@ -2227,16 +2227,16 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "fstype Ausdruck erwartet, erhalten: %s\n"
 
 #~ msgid "Expected a FileSet option keyword, got:%s:"
-#~ msgstr "FileSet option Schlüsselwort erwartet, erhalten:%s:"
+#~ msgstr "FileSet option SchlÃ¼sselwort erwartet, erhalten:%s:"
 
 #~ msgid "Old style Include/Exclude not supported\n"
-#~ msgstr "veraltete Include/Exclude Anweisung nicht unterstützt\n"
+#~ msgstr "veraltete Include/Exclude Anweisung nicht unterstÃ¼tzt\n"
 
 #~ msgid "Regex compile error. ERR=%s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #~ msgid "Expected a regex string, got: %s\n"
-#~ msgstr "regulären Ausdruck erwartet, erhalten: %s\n"
+#~ msgstr "regulÃ¤ren Ausdruck erwartet, erhalten: %s\n"
 
 #~ msgid "Expected a wild-card string, got: %s\n"
 #~ msgstr "wild-card Ausdruck erwartet, erhalten: %s\n"
@@ -2245,19 +2245,19 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgid "Backslash found. Use forward slashes or quote the string.: %s\n"
 #~ msgstr ""
 #~ "Backslash gefunden. Benutze forward slashes oder setze den String in "
-#~ "Anführungszeichen.: %s\n"
+#~ "AnfÃ¼hrungszeichen.: %s\n"
 
 #~ msgid "Expected a filename, got: %s"
 #~ msgstr "Dateiname erwartet, erhalten: %s"
 
 #~ msgid "Expected a FileSet keyword, got: %s"
-#~ msgstr "FileSet Schlüsselwort erwartet,erhalten: %s"
+#~ msgstr "FileSet SchlÃ¼sselwort erwartet,erhalten: %s"
 
 #~ msgid "Could not init job queue: ERR=%s\n"
 #~ msgstr "Konnte job queue nicht initialiseren: ERR=%s\n"
 
 #~ msgid "Could not add job queue: ERR=%s\n"
-#~ msgstr "Konnte job queue nicht hinzufügen: ERR=%s\n"
+#~ msgstr "Konnte job queue nicht hinzufÃ¼gen: ERR=%s\n"
 
 #~ msgid "Unable to init job cond variable: ERR=%s\n"
 #~ msgstr "konnte job cond Variable nicht initialisieren: ERR=%s\n"
@@ -2269,11 +2269,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "nicht implementierter job Typ: %d\n"
 
 #~ msgid "Job canceled because max start delay time exceeded.\n"
-#~ msgstr "Job abgebrochen, da \"max start delay time\" überschritten wurde.\n"
+#~ msgstr "Job abgebrochen, da \"max start delay time\" Ã¼berschritten wurde.\n"
 
 #, fuzzy
 #~ msgid "Job canceled because max run sched time exceeded.\n"
-#~ msgstr "Job abgebrochen, da \"max start delay time\" überschritten wurde.\n"
+#~ msgstr "Job abgebrochen, da \"max start delay time\" Ã¼berschritten wurde.\n"
 
 #~ msgid "Failed to connect to File daemon.\n"
 #~ msgstr "Verbindung zu File daemon fehlgeschlagen.\n"
@@ -2287,7 +2287,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "jobid/ujobid argument not found.\n"
-#~ msgstr "Ungültige JobId gefunden.\n"
+#~ msgstr "UngÃ¼ltige JobId gefunden.\n"
 
 #, fuzzy
 #~ msgid "Job %ld/%s not found in database.\n"
@@ -2310,14 +2310,14 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "JobId %s, Job %s zum Abbruch markiert.\n"
 
 #~ msgid "Max wait time exceeded. Job canceled.\n"
-#~ msgstr "\"Max wait time\" überschritten. Job abgebrochen.\n"
+#~ msgstr "\"Max wait time\" Ã¼berschritten. Job abgebrochen.\n"
 
 #~ msgid "Max run time exceeded. Job canceled.\n"
-#~ msgstr "\"Max run time\" überschritten, Job abgebrochen.\n"
+#~ msgstr "\"Max run time\" Ã¼berschritten, Job abgebrochen.\n"
 
 #, fuzzy
 #~ msgid "Max run sched time exceeded. Job canceled.\n"
-#~ msgstr "\"Max run time\" überschritten, Job abgebrochen.\n"
+#~ msgstr "\"Max run time\" Ã¼berschritten, Job abgebrochen.\n"
 
 #, fuzzy
 #~ msgid "Cannot create cancel thread: ERR=%s\n"
@@ -2333,7 +2333,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Run NextPool override"
-#~ msgstr "von \"Run pool\" überschrieben"
+#~ msgstr "von \"Run pool\" Ã¼berschrieben"
 
 #, fuzzy
 #~ msgid "Job's NextPool resource"
@@ -2348,39 +2348,39 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Run Pool override"
-#~ msgstr "von \"Run pool\" überschrieben"
+#~ msgstr "von \"Run pool\" Ã¼berschrieben"
 
 #, fuzzy
 #~ msgid "Run FullPool override"
-#~ msgstr "von \"Run FullPool\" überschrieben"
+#~ msgstr "von \"Run FullPool\" Ã¼berschrieben"
 
 #, fuzzy
 #~ msgid "Job FullPool override"
-#~ msgstr "von \"Run FullPool\" überschrieben"
+#~ msgstr "von \"Run FullPool\" Ã¼berschrieben"
 
 #, fuzzy
 #~ msgid "Run VFullPool override"
-#~ msgstr "von \"Run FullPool\" überschrieben"
+#~ msgstr "von \"Run FullPool\" Ã¼berschrieben"
 
 #, fuzzy
 #~ msgid "Job VFullPool override"
-#~ msgstr "von \"Run FullPool\" überschrieben"
+#~ msgstr "von \"Run FullPool\" Ã¼berschrieben"
 
 #, fuzzy
 #~ msgid "Run IncPool override"
-#~ msgstr "von \"Run pool\" überschrieben"
+#~ msgstr "von \"Run pool\" Ã¼berschrieben"
 
 #, fuzzy
 #~ msgid "Job IncPool override"
-#~ msgstr "von \"Run pool\" überschrieben"
+#~ msgstr "von \"Run pool\" Ã¼berschrieben"
 
 #, fuzzy
 #~ msgid "Run DiffPool override"
-#~ msgstr "von \"Run pool\" überschrieben"
+#~ msgstr "von \"Run pool\" Ã¼berschrieben"
 
 #, fuzzy
 #~ msgid "Job DiffPool override"
-#~ msgstr "von \"Run pool\" überschrieben"
+#~ msgstr "von \"Run pool\" Ã¼berschrieben"
 
 #, fuzzy
 #~ msgid "No Client specified.\n"
@@ -2390,7 +2390,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Konnte Client Eintrag nicht anlegen. ERR=%s\n"
 
 #~ msgid "FileSet MD5 digest not found.\n"
-#~ msgstr "FileSet MD5 Prüfsumme nicht gefunden.\n"
+#~ msgstr "FileSet MD5 PrÃ¼fsumme nicht gefunden.\n"
 
 #~ msgid "Could not create FileSet \"%s\" record. ERR=%s\n"
 #~ msgstr "Konnte FileSet \"%s\" Eintrag nicht erzeugen. ERR=%s\n"
@@ -2400,7 +2400,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Run pool override"
-#~ msgstr "von \"Run pool\" überschrieben"
+#~ msgstr "von \"Run pool\" Ã¼berschrieben"
 
 #, fuzzy
 #~ msgid "Run storage override"
@@ -2449,7 +2449,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #~ msgid "Rescheduled Job %s at %s to re-run in %d seconds (%s).\n"
 #~ msgstr ""
-#~ " Job %s für %s erneut geplant um in %d seconds nachgestartet zu werden "
+#~ " Job %s fÃ¼r %s erneut geplant um in %d seconds nachgestartet zu werden "
 #~ "(%s).\n"
 
 #~ msgid "previous Job"
@@ -2459,7 +2459,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Job canceled. Attempt to read and write same device.\n"
 #~ "    Read storage \"%s\" (From %s) -- Write storage \"%s\" (From %s)\n"
 #~ msgstr ""
-#~ "Job abgebrochen. Versuch auf das selbe Gerät zu lesen und zu schreiben.\n"
+#~ "Job abgebrochen. Versuch auf das selbe GerÃ¤t zu lesen und zu schreiben.\n"
 #~ "    lese storage \"%s\" (Von %s) -- schreib storage \"%s\" (Von %s)\n"
 
 #~ msgid "Could not get or create a Pool record.\n"
@@ -2481,23 +2481,23 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Vorheriger Job hat keine Daten zu migrieren.\n"
 
 #~ msgid "Job resource not found for \"%s\".\n"
-#~ msgstr "Job Ressource für \"%s\"nicht gefunden.\n"
+#~ msgstr "Job Ressource fÃ¼r \"%s\"nicht gefunden.\n"
 
 #~ msgid "Previous Job resource not found for \"%s\".\n"
-#~ msgstr "Vorherige Job Ressource für \"%s\"nicht gefunden.\n"
+#~ msgstr "Vorherige Job Ressource fÃ¼r \"%s\"nicht gefunden.\n"
 
 #~ msgid "setup job failed.\n"
 #~ msgstr "Job Einrichtung Fehlgeschlagen.\n"
 
 #~ msgid "Pool for JobId %s not in database. ERR=%s\n"
-#~ msgstr "Pool für JobId %s ist nicht in der Datenbank. ERR=%s\n"
+#~ msgstr "Pool fÃ¼r JobId %s ist nicht in der Datenbank. ERR=%s\n"
 
 #~ msgid "Pool resource \"%s\" not found.\n"
 #~ msgstr "Pool Ressource \"%s\" nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "Could not get job record for JobId %s to %s. ERR=%s"
-#~ msgstr "Konnte job record für JobId %s zum migrieren nicht holen. ERR=%s"
+#~ msgstr "Konnte job record fÃ¼r JobId %s zum migrieren nicht holen. ERR=%s"
 
 #, fuzzy
 #~ msgid "Start %s JobId %s, Job=%s\n"
@@ -2578,7 +2578,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "  Start Zeit:             %s\n"
 #~ "  End Zeit:               %s\n"
 #~ "  Verstichene Zeit:       %s\n"
-#~ "  Priorität:              %d\n"
+#~ "  PrioritÃ¤t:              %d\n"
 #~ "  SD Dateien geschrieben: %s\n"
 #~ "  SD Bytes geschrieben:   %s (%sB)\n"
 #~ "  Geschwindigkeit:        %.1f KB/s\n"
@@ -2609,7 +2609,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Keine Volumes zum Wiederherstellen gefunden.\n"
 
 #~ msgid "Invalid JobId found.\n"
-#~ msgstr "Ungültige JobId gefunden.\n"
+#~ msgstr "UngÃ¼ltige JobId gefunden.\n"
 
 #, fuzzy
 #~ msgid "Unknown %s Selection Type.\n"
@@ -2617,7 +2617,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "No JobIds found to %s.\n"
-#~ msgstr "Kein Job gefunden für: %s.\n"
+#~ msgstr "Kein Job gefunden fÃ¼r: %s.\n"
 
 #, fuzzy
 #~ msgid "The following %u JobId%s chosen to be %s: %s\n"
@@ -2644,11 +2644,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Query of Pool \"%s\" returned no Jobs to %s.\n"
-#~ msgstr "Abfrage nach Pool \"%s\" ergab keine Jobs für die Migration.\n"
+#~ msgstr "Abfrage nach Pool \"%s\" ergab keine Jobs fÃ¼r die Migration.\n"
 
 #, fuzzy
 #~ msgid "Regex pattern matched no Jobs to %s.\n"
-#~ msgstr "Regex pattern hat auf keine Jobs für die Migration zugetroffen.\n"
+#~ msgstr "Regex pattern hat auf keine Jobs fÃ¼r die Migration zugetroffen.\n"
 
 #, fuzzy
 #~ msgid "No %s found to %s.\n"
@@ -2695,7 +2695,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Kann \"message thread\" nicht erzeugen: %s\n"
 
 #~ msgid "Could not open bootstrap file %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #~ msgid "Illegal character in Volume name \"%s\"\n"
 #~ msgstr "Illegales Zeichen in \"Volume name\" \"%s\"\n"
@@ -2807,7 +2807,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Restore OK"
-#~ msgstr "Wiederherstellung läuft..."
+#~ msgstr "Wiederherstellung lÃ¤uft..."
 
 #, fuzzy
 #~ msgid "Restore OK -- with warnings"
@@ -2891,7 +2891,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Range logic error.\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unexpected run state\n"
@@ -2907,7 +2907,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "run override"
-#~ msgstr "von \"Run pool\" überschrieben"
+#~ msgstr "von \"Run pool\" Ã¼berschrieben"
 
 #, fuzzy
 #~ msgid "Comm error with SD. bad response to %s. ERR=%s\n"
@@ -2919,7 +2919,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Snapshot not found\n"
-#~ msgstr "FileSet MD5 Prüfsumme nicht gefunden.\n"
+#~ msgstr "FileSet MD5 PrÃ¼fsumme nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "Client resource not found\n"
@@ -2951,7 +2951,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Snapshot choice: \n"
-#~ msgstr "FileSet MD5 Prüfsumme nicht gefunden.\n"
+#~ msgstr "FileSet MD5 PrÃ¼fsumme nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "List snapshots on Client"
@@ -2971,7 +2971,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Snapshot Retention Period"
-#~ msgstr "FileSet MD5 Prüfsumme nicht gefunden.\n"
+#~ msgstr "FileSet MD5 PrÃ¼fsumme nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "Snapshot Comment"
@@ -3007,7 +3007,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Restore files"
-#~ msgstr "Wiederherstellung läuft..."
+#~ msgstr "Wiederherstellung lÃ¤uft..."
 
 #, fuzzy
 #~ msgid "Run a job"
@@ -3147,11 +3147,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "ERR: Can't open db\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "ERR: Job was not found\n"
-#~ msgstr "Job Type Schlüsselwort erwartet, erhalten: %s"
+#~ msgstr "Job Type SchlÃ¼sselwort erwartet, erhalten: %s"
 
 #, fuzzy
 #~ msgid "  %-13s %s\n"
@@ -3178,7 +3178,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not open catalog database \"%s\".\n"
-#~ msgstr "Konnte Catalog \"%s\", database \"%s\" nicht öffnen.\n"
+#~ msgstr "Konnte Catalog \"%s\", database \"%s\" nicht Ã¶ffnen.\n"
 
 #, fuzzy
 #~ msgid "Using Catalog \"%s\"\n"
@@ -3218,11 +3218,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Invalid argument for %s\n"
-#~ msgstr "Ungültige JobId gefunden.\n"
+#~ msgstr "UngÃ¼ltige JobId gefunden.\n"
 
 #, fuzzy
 #~ msgid "Invalid argument for job\n"
-#~ msgstr "Ungültige JobId gefunden.\n"
+#~ msgstr "UngÃ¼ltige JobId gefunden.\n"
 
 #, fuzzy
 #~ msgid "Unable to open the catalog.\n"
@@ -3271,15 +3271,15 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #, fuzzy
 #~ msgid "Slot %d greater than max %d ignored.\n"
 #~ msgstr ""
-#~ "Anforderung von \"Volume item\" %d größer als Max %d oder weniger als 1\n"
+#~ "Anforderung von \"Volume item\" %d grÃ¶ÃŸer als Max %d oder weniger als 1\n"
 
 #, fuzzy
 #~ msgid "Catalog record for Volume \"%s\" updated to reference slot %d.\n"
-#~ msgstr "Media Eintrag für Volume \"%s\" nicht gefunden.\n"
+#~ msgstr "Media Eintrag fÃ¼r Volume \"%s\" nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "Catalog record for Volume \"%s\" is up to date.\n"
-#~ msgstr "Media Eintrag für Volume \"%s\" nicht gefunden.\n"
+#~ msgstr "Media Eintrag fÃ¼r Volume \"%s\" nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "Media record for new Volume \"%s\" already exists.\n"
@@ -3311,23 +3311,23 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Sending label command for Volume \"%s\" Slot %d ...\n"
-#~ msgstr "Media Eintrag für Volume \"%s\" nicht gefunden.\n"
+#~ msgstr "Media Eintrag fÃ¼r Volume \"%s\" nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "Catalog record for Volume \"%s\", Slot %d  successfully created.\n"
-#~ msgstr "Media Eintrag für Volume \"%s\" nicht gefunden.\n"
+#~ msgstr "Media Eintrag fÃ¼r Volume \"%s\" nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "Label command failed for Volume %s.\n"
-#~ msgstr "Mehr als ein Dateiname! %s für Datei: %s\n"
+#~ msgstr "Mehr als ein Dateiname! %s fÃ¼r Datei: %s\n"
 
 #, fuzzy
 #~ msgid "Could not open SD socket.\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "Invalid Slot number: %s\n"
-#~ msgstr "Ungültige Catalog Anfrage: %s"
+#~ msgstr "UngÃ¼ltige Catalog Anfrage: %s"
 
 #, fuzzy
 #~ msgid "Device \"%s\" has %d slots.\n"
@@ -3335,7 +3335,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Pool \"%s\" resource not found for volume \"%s\"!\n"
-#~ msgstr "Job Ressource für \"%s\"nicht gefunden.\n"
+#~ msgstr "Job Ressource fÃ¼r \"%s\"nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "No Volumes found, or no barcodes.\n"
@@ -3363,7 +3363,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Invalid jobid argument\n"
-#~ msgstr "Ungültige JobId gefunden.\n"
+#~ msgstr "UngÃ¼ltige JobId gefunden.\n"
 
 #, fuzzy
 #~ msgid "Unknown ObjectType %s\n"
@@ -3383,15 +3383,15 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not find Pool for Job %s\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "Could not find next Volume for Job %s (Pool=%s, Level=%s).\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "Could not find next Volume for Job %s.\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #~ msgid "Pool %s not in database. %s"
 #~ msgstr "Pool %s nicht in der Datenbank. %s"
@@ -3409,7 +3409,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Begin pruning Files.\n"
-#~ msgstr "Beginn automatische Säuberung von Dateien.\n"
+#~ msgstr "Beginn automatische SÃ¤uberung von Dateien.\n"
 
 #, fuzzy
 #~ msgid "No Files found to prune.\n"
@@ -3417,11 +3417,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Begin pruning Jobs older than %s.\n"
-#~ msgstr "Beginn automatische Säuberung von Aufträgen.\n"
+#~ msgstr "Beginn automatische SÃ¤uberung von AuftrÃ¤gen.\n"
 
 #, fuzzy
 #~ msgid "No Jobs found to prune.\n"
-#~ msgstr "Kein Job gefunden für: %s.\n"
+#~ msgstr "Kein Job gefunden fÃ¼r: %s.\n"
 
 #, fuzzy
 #~ msgid "%d expired volume%s found\n"
@@ -3429,11 +3429,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Begin purging files for Client \"%s\"\n"
-#~ msgstr "Beginn automatische Säuberung von Aufträgen.\n"
+#~ msgstr "Beginn automatische SÃ¤uberung von AuftrÃ¤gen.\n"
 
 #, fuzzy
 #~ msgid "Begin purging jobs from Client \"%s\"\n"
-#~ msgstr "Beginn automatische Säuberung von Aufträgen.\n"
+#~ msgstr "Beginn automatische SÃ¤uberung von AuftrÃ¤gen.\n"
 
 #, fuzzy
 #~ msgid "%d Job%s on Volume \"%s\" purged from catalog.\n"
@@ -3449,7 +3449,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not open %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Available queries:\n"
@@ -3461,7 +3461,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not find query.\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "Restore not done.\n"
@@ -3472,7 +3472,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Keine Volumes zum Wiederherstellen gefunden.\n"
 
 #~ msgid "Bootstrap records written to %s\n"
-#~ msgstr "Bootstrap Einträge geschrieben nach %s\n"
+#~ msgstr "Bootstrap EintrÃ¤ge geschrieben nach %s\n"
 
 #, fuzzy
 #~ msgid "No Client resource found!\n"
@@ -3480,7 +3480,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Missing value for keyword: %s\n"
-#~ msgstr "Ungültige JobId gefunden.\n"
+#~ msgstr "UngÃ¼ltige JobId gefunden.\n"
 
 #, fuzzy
 #~ msgid "Unknown keyword: %s\n"
@@ -3507,9 +3507,9 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "\n"
 #~ msgstr ""
 #~ "\n"
-#~ "Zuerst wählen Sie eine oder mehrere JobIds die Dateien enthalten\n"
+#~ "Zuerst wÃ¤hlen Sie eine oder mehrere JobIds die Dateien enthalten\n"
 #~ "die wiederhergestellt werden sollen. Es werden mehrere Methoden\n"
-#~ "zur ermittlung der JobIds angezeigt. Dann können Sie auswählen, \n"
+#~ "zur ermittlung der JobIds angezeigt. Dann kÃ¶nnen Sie auswÃ¤hlen, \n"
 #~ "welche Dateien von diesen JobIds wiederhergestellt werden sollen.\n"
 #~ "\n"
 
@@ -3527,11 +3527,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Invalid JobId in list.\n"
-#~ msgstr "Ungültige JobId gefunden.\n"
+#~ msgstr "UngÃ¼ltige JobId gefunden.\n"
 
 #, fuzzy
 #~ msgid "Cannot open file %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Error occurred on line %d of file \"%s\"\n"
@@ -3539,7 +3539,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "No database record found for: %s\n"
-#~ msgstr "Keinen Job gefunden für: %s\n"
+#~ msgstr "Keinen Job gefunden fÃ¼r: %s\n"
 
 #, fuzzy
 #~ msgid "No JobId specified cannot continue.\n"
@@ -3547,11 +3547,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "No table found: %s\n"
-#~ msgstr "Keinen Job gefunden für: %s\n"
+#~ msgstr "Keinen Job gefunden fÃ¼r: %s\n"
 
 #, fuzzy
 #~ msgid "Regex compile error: %s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to create component file %s. ERR=%s\n"
@@ -3559,7 +3559,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Unable to fdopen component file %s. ERR=%s\n"
-#~ msgstr "Kann Datenbank=%s.nicht öffen. ERR=%s\n"
+#~ msgstr "Kann Datenbank=%s.nicht Ã¶ffen. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Error writing component file.\n"
@@ -3599,7 +3599,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "No jobs found.\n"
-#~ msgstr "Kein Job gefunden für: %s.\n"
+#~ msgstr "Kein Job gefunden fÃ¼r: %s.\n"
 
 #, fuzzy
 #~ msgid "Job %s failed.\n"
@@ -3607,7 +3607,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Job queued. JobId=%s\n"
-#~ msgstr "Kein Job für JobId %s gefunden\n"
+#~ msgstr "Kein Job fÃ¼r JobId %s gefunden\n"
 
 #, fuzzy
 #~ msgid "Job \"%s\" not found\n"
@@ -3615,7 +3615,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "A job name must be specified.\n"
-#~ msgstr "Ein Benutzername für MySQL muss angegeben werden.\n"
+#~ msgstr "Ein Benutzername fÃ¼r MySQL muss angegeben werden.\n"
 
 #, fuzzy
 #~ msgid "No authorization. Job \"%s\".\n"
@@ -3675,7 +3675,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not get job record for selected JobId=%d. ERR=%s"
-#~ msgstr "Konnte job record für JobId %s zum migrieren nicht holen. ERR=%s"
+#~ msgstr "Konnte job record fÃ¼r JobId %s zum migrieren nicht holen. ERR=%s"
 
 #, fuzzy
 #~ msgid "Unable to use current plugin configuration, discarding it."
@@ -3699,11 +3699,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Can't configure %32s\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Restore Client"
-#~ msgstr "Wiederherstellung läuft..."
+#~ msgstr "Wiederherstellung lÃ¤uft..."
 
 #, fuzzy
 #~ msgid "Priority"
@@ -3735,7 +3735,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Warning cannot open %s: ERR=%s\n"
-#~ msgstr "Kann Ausdruck\"%s\"nicht auflösen: ERR=%s\n"
+#~ msgstr "Kann Ausdruck\"%s\"nicht auflÃ¶sen: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Select replace option"
@@ -3743,7 +3743,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Invalid replace option: %s\n"
-#~ msgstr "Ungültige JobId gefunden.\n"
+#~ msgstr "UngÃ¼ltige JobId gefunden.\n"
 
 #, fuzzy
 #~ msgid "regexwhere=%s\n"
@@ -3751,7 +3751,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot use your regexp\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "%s -> %s\n"
@@ -3759,7 +3759,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot use your regexp.\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Since"
@@ -3767,7 +3767,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not get job record for selected JobId. ERR=%s"
-#~ msgstr "Konnte job record für JobId %s zum migrieren nicht holen. ERR=%s"
+#~ msgstr "Konnte job record fÃ¼r JobId %s zum migrieren nicht holen. ERR=%s"
 
 #, fuzzy
 #~ msgid "User specified"
@@ -3879,7 +3879,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Invalid spooldata flag.\n"
-#~ msgstr "Ungültige JobId gefunden.\n"
+#~ msgstr "UngÃ¼ltige JobId gefunden.\n"
 
 #, fuzzy
 #~ msgid "IgnoreDuplicateCheck flag specified twice.\n"
@@ -3887,7 +3887,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Invalid ignoreduplicatecheck flag.\n"
-#~ msgstr "Ungültige JobId gefunden.\n"
+#~ msgstr "UngÃ¼ltige JobId gefunden.\n"
 
 #, fuzzy
 #~ msgid "Accurate flag specified twice.\n"
@@ -3895,7 +3895,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Invalid accurate flag.\n"
-#~ msgstr "Ungültige JobId gefunden.\n"
+#~ msgstr "UngÃ¼ltige JobId gefunden.\n"
 
 #, fuzzy
 #~ msgid "Job name specified twice.\n"
@@ -3911,7 +3911,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Invalid keyword: %s\n"
-#~ msgstr "Ungültige JobId gefunden.\n"
+#~ msgstr "UngÃ¼ltige JobId gefunden.\n"
 
 #, fuzzy
 #~ msgid "Catalog \"%s\" not found\n"
@@ -3931,7 +3931,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Invalid period.\n"
-#~ msgstr "Ungültige MediaId gefunden.\n"
+#~ msgstr "UngÃ¼ltige MediaId gefunden.\n"
 
 #, fuzzy
 #~ msgid "The defined Storage resources are:\n"
@@ -4039,15 +4039,15 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not find Job \"%s\": ERR=%s"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "Expecting jobid=nn command, got: %s\n"
-#~ msgstr "Schlüsselwort erwartet, erhalten:%s\n"
+#~ msgstr "SchlÃ¼sselwort erwartet, erhalten:%s\n"
 
 #, fuzzy
 #~ msgid "Expecting job=xxx, got: %s.\n"
-#~ msgstr "Schlüsselwort erwartet, erhalten:%s\n"
+#~ msgstr "SchlÃ¼sselwort erwartet, erhalten:%s\n"
 
 #, fuzzy
 #~ msgid "Job \"%s\" is not running.\n"
@@ -4055,7 +4055,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Expecting ujobid=xxx, got: %s.\n"
-#~ msgstr "Schlüsselwort erwartet, erhalten:%s\n"
+#~ msgstr "SchlÃ¼sselwort erwartet, erhalten:%s\n"
 
 #, fuzzy
 #~ msgid "Storage resource \"%s\": not found\n"
@@ -4071,19 +4071,19 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "No Jobs running.\n"
-#~ msgstr "Kein Job gefunden für: %s.\n"
+#~ msgstr "Kein Job gefunden fÃ¼r: %s.\n"
 
 #, fuzzy
 #~ msgid "No value given for \"jobid\".\n"
-#~ msgstr "Keine volumes für JobId=%d gefunden\n"
+#~ msgstr "Keine volumes fÃ¼r JobId=%d gefunden\n"
 
 #, fuzzy
 #~ msgid "No value given for \"job\".\n"
-#~ msgstr "Keine volumes für JobId=%d gefunden\n"
+#~ msgstr "Keine volumes fÃ¼r JobId=%d gefunden\n"
 
 #, fuzzy
 #~ msgid "No value given for \"ujobid\".\n"
-#~ msgstr "Keine volumes für JobId=%d gefunden\n"
+#~ msgstr "Keine volumes fÃ¼r JobId=%d gefunden\n"
 
 #, fuzzy
 #~ msgid "Select Job(s):\n"
@@ -4095,7 +4095,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Invalid argument \"action\".\n"
-#~ msgstr "Ungültige JobId gefunden.\n"
+#~ msgstr "UngÃ¼ltige JobId gefunden.\n"
 
 #, fuzzy
 #~ msgid "No Volumes found to perform the command.\n"
@@ -4258,7 +4258,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "print current working directory"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Invalid command \"%s\".  Enter \"done\" to exit.\n"
@@ -4270,7 +4270,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Invalid path given.\n"
-#~ msgstr "Ungültige JobId gefunden.\n"
+#~ msgstr "UngÃ¼ltige JobId gefunden.\n"
 
 #, fuzzy
 #~ msgid "Volume parameters"
@@ -4342,7 +4342,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Current max files is: %u\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Current value is: %s\n"
@@ -4362,7 +4362,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Expect JobId keyword, not found.\n"
-#~ msgstr "Job Type Schlüsselwort erwartet, erhalten: %s"
+#~ msgstr "Job Type SchlÃ¼sselwort erwartet, erhalten: %s"
 
 #, fuzzy
 #~ msgid "Neither Client, StartTime or Priority specified.\n"
@@ -4378,7 +4378,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "No valid Jobs found from user selection.\n"
-#~ msgstr "Kein Job gefunden für: %s.\n"
+#~ msgstr "Kein Job gefunden fÃ¼r: %s.\n"
 
 #, fuzzy
 #~ msgid "Using user supplied JobIds=%s\n"
@@ -4390,7 +4390,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Error getting Job record for previous Job: ERR=%s"
-#~ msgstr "Fehler beim Holen des job Eintrags für den job Bericht: %s"
+#~ msgstr "Fehler beim Holen des job Eintrags fÃ¼r den job Bericht: %s"
 
 #~ msgid "Backup OK -- with warnings"
 #~ msgstr "Sicherung OK -- mit Warnungen"
@@ -4439,7 +4439,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "  Start Zeit:             %s\n"
 #~ "  End Zeit:               %s\n"
 #~ "  Verstichene Zeit:       %s\n"
-#~ "  Priorität:              %d\n"
+#~ "  PrioritÃ¤t:              %d\n"
 #~ "  SD Dateien geschrieben: %s\n"
 #~ "  SD Bytes geschrieben:   %s (%sB)\n"
 #~ "  Geschwindigkeit:        %.1f KB/s\n"
@@ -4458,7 +4458,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not get job record for previous Job. ERR=%s"
-#~ msgstr "Konnte job record für JobId %s zum migrieren nicht holen. ERR=%s"
+#~ msgstr "Konnte job record fÃ¼r JobId %s zum migrieren nicht holen. ERR=%s"
 
 #, fuzzy
 #~ msgid "Verifying against JobId=%d Job=%s\n"
@@ -4466,7 +4466,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not get fileset record from previous Job. ERR=%s"
-#~ msgstr "Konnte job record für JobId %s zum migrieren nicht holen. ERR=%s"
+#~ msgstr "Konnte job record fÃ¼r JobId %s zum migrieren nicht holen. ERR=%s"
 
 #, fuzzy
 #~ msgid "Could not find FileSet resource \"%s\" from previous Job\n"
@@ -4625,14 +4625,14 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "%s digest initialization failed\n"
-#~ msgstr "Initialisierung der Verschlüsselungsbibliothek fehlgeschlagen.\n"
+#~ msgstr "Initialisierung der VerschlÃ¼sselungsbibliothek fehlgeschlagen.\n"
 
 #, fuzzy
 #~ msgid ""
 #~ "Authorization problem: Remote server did not advertize required TLS "
 #~ "support.\n"
 #~ msgstr ""
-#~ "Authorisationsproblem: Entfernter Server hat benötigte TLS Unterstützung "
+#~ "Authorisationsproblem: Entfernter Server hat benÃ¶tigte TLS UnterstÃ¼tzung "
 #~ "nicht angeboten.\n"
 
 #, fuzzy
@@ -4645,7 +4645,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "     Could not stat \"%s\": ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "     Could not open directory \"%s\": ERR=%s\n"
@@ -4657,7 +4657,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "     Cannot open \"%s\": ERR=%s.\n"
-#~ msgstr "Kann Ausdruck\"%s\"nicht auflösen: ERR=%s\n"
+#~ msgstr "Kann Ausdruck\"%s\"nicht auflÃ¶sen: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Network send error to SD. ERR=%s\n"
@@ -4678,7 +4678,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #, fuzzy
 #~ msgid "Invalid file flags, no supported data stream type.\n"
 #~ msgstr ""
-#~ "Catalog Fehler beim Aktualisieren des file digest. Nicht unterstützter "
+#~ "Catalog Fehler beim Aktualisieren des file digest. Nicht unterstÃ¼tzter "
 #~ "digest stream typ: %d"
 
 #, fuzzy
@@ -4687,15 +4687,15 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "     Cannot open resource fork for \"%s\": ERR=%s.\n"
-#~ msgstr "Kann Ausdruck\"%s\"nicht auflösen: ERR=%s\n"
+#~ msgstr "Kann Ausdruck\"%s\"nicht auflÃ¶sen: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Compression deflate error: %d\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Compression LZO error: %d\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid ""
@@ -4721,12 +4721,12 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: bacula-fd [-f -s] [-c config_datei] [-d debug_level]\n"
 #~ "        -c <Datei>   benutze <Datei> als Konfigurationsdatei\n"
 #~ "        -dnn        setze debug level auf nn\n"
-#~ "        -f          starte in Vordergrund (für debugging)\n"
+#~ "        -f          starte in Vordergrund (fÃ¼r debugging)\n"
 #~ "        -g          groupid\n"
-#~ "        -s          no signals (für debugging)\n"
+#~ "        -s          no signals (fÃ¼r debugging)\n"
 #~ "        -t          Konfigurationsdatei testen und beenden\n"
 #~ "        -u          userid\n"
-#~ "        -v          Ausführliche Benutzermeldungen\n"
+#~ "        -v          AusfÃ¼hrliche Benutzermeldungen\n"
 #~ "        -?          diese Meldung ausgeben.\n"
 #~ "\n"
 
@@ -4748,7 +4748,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "for File daemon in %s.\n"
 #~ msgstr ""
 #~ "Weder \"TLS CA Certificate\" noch \"TLS CA Certificate Dir\" sind "
-#~ "definiert für File daemon \"%s\" in %s.\n"
+#~ "definiert fÃ¼r File daemon \"%s\" in %s.\n"
 
 #, fuzzy
 #~ msgid "No Director resource defined in %s\n"
@@ -4756,15 +4756,15 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Failed to initialize encryption context.\n"
-#~ msgstr "Konnte TLS context für Storage \"%s\" in %s nicht initialisieren.\n"
+#~ msgstr "Konnte TLS context fÃ¼r Storage \"%s\" in %s nicht initialisieren.\n"
 
 #, fuzzy
 #~ msgid "%s signature digest initialization failed\n"
-#~ msgstr "Initialisierung der Verschlüsselungsbibliothek fehlgeschlagen.\n"
+#~ msgstr "Initialisierung der VerschlÃ¼sselungsbibliothek fehlgeschlagen.\n"
 
 #, fuzzy
 #~ msgid "Unsupported cipher on this system.\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "An error occurred while encrypting the stream.\n"
@@ -4792,7 +4792,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not create %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Error while creating command string %s.\n"
@@ -4877,12 +4877,12 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: bacula-fd [-f -s] [-c config_datei] [-d debug_level]\n"
 #~ "        -c <Datei>   benutze <Datei> als Konfigurationsdatei\n"
 #~ "        -dnn        setze debug level auf nn\n"
-#~ "        -f          starte in Vordergrund (für debugging)\n"
+#~ "        -f          starte in Vordergrund (fÃ¼r debugging)\n"
 #~ "        -g          groupid\n"
-#~ "        -s          no signals (für debugging)\n"
+#~ "        -s          no signals (fÃ¼r debugging)\n"
 #~ "        -t          Konfigurationsdatei testen und beenden\n"
 #~ "        -u          userid\n"
-#~ "        -v          Ausführliche Benutzermeldungen\n"
+#~ "        -v          AusfÃ¼hrliche Benutzermeldungen\n"
 #~ "        -?          diese Meldung ausgeben.\n"
 #~ "\n"
 
@@ -4893,41 +4893,41 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #, fuzzy
 #~ msgid "Failed to load public certificate for File daemon \"%s\" in %s.\n"
 #~ msgstr ""
-#~ "Konnte TLS context für File daemon \"%s\" in %s nicht initialisieren.\n"
+#~ "Konnte TLS context fÃ¼r File daemon \"%s\" in %s nicht initialisieren.\n"
 
 #, fuzzy
 #~ msgid "Failed to load private key for File daemon \"%s\" in %s.\n"
 #~ msgstr ""
-#~ "Konnte TLS context für File daemon \"%s\" in %s nicht initialisieren.\n"
+#~ "Konnte TLS context fÃ¼r File daemon \"%s\" in %s nicht initialisieren.\n"
 
 #, fuzzy
 #~ msgid ""
 #~ "Failed to load private key from file %s for File daemon \"%s\" in %s.\n"
 #~ msgstr ""
-#~ "Konnte TLS context für File daemon \"%s\" in %s nicht initialisieren.\n"
+#~ "Konnte TLS context fÃ¼r File daemon \"%s\" in %s nicht initialisieren.\n"
 
 #, fuzzy
 #~ msgid ""
 #~ "Failed to load trusted signer certificate from file %s for File daemon "
 #~ "\"%s\" in %s.\n"
 #~ msgstr ""
-#~ "Konnte TLS context für File daemon \"%s\" in %s nicht initialisieren.\n"
+#~ "Konnte TLS context fÃ¼r File daemon \"%s\" in %s nicht initialisieren.\n"
 
 #, fuzzy
 #~ msgid ""
 #~ "Failed to load master key certificate from file %s for File daemon \"%s\" "
 #~ "in %s.\n"
 #~ msgstr ""
-#~ "Konnte TLS context für File daemon \"%s\" in %s nicht initialisieren.\n"
+#~ "Konnte TLS context fÃ¼r File daemon \"%s\" in %s nicht initialisieren.\n"
 
 #, fuzzy
 #~ msgid "Failed to initialize TLS context for Console \"%s\" in %s.\n"
 #~ msgstr ""
-#~ "Konnte TLS context für Director nicht initialisieren \"%s\" in %s.\n"
+#~ "Konnte TLS context fÃ¼r Director nicht initialisieren \"%s\" in %s.\n"
 
 #, fuzzy
 #~ msgid "Expected a Cipher Type keyword, got: %s"
-#~ msgstr "Job Type Schlüsselwort erwartet, erhalten: %s"
+#~ msgstr "Job Type SchlÃ¼sselwort erwartet, erhalten: %s"
 
 #, fuzzy
 #~ msgid "Cannot find any Console resource for remote access\n"
@@ -4935,7 +4935,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Bad Hello command from Director at %s. Len=%d.\n"
-#~ msgstr "UA Hello von %s:%s:%d ist ungültig. Len=%d\n"
+#~ msgstr "UA Hello von %s:%s:%d ist ungÃ¼ltig. Len=%d\n"
 
 #, fuzzy
 #~ msgid "Connection from unknown Director %s at %s rejected.\n"
@@ -4959,7 +4959,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Bad command from %s. Len=%d.\n"
-#~ msgstr "UA Hello von %s:%s:%d ist ungültig. Len=%d\n"
+#~ msgstr "UA Hello von %s:%s:%d ist ungÃ¼ltig. Len=%d\n"
 
 #, fuzzy
 #~ msgid "2901 Job %s not found.\n"
@@ -5019,11 +5019,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot open FileSet input file: %s. ERR=%s\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "REGEX %s compile error. ERR=%s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Invalid FileSet command: %s\n"
@@ -5055,7 +5055,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "ACL support not configured for Client.\n"
-#~ msgstr "TLS benötigt aber nicht konfiguriert in Bacula.\n"
+#~ msgstr "TLS benÃ¶tigt aber nicht konfiguriert in Bacula.\n"
 
 #, fuzzy
 #~ msgid "Cannot contact Storage daemon\n"
@@ -5063,7 +5063,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Bad response to append open: %s\n"
-#~ msgstr "FD hat fehlerhafte Antwort auf JobId Kommando zurückgegeben: %s\n"
+#~ msgstr "FD hat fehlerhafte Antwort auf JobId Kommando zurÃ¼ckgegeben: %s\n"
 
 #, fuzzy
 #~ msgid "Bad response from stored to open command\n"
@@ -5071,7 +5071,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Bad status %d %c returned from Storage Daemon.\n"
-#~ msgstr "FD hat keinen Jobstatus zurückgegeben.\n"
+#~ msgstr "FD hat keinen Jobstatus zurÃ¼ckgegeben.\n"
 
 #, fuzzy
 #~ msgid "2994 Bad verify command: %s\n"
@@ -5083,7 +5083,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Bad response to SD read open: %s\n"
-#~ msgstr "FD hat fehlerhafte Antwort auf JobId Kommando zurückgegeben: %s\n"
+#~ msgstr "FD hat fehlerhafte Antwort auf JobId Kommando zurÃ¼ckgegeben: %s\n"
 
 #, fuzzy
 #~ msgid "Bad response from stored to read open command\n"
@@ -5100,7 +5100,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Error setting Finder Info on \"%s\"\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "LZO init failed\n"
@@ -5108,7 +5108,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Record header scan error: %s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Data record error. ERR=%s\n"
@@ -5124,7 +5124,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Signer not found. Decryption failed.\n"
-#~ msgstr "FileSet MD5 Prüfsumme nicht gefunden.\n"
+#~ msgstr "FileSet MD5 PrÃ¼fsumme nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid ""
@@ -5138,11 +5138,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Failed to initialize decryption context for %s\n"
-#~ msgstr "Konnte TLS context für Storage \"%s\" in %s nicht initialisieren.\n"
+#~ msgstr "Konnte TLS context fÃ¼r Storage \"%s\" in %s nicht initialisieren.\n"
 
 #, fuzzy
 #~ msgid "Cannot open resource fork for %s.\n"
-#~ msgstr "Kann Ausdruck\"%s\"nicht auflösen: ERR=%s\n"
+#~ msgstr "Kann Ausdruck\"%s\"nicht auflÃ¶sen: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Failed to decode message signature for %s\n"
@@ -5175,7 +5175,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Digest one file failed for file: %s\n"
-#~ msgstr "Mehr als ein Dateiname! %s für Datei: %s\n"
+#~ msgstr "Mehr als ein Dateiname! %s fÃ¼r Datei: %s\n"
 
 #, fuzzy
 #~ msgid "Signature validation failed for %s: %s\n"
@@ -5221,7 +5221,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "     Could not stat %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "     Could not open directory %s: ERR=%s\n"
@@ -5237,19 +5237,19 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "     Cannot open %s: ERR=%s.\n"
-#~ msgstr "Kann Ausdruck\"%s\"nicht auflösen: ERR=%s\n"
+#~ msgstr "Kann Ausdruck\"%s\"nicht auflÃ¶sen: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "     Cannot open resource fork for %s: ERR=%s.\n"
-#~ msgstr "Kann Ausdruck\"%s\"nicht auflösen: ERR=%s\n"
+#~ msgstr "Kann Ausdruck\"%s\"nicht auflÃ¶sen: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Error reading file %s: ERR=%s\n"
-#~ msgstr "Fehler beim Holen der Zeile für Datei=%s: ERR=%s\n"
+#~ msgstr "Fehler beim Holen der Zeile fÃ¼r Datei=%s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to stat file \"%s\": ERR=%s\n"
-#~ msgstr "Kann Datenbank=%s.nicht öffen. ERR=%s\n"
+#~ msgstr "Kann Datenbank=%s.nicht Ã¶ffen. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Failed to serialize extended attributes on file \"%s\"\n"
@@ -5261,11 +5261,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Illegal xattr stream, no XATTR_MAGIC on file \"%s\"\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Illegal xattr stream, xattr name length <= 0 on file \"%s\"\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "pioctl VIOCGETAL error on file \"%s\": ERR=%s\n"
@@ -5372,7 +5372,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Unable to get status on xattr \"%s\" on file \"%s\": ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unsupported extended attribute type: %i for \"%s\" on file \"%s\"\n"
@@ -5396,15 +5396,15 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Unable to get xattr acl on file \"%s\": ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to get acl on xattr %s on file \"%s\": ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to get acl text on xattr %s on file \"%s\": ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to convert acl from text on file \"%s\"\n"
@@ -5420,7 +5420,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "wrong encoding of acl type in acl stream on file \"%s\"\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "acl_set error on file \"%s\": ERR=%s\n"
@@ -5428,7 +5428,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Unable to open xattr on file \"%s\": ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to list the xattr on file \"%s\": ERR=%s\n"
@@ -5436,15 +5436,15 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Unable to close xattr list on file \"%s\": ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to stat xattr \"%s\" on file \"%s\": ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to open file \"%s\": ERR=%s\n"
-#~ msgstr "Kann Datenbank=%s.nicht öffen. ERR=%s\n"
+#~ msgstr "Kann Datenbank=%s.nicht Ã¶ffen. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to link xattr %s to %s on file \"%s\": ERR=%s\n"
@@ -5452,11 +5452,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Unable to open attribute \"%s\" at file \"%s\": ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to restore data of xattr %s on file \"%s\": ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unsupported xattr type %s on file \"%s\"\n"
@@ -5472,19 +5472,19 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Unable to set file owner %s: ERR=%s\n"
-#~ msgstr "Kann Datenbank=%s.nicht öffen. ERR=%s\n"
+#~ msgstr "Kann Datenbank=%s.nicht Ã¶ffen. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to set file modes %s: ERR=%s\n"
-#~ msgstr "Kann Datenbank=%s.nicht öffen. ERR=%s\n"
+#~ msgstr "Kann Datenbank=%s.nicht Ã¶ffen. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to set file times %s: ERR=%s\n"
-#~ msgstr "Kann Datenbank=%s.nicht öffen. ERR=%s\n"
+#~ msgstr "Kann Datenbank=%s.nicht Ã¶ffen. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to set file flags %s: ERR=%s\n"
-#~ msgstr "Kann Datenbank=%s.nicht öffen. ERR=%s\n"
+#~ msgstr "Kann Datenbank=%s.nicht Ã¶ffen. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "File data"
@@ -5492,7 +5492,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Restore Object"
-#~ msgstr "Wiederherstellung läuft..."
+#~ msgstr "Wiederherstellung lÃ¤uft..."
 
 #, fuzzy
 #~ msgid "File skipped. Already exists: %s\n"
@@ -5500,27 +5500,27 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot make fifo %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Cannot make node %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Could not symlink %s -> %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Could not restore file flags for file %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Could not hard link %s -> %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Could not reset file flags for file %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unknown file type %d; not restored: %s\n"
@@ -5536,7 +5536,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot stat file %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Cannot create directory %s: ERR=%s\n"
@@ -5544,11 +5544,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot change owner and/or group of %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Cannot change permissions of %s: ERR=%s\n"
-#~ msgstr "Kann Ausdruck\"%s\"nicht auflösen: ERR=%s\n"
+#~ msgstr "Kann Ausdruck\"%s\"nicht auflÃ¶sen: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Too many subdirectories. Some permissions not reset.\n"
@@ -5556,7 +5556,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot open current directory: ERR=%s\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Cannot get current directory: ERR=%s\n"
@@ -5580,15 +5580,15 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Expected a string but got: %s"
-#~ msgstr "regulären Ausdruck erwartet, erhalten: %s\n"
+#~ msgstr "regulÃ¤ren Ausdruck erwartet, erhalten: %s\n"
 
 #, fuzzy
 #~ msgid "Expected a string [ip|ipv4|ipv6] but got: %s"
-#~ msgstr "regulären Ausdruck erwartet, erhalten: %s\n"
+#~ msgstr "regulÃ¤ren Ausdruck erwartet, erhalten: %s\n"
 
 #, fuzzy
 #~ msgid "Expected a string [ip|ipv4] but got: %s"
-#~ msgstr "regulären Ausdruck erwartet, erhalten: %s\n"
+#~ msgstr "regulÃ¤ren Ausdruck erwartet, erhalten: %s\n"
 
 #, fuzzy
 #~ msgid "Expected an equal = but got: %s"
@@ -5608,7 +5608,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Expected a number or a string but got: %s"
-#~ msgstr "regulären Ausdruck erwartet, erhalten: %s\n"
+#~ msgstr "regulÃ¤ren Ausdruck erwartet, erhalten: %s\n"
 
 #, fuzzy
 #~ msgid "Expected an IP number or a hostname but got: %s"
@@ -5628,7 +5628,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Expected a port number or string, got: %s"
-#~ msgstr "regulären Ausdruck erwartet, erhalten: %s\n"
+#~ msgstr "regulÃ¤ren Ausdruck erwartet, erhalten: %s\n"
 
 #, fuzzy
 #~ msgid "Error scanning attributes: %s\n"
@@ -5652,11 +5652,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "TLS enabled but not configured.\n"
-#~ msgstr "TLS benötigt aber nicht konfiguriert in Bacula.\n"
+#~ msgstr "TLS benÃ¶tigt aber nicht konfiguriert in Bacula.\n"
 
 #, fuzzy
 #~ msgid "TLS enable but not configured.\n"
-#~ msgstr "TLS benötigt aber nicht konfiguriert in Bacula.\n"
+#~ msgstr "TLS benÃ¶tigt aber nicht konfiguriert in Bacula.\n"
 
 #, fuzzy
 #~ msgid "Unknown error."
@@ -5692,7 +5692,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not add job to client queue: ERR=%s\n"
-#~ msgstr "Konnte job queue nicht hinzufügen: ERR=%s\n"
+#~ msgstr "Konnte job queue nicht hinzufÃ¼gen: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Could not destroy client queue: ERR=%s\n"
@@ -5748,27 +5748,27 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "fread attr spool error. Wanted=%d got=%d bytes.\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "fread attr spool I/O error.\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Could not malloc BSOCK data buffer\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "sockopt error: %s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "fcntl F_GETFL error. ERR=%s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "fcntl F_SETFL error. ERR=%s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Director authorization error at \"%s:%d\"\n"
@@ -5779,7 +5779,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Authorization error: Remote server at \"%s:%d\" did not advertise "
 #~ "required TLS support.\n"
 #~ msgstr ""
-#~ "Authorisationsproblem: Entfernter Server hat benötigte TLS Unterstützung "
+#~ "Authorisationsproblem: Entfernter Server hat benÃ¶tigte TLS UnterstÃ¼tzung "
 #~ "nicht angeboten.\n"
 
 #, fuzzy
@@ -5796,12 +5796,12 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "during the TLS handshake.\n"
 #~ "For help, please see: "
 #~ msgstr ""
-#~ "Kann mit  File daemon on \"%s:%d\" nicht authentisieren. Mögliche "
+#~ "Kann mit  File daemon on \"%s:%d\" nicht authentisieren. MÃ¶gliche "
 #~ "Ursachen:\n"
 #~ "Passworte oder Namen nicht gleich oder\n"
-#~ "Maximum Concurrent Jobs überschritten auf dem FD oder\n"
+#~ "Maximum Concurrent Jobs Ã¼berschritten auf dem FD oder\n"
 #~ "FD Netzwerk durcheinander (Daemon neustarten).\n"
-#~ "Für Hilfe bitte unter http://www.bacula.org/rel-manual/faq."
+#~ "FÃ¼r Hilfe bitte unter http://www.bacula.org/rel-manual/faq."
 #~ "html#AuthorizationErrors nachsehen.\n"
 
 #, fuzzy
@@ -5818,23 +5818,23 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot open %s file. %s ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Could not open %s file. %s ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Cannot lock %s file. %s ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Cannot not open %s file. %s ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Could not create state file. %s ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Write final hdr error: ERR=%s\n"
@@ -5846,7 +5846,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Unable to open certificate file"
-#~ msgstr "Kann Datenbank=%s.nicht öffen. ERR=%s\n"
+#~ msgstr "Kann Datenbank=%s.nicht Ã¶ffen. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to read certificate from file"
@@ -5866,7 +5866,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "OpenSSL digest initialization failed"
-#~ msgstr "Initialisierung der Verschlüsselungsbibliothek fehlgeschlagen.\n"
+#~ msgstr "Initialisierung der VerschlÃ¼sselungsbibliothek fehlgeschlagen.\n"
 
 #, fuzzy
 #~ msgid "No signers found for crypto verify.\n"
@@ -5874,7 +5874,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Signature creation failed"
-#~ msgstr "FileSet MD5 Prüfsumme nicht gefunden.\n"
+#~ msgstr "FileSet MD5 PrÃ¼fsumme nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "SHA1Update() returned an error: %d\n"
@@ -5886,11 +5886,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Signer not found"
-#~ msgstr "FileSet MD5 Prüfsumme nicht gefunden.\n"
+#~ msgstr "FileSet MD5 PrÃ¼fsumme nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "Recipient not found"
-#~ msgstr "FileSet MD5 Prüfsumme nicht gefunden.\n"
+#~ msgstr "FileSet MD5 PrÃ¼fsumme nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "Internal error"
@@ -5914,11 +5914,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot open config file %s: %s\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Cannot open lex\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Backup"
@@ -5926,7 +5926,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Restoring"
-#~ msgstr "Wiederherstellung läuft..."
+#~ msgstr "Wiederherstellung lÃ¤uft..."
 
 #, fuzzy
 #~ msgid "Migration"
@@ -5974,15 +5974,15 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Config error: %s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "string"
-#~ msgstr "Wiederherstellung läuft..."
+#~ msgstr "Wiederherstellung lÃ¤uft..."
 
 #, fuzzy
 #~ msgid "quoted_string"
-#~ msgstr "Wiederherstellung läuft..."
+#~ msgstr "Wiederherstellung lÃ¤uft..."
 
 #, fuzzy
 #~ msgid "expected a positive integer number, got: %s"
@@ -5990,11 +5990,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot open included config file %s: %s\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "expected an integer or a range, got %s: %s"
-#~ msgstr "regulären Ausdruck erwartet, erhalten: %s\n"
+#~ msgstr "regulÃ¤ren Ausdruck erwartet, erhalten: %s\n"
 
 #, fuzzy
 #~ msgid "expected an integer number, got %s: %s"
@@ -6006,7 +6006,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "expected a string, got %s: %s"
-#~ msgstr "regulären Ausdruck erwartet, erhalten: %s\n"
+#~ msgstr "regulÃ¤ren Ausdruck erwartet, erhalten: %s\n"
 
 #, fuzzy
 #~ msgid "Mutex lock failure. ERR=%s\n"
@@ -6022,7 +6022,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not open console message file %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Could not get con mutex: ERR=%s\n"
@@ -6127,7 +6127,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Expected a Tape Label keyword, got: %s"
-#~ msgstr "Job Level Schlüsselwort erwartet, erhalten: %s"
+#~ msgstr "Job Level SchlÃ¼sselwort erwartet, erhalten: %s"
 
 #, fuzzy
 #~ msgid "Unable to initialize resource lock. ERR=%s\n"
@@ -6139,7 +6139,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot open config file \"%s\": %s\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Expected a Resource name identifier, got: %s"
@@ -6155,7 +6155,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Name not specified for resource"
-#~ msgstr "Schlüsselwort %s ist in dieser Ressource nicht erlaubt."
+#~ msgstr "SchlÃ¼sselwort %s ist in dieser Ressource nicht erlaubt."
 
 #, fuzzy
 #~ msgid "Unknown parser state %d\n"
@@ -6163,11 +6163,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Failed to open Plugin directory %s: ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Failed to find any plugins in %s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "dlopen plugin %s failed: ERR=%s\n"
@@ -6183,7 +6183,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not find userid=%s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Could not find password entry. ERR=%s\n"
@@ -6191,7 +6191,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not find group=%s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Could not initgroups for group=%s, userid=%s: ERR=%s\n"
@@ -6203,7 +6203,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not set group=%s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "prctl failed: ERR=%s\n"
@@ -6223,7 +6223,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not set specified userid: %s\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "rwl_writelock failure at %s:%d:  ERR=%s\n"
@@ -6263,7 +6263,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Unable to open DH parameters file"
-#~ msgstr "Kann Datenbank=%s.nicht öffen. ERR=%s\n"
+#~ msgstr "Kann Datenbank=%s.nicht Ã¶ffen. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Non-fatal error"
@@ -6363,7 +6363,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "invalid expansion configuration"
-#~ msgstr "Vorherige Konfiguration zurückgesetzt.\n"
+#~ msgstr "Vorherige Konfiguration zurÃ¼ckgesetzt.\n"
 
 #, fuzzy
 #~ msgid "unknown command character in variable"
@@ -6395,7 +6395,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "invalid argument"
-#~ msgstr "Ungültige JobId gefunden.\n"
+#~ msgstr "UngÃ¼ltige JobId gefunden.\n"
 
 #, fuzzy
 #~ msgid "undefined operation"
@@ -6423,7 +6423,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not add work to queue: ERR=%s\n"
-#~ msgstr "Konnte job queue nicht hinzufügen: ERR=%s\n"
+#~ msgstr "Konnte job queue nicht hinzufÃ¼gen: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Waiting for workq to be empty: ERR=%s\n"
@@ -6431,7 +6431,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Error in workq_destroy: ERR=%s\n"
-#~ msgstr "Fehler beim Holen der Zeile für Datei=%s: ERR=%s\n"
+#~ msgstr "Fehler beim Holen der Zeile fÃ¼r Datei=%s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "No volumes specified for reading. Job %s canceled.\n"
@@ -6463,7 +6463,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not write ANSI HDR1 label. ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Error writing EOF to tape. ERR=%s"
@@ -6593,13 +6593,13 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: dird [-f -s] [-c config_file] [-d debug_level] [config_file]\n"
 #~ "       -c <file>   setze Konfigurationsdatei auf Datei\n"
 #~ "       -dnn        setze debug level auf nn\n"
-#~ "       -f          starte im Vordergrund (für debugging Zwecke)\n"
+#~ "       -f          starte im Vordergrund (fÃ¼r debugging Zwecke)\n"
 #~ "       -g          groupid\n"
 #~ "       -r <job>    starte <job> jetzt\n"
 #~ "       -s          no signals\n"
 #~ "       -t          test - Konfiguration Lesen und beenden\n"
 #~ "       -u          userid\n"
-#~ "       -v          ausführliche Benutzer Meldungen\n"
+#~ "       -v          ausfÃ¼hrliche Benutzer Meldungen\n"
 #~ "       -?          diese Meldung ausgeben.\n"
 #~ "\n"
 
@@ -6646,26 +6646,26 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: bacula-fd [-f -s] [-c config_datei] [-d debug_level]\n"
 #~ "        -c <Datei>   benutze <Datei> als Konfigurationsdatei\n"
 #~ "        -dnn        setze debug level auf nn\n"
-#~ "        -f          starte in Vordergrund (für debugging)\n"
+#~ "        -f          starte in Vordergrund (fÃ¼r debugging)\n"
 #~ "        -g          groupid\n"
-#~ "        -s          no signals (für debugging)\n"
+#~ "        -s          no signals (fÃ¼r debugging)\n"
 #~ "        -t          Konfigurationsdatei testen und beenden\n"
 #~ "        -u          userid\n"
-#~ "        -v          Ausführliche Benutzermeldungen\n"
+#~ "        -v          AusfÃ¼hrliche Benutzermeldungen\n"
 #~ "        -?          diese Meldung ausgeben.\n"
 #~ "\n"
 
 #, fuzzy
 #~ msgid "Could not open exclude file: %s, ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Could not open include file: %s, ERR=%s\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Cannot stat %s. It must exist. ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Write error on %s: %s\n"
@@ -6673,7 +6673,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot continue.\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Seek error Addr=%llu on %s: %s\n"
@@ -6681,11 +6681,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Uncompression error. ERR=%d\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "LZO uncompression error. ERR=%d\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Error writing JobMedia record to catalog.\n"
@@ -6770,13 +6770,13 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: dird [-f -s] [-c config_file] [-d debug_level] [config_file]\n"
 #~ "       -c <file>   setze Konfigurationsdatei auf Datei\n"
 #~ "       -dnn        setze debug level auf nn\n"
-#~ "       -f          starte im Vordergrund (für debugging Zwecke)\n"
+#~ "       -f          starte im Vordergrund (fÃ¼r debugging Zwecke)\n"
 #~ "       -g          groupid\n"
 #~ "       -r <job>    starte <job> jetzt\n"
 #~ "       -s          no signals\n"
 #~ "       -t          test - Konfiguration Lesen und beenden\n"
 #~ "       -u          userid\n"
-#~ "       -v          ausführliche Benutzer Meldungen\n"
+#~ "       -v          ausfÃ¼hrliche Benutzer Meldungen\n"
 #~ "       -?          diese Meldung ausgeben.\n"
 #~ "\n"
 
@@ -6830,13 +6830,13 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: dird [-f -s] [-c config_file] [-d debug_level] [config_file]\n"
 #~ "       -c <file>   setze Konfigurationsdatei auf Datei\n"
 #~ "       -dnn        setze debug level auf nn\n"
-#~ "       -f          starte im Vordergrund (für debugging Zwecke)\n"
+#~ "       -f          starte im Vordergrund (fÃ¼r debugging Zwecke)\n"
 #~ "       -g          groupid\n"
 #~ "       -r <job>    starte <job> jetzt\n"
 #~ "       -s          no signals\n"
 #~ "       -t          test - Konfiguration Lesen und beenden\n"
 #~ "       -u          userid\n"
-#~ "       -v          ausführliche Benutzer Meldungen\n"
+#~ "       -v          ausfÃ¼hrliche Benutzer Meldungen\n"
 #~ "       -?          diese Meldung ausgeben.\n"
 #~ "\n"
 
@@ -6866,15 +6866,15 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Media record for %s found in DB.\n"
-#~ msgstr "Media Eintrag für MediaId=%u in Catalog nicht gefunden.\n"
+#~ msgstr "Media Eintrag fÃ¼r MediaId=%u in Catalog nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "SOS_LABEL: Found Job record for JobId: %d\n"
-#~ msgstr "Kein Job für JobId %s gefunden\n"
+#~ msgstr "Kein Job fÃ¼r JobId %s gefunden\n"
 
 #, fuzzy
 #~ msgid "SOS_LABEL: Job record not found for JobId: %d\n"
-#~ msgstr "Kein Job für JobId %s gefunden\n"
+#~ msgstr "Kein Job fÃ¼r JobId %s gefunden\n"
 
 #, fuzzy
 #~ msgid "Could not update job record. ERR=%s\n"
@@ -6902,7 +6902,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Created Media record for Volume: %s\n"
-#~ msgstr "Konnte Media record für Volume %s nicht holen: ERR=%s\n"
+#~ msgstr "Konnte Media record fÃ¼r Volume %s nicht holen: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Updated Media record at end of Volume: %s\n"
@@ -7022,12 +7022,12 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: bacula-fd [-f -s] [-c config_datei] [-d debug_level]\n"
 #~ "        -c <Datei>   benutze <Datei> als Konfigurationsdatei\n"
 #~ "        -dnn        setze debug level auf nn\n"
-#~ "        -f          starte in Vordergrund (für debugging)\n"
+#~ "        -f          starte in Vordergrund (fÃ¼r debugging)\n"
 #~ "        -g          groupid\n"
-#~ "        -s          no signals (für debugging)\n"
+#~ "        -s          no signals (fÃ¼r debugging)\n"
 #~ "        -t          Konfigurationsdatei testen und beenden\n"
 #~ "        -u          userid\n"
-#~ "        -v          Ausführliche Benutzermeldungen\n"
+#~ "        -v          AusfÃ¼hrliche Benutzermeldungen\n"
 #~ "        -?          diese Meldung ausgeben.\n"
 #~ "\n"
 
@@ -7056,11 +7056,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #, fuzzy
 #~ msgid "\"TLS Certificate\" file not defined for Storage \"%s\" in %s.\n"
 #~ msgstr ""
-#~ "\"TLS Certificate\" Datei nicht definiert für Console \"%s\" in %s.\n"
+#~ "\"TLS Certificate\" Datei nicht definiert fÃ¼r Console \"%s\" in %s.\n"
 
 #, fuzzy
 #~ msgid "\"TLS Key\" file not defined for Storage \"%s\" in %s.\n"
-#~ msgstr "\"TLS Key\" Datei nicht für Director definiert \"%s\" in %s.\n"
+#~ msgstr "\"TLS Key\" Datei nicht fÃ¼r Director definiert \"%s\" in %s.\n"
 
 #, fuzzy
 #~ msgid ""
@@ -7068,9 +7068,9 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "for Storage \"%s\" in %s. At least one CA certificate store is required "
 #~ "when using \"TLS Verify Peer\".\n"
 #~ msgstr ""
-#~ "Weder \"TLS CA Certificate\"  noch \"TLS CA Certificate Dir\" sind für "
+#~ "Weder \"TLS CA Certificate\"  noch \"TLS CA Certificate Dir\" sind fÃ¼r "
 #~ "Director \"%s\" in %s definert. Mindestens ein CA certificate store wird "
-#~ "benötigt wenn \"TLS Verify Peer\" eingesetzt wird.\n"
+#~ "benÃ¶tigt wenn \"TLS Verify Peer\" eingesetzt wird.\n"
 
 #, fuzzy
 #~ msgid "No archive name specified.\n"
@@ -7130,7 +7130,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Bad status from weof. ERR=%s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Wrote 1 EOF to %s\n"
@@ -7138,11 +7138,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Bad status from bsf. ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Bad status from bsr. ERR=%s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Error writing record to block.\n"
@@ -7214,7 +7214,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Bad status from fsr. ERR=%s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Now forward spacing 2 files.\n"
@@ -7226,7 +7226,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Bad status from fsf. ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Wrote block to device.\n"
@@ -7235,7 +7235,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #, fuzzy
 #~ msgid "End of tape\n"
 #~ msgstr ""
-#~ "Ende automatische Säuberung.\n"
+#~ "Ende automatische SÃ¤uberung.\n"
 #~ "\n"
 
 #, fuzzy
@@ -7280,7 +7280,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not create state file: %s ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "do_unfill failed.\n"
@@ -7288,7 +7288,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Reposition error. ERR=%s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Error reading block: ERR=%s\n"
@@ -7325,13 +7325,13 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: dird [-f -s] [-c config_file] [-d debug_level] [config_file]\n"
 #~ "       -c <file>   setze Konfigurationsdatei auf Datei\n"
 #~ "       -dnn        setze debug level auf nn\n"
-#~ "       -f          starte im Vordergrund (für debugging Zwecke)\n"
+#~ "       -f          starte im Vordergrund (fÃ¼r debugging Zwecke)\n"
 #~ "       -g          groupid\n"
 #~ "       -r <job>    starte <job> jetzt\n"
 #~ "       -s          no signals\n"
 #~ "       -t          test - Konfiguration Lesen und beenden\n"
 #~ "       -u          userid\n"
-#~ "       -v          ausführliche Benutzer Meldungen\n"
+#~ "       -v          ausfÃ¼hrliche Benutzer Meldungen\n"
 #~ "       -?          diese Meldung ausgeben.\n"
 #~ "\n"
 
@@ -7341,11 +7341,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot open Dev=%s, Vol=%s\n"
-#~ msgstr "Kann Ausdruck\"%s\"nicht auflösen: ERR=%s\n"
+#~ msgstr "Kann Ausdruck\"%s\"nicht auflÃ¶sen: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Cannot find device \"%s\" in config file %s.\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Cannot init device %s\n"
@@ -7353,7 +7353,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot open %s\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Could not find device \"%s\" in config file %s.\n"
@@ -7457,7 +7457,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "3929 Unable to open device \"%s\": ERR=%s\n"
-#~ msgstr "Kann Datenbank=%s.nicht öffen. ERR=%s\n"
+#~ msgstr "Kann Datenbank=%s.nicht Ã¶ffen. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "3912 Failed to label Volume %s: ERR=%s\n"
@@ -7513,7 +7513,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "3901 Unable to open device \"%s\": ERR=%s\n"
-#~ msgstr "Kann Datenbank=%s.nicht öffen. ERR=%s\n"
+#~ msgstr "Kann Datenbank=%s.nicht Ã¶ffen. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "3001 Device \"%s\" is mounted with Volume \"%s\"\n"
@@ -7609,7 +7609,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "[SF0110] Could not create bootstrap file %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "[SF0111] Error parsing bootstrap file.\n"
@@ -7661,7 +7661,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot open session, received bad parameters.\n"
-#~ msgstr "Kann Ausdruck\"%s\"nicht auflösen: ERR=%s\n"
+#~ msgstr "Kann Ausdruck\"%s\"nicht auflÃ¶sen: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Rewind failed: device %s is not open.\n"
@@ -7673,7 +7673,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not open(%s,%s,0640): ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to truncate device %s. ERR=%s\n"
@@ -7685,7 +7685,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not reopen: %s, ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Device %s cannot be %smounted. ERR=%s\n"
@@ -7707,11 +7707,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Invalid connection from %s. Len=%d\n"
-#~ msgstr "UA Hello von %s:%s:%d ist ungültig. Len=%d\n"
+#~ msgstr "UA Hello von %s:%s:%d ist ungÃ¼ltig. Len=%d\n"
 
 #, fuzzy
 #~ msgid "Invalid Hello from %s. Len=%d\n"
-#~ msgstr "UA Hello von %s:%s:%d ist ungültig. Len=%d\n"
+#~ msgstr "UA Hello von %s:%s:%d ist ungÃ¼ltig. Len=%d\n"
 
 #, fuzzy
 #~ msgid "Client connect failed: Job name not found: %s\n"
@@ -7727,7 +7727,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Bad Hello from Client: %s.\n"
-#~ msgstr "UA Hello von %s:%s:%d ist ungültig. Len=%d\n"
+#~ msgstr "UA Hello von %s:%s:%d ist ungÃ¼ltig. Len=%d\n"
 
 #, fuzzy
 #~ msgid "[SE0001] Unable to stat device %s at %s: ERR=%s\n"
@@ -7785,11 +7785,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Couldn't rewind %s device %s: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Could not unserialize Volume label: ERR=%s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Volume on %s device %s has bad Bacula label type: %ld\n"
@@ -7821,7 +7821,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Failed to re-open device after truncate on %s device %s: ERR=%s"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to write %s device %s: ERR=%s\n"
@@ -7873,7 +7873,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "%s device %s not configured to autolabel Volumes.\n"
-#~ msgstr "TLS benötigt aber nicht konfiguriert in Bacula.\n"
+#~ msgstr "TLS benÃ¶tigt aber nicht konfiguriert in Bacula.\n"
 
 #, fuzzy
 #~ msgid "Marking Volume \"%s\" in Error in Catalog.\n"
@@ -7881,7 +7881,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot open %s Dev=%s, Vol=%s for reading.\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to set eotmodel on device %s: ERR=%s\n"
@@ -7905,7 +7905,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Cannot open bootstrap file %s: %s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Device \"%s\" in bsr at inappropriate place.\n"
@@ -7913,7 +7913,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "REGEX '%s' compile error. ERR=%s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "JobType not yet implemented\n"
@@ -7985,7 +7985,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Device reservation failed for JobId=%d: %s\n"
-#~ msgstr "Mehr als ein Dateiname! %s für Datei: %s\n"
+#~ msgstr "Mehr als ein Dateiname! %s fÃ¼r Datei: %s\n"
 
 #, fuzzy
 #~ msgid "Failed command: %s\n"
@@ -8013,7 +8013,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "3926 Could not get dcr for device: %s\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "3603 JobId=%u %s device %s is busy reading.\n"
@@ -8210,12 +8210,12 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: bacula-fd [-f -s] [-c config_datei] [-d debug_level]\n"
 #~ "        -c <Datei>   benutze <Datei> als Konfigurationsdatei\n"
 #~ "        -dnn        setze debug level auf nn\n"
-#~ "        -f          starte in Vordergrund (für debugging)\n"
+#~ "        -f          starte in Vordergrund (fÃ¼r debugging)\n"
 #~ "        -g          groupid\n"
-#~ "        -s          no signals (für debugging)\n"
+#~ "        -s          no signals (fÃ¼r debugging)\n"
 #~ "        -t          Konfigurationsdatei testen und beenden\n"
 #~ "        -u          userid\n"
-#~ "        -v          Ausführliche Benutzermeldungen\n"
+#~ "        -v          AusfÃ¼hrliche Benutzermeldungen\n"
 #~ "        -?          diese Meldung ausgeben.\n"
 #~ "\n"
 
@@ -8225,7 +8225,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not initialize SD device \"%s\"\n"
-#~ msgstr "Konnte TLS context für Storage \"%s\" in %s nicht initialisieren.\n"
+#~ msgstr "Konnte TLS context fÃ¼r Storage \"%s\" in %s nicht initialisieren.\n"
 
 #, fuzzy
 #~ msgid "Unable to stat ControlDevice %s: ERR=%s\n"
@@ -8233,7 +8233,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not open device %s\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "Could not mount device %s\n"
@@ -8241,27 +8241,27 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Expected a Device Type keyword, got: %s"
-#~ msgstr "Job Type Schlüsselwort erwartet, erhalten: %s"
+#~ msgstr "Job Type SchlÃ¼sselwort erwartet, erhalten: %s"
 
 #, fuzzy
 #~ msgid "Expected a Cloud driver keyword, got: %s"
-#~ msgstr "Job Level Schlüsselwort erwartet, erhalten: %s"
+#~ msgstr "Job Level SchlÃ¼sselwort erwartet, erhalten: %s"
 
 #, fuzzy
 #~ msgid "Expected a Truncate Cache option keyword, got: %s"
-#~ msgstr "FileSet option Schlüsselwort erwartet, erhalten:%s:"
+#~ msgstr "FileSet option SchlÃ¼sselwort erwartet, erhalten:%s:"
 
 #, fuzzy
 #~ msgid "Expected a Cloud Upload option keyword, got: %s"
-#~ msgstr "FileSet option Schlüsselwort erwartet, erhalten:%s:"
+#~ msgstr "FileSet option SchlÃ¼sselwort erwartet, erhalten:%s:"
 
 #, fuzzy
 #~ msgid "Expected a Cloud communications protocol option keyword, got: %s"
-#~ msgstr " Migration Job Type  Schlüsselwort erwartet, erhalten: %s"
+#~ msgstr " Migration Job Type  SchlÃ¼sselwort erwartet, erhalten: %s"
 
 #, fuzzy
 #~ msgid "Expected a Cloud Uri Style option keyword, got: %s"
-#~ msgstr "FileSet option Schlüsselwort erwartet, erhalten:%s:"
+#~ msgstr "FileSet option SchlÃ¼sselwort erwartet, erhalten:%s:"
 
 #, fuzzy
 #~ msgid "Warning: no \"%s\" resource (%d) defined.\n"
@@ -8297,7 +8297,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Unable to open device %s: ERR=%s\n"
-#~ msgstr "Kann Datenbank=%s.nicht öffen. ERR=%s\n"
+#~ msgstr "Kann Datenbank=%s.nicht Ã¶ffen. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Rewind error on %s. ERR=%s.\n"
@@ -8325,7 +8325,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "ioctl MTFSF error on %s. ERR=%s.\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Device %s cannot BSF because it is not a tape.\n"
@@ -8378,7 +8378,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "pthread timedwait error. ERR=%s\n"
-#~ msgstr "Regex Übersetzungsfehler. ERR=%s\n"
+#~ msgstr "Regex Ãœbersetzungsfehler. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "JobId=%s, Job %s waiting to reserve a device.\n"
@@ -8423,19 +8423,19 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: dird [-f -s] [-c config_file] [-d debug_level] [config_file]\n"
 #~ "       -c <file>   setze Konfigurationsdatei auf Datei\n"
 #~ "       -dnn        setze debug level auf nn\n"
-#~ "       -f          starte im Vordergrund (für debugging Zwecke)\n"
+#~ "       -f          starte im Vordergrund (fÃ¼r debugging Zwecke)\n"
 #~ "       -g          groupid\n"
 #~ "       -r <job>    starte <job> jetzt\n"
 #~ "       -s          no signals\n"
 #~ "       -t          test - Konfiguration Lesen und beenden\n"
 #~ "       -u          userid\n"
-#~ "       -v          ausführliche Benutzer Meldungen\n"
+#~ "       -v          ausfÃ¼hrliche Benutzer Meldungen\n"
 #~ "       -?          diese Meldung ausgeben.\n"
 #~ "\n"
 
 #, fuzzy
 #~ msgid "Could not init Bacula database\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "Error opening datafile %s\n"
@@ -8447,7 +8447,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Could not open data file: %s\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "Fatal fgets error: ERR=%s\n"
@@ -8479,13 +8479,13 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: dird [-f -s] [-c config_file] [-d debug_level] [config_file]\n"
 #~ "       -c <file>   setze Konfigurationsdatei auf Datei\n"
 #~ "       -dnn        setze debug level auf nn\n"
-#~ "       -f          starte im Vordergrund (für debugging Zwecke)\n"
+#~ "       -f          starte im Vordergrund (fÃ¼r debugging Zwecke)\n"
 #~ "       -g          groupid\n"
 #~ "       -r <job>    starte <job> jetzt\n"
 #~ "       -s          no signals\n"
 #~ "       -t          test - Konfiguration Lesen und beenden\n"
 #~ "       -u          userid\n"
-#~ "       -v          ausführliche Benutzer Meldungen\n"
+#~ "       -v          ausfÃ¼hrliche Benutzer Meldungen\n"
 #~ "       -?          diese Meldung ausgeben.\n"
 #~ "\n"
 
@@ -8564,13 +8564,13 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: dird [-f -s] [-c config_file] [-d debug_level] [config_file]\n"
 #~ "       -c <file>   setze Konfigurationsdatei auf Datei\n"
 #~ "       -dnn        setze debug level auf nn\n"
-#~ "       -f          starte im Vordergrund (für debugging Zwecke)\n"
+#~ "       -f          starte im Vordergrund (fÃ¼r debugging Zwecke)\n"
 #~ "       -g          groupid\n"
 #~ "       -r <job>    starte <job> jetzt\n"
 #~ "       -s          no signals\n"
 #~ "       -t          test - Konfiguration Lesen und beenden\n"
 #~ "       -u          userid\n"
-#~ "       -v          ausführliche Benutzer Meldungen\n"
+#~ "       -v          ausfÃ¼hrliche Benutzer Meldungen\n"
 #~ "       -?          diese Meldung ausgeben.\n"
 #~ "\n"
 
@@ -8599,19 +8599,19 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: dird [-f -s] [-c config_file] [-d debug_level] [config_file]\n"
 #~ "       -c <file>   setze Konfigurationsdatei auf Datei\n"
 #~ "       -dnn        setze debug level auf nn\n"
-#~ "       -f          starte im Vordergrund (für debugging Zwecke)\n"
+#~ "       -f          starte im Vordergrund (fÃ¼r debugging Zwecke)\n"
 #~ "       -g          groupid\n"
 #~ "       -r <job>    starte <job> jetzt\n"
 #~ "       -s          no signals\n"
 #~ "       -t          test - Konfiguration Lesen und beenden\n"
 #~ "       -u          userid\n"
-#~ "       -v          ausführliche Benutzer Meldungen\n"
+#~ "       -v          ausfÃ¼hrliche Benutzer Meldungen\n"
 #~ "       -?          diese Meldung ausgeben.\n"
 #~ "\n"
 
 #, fuzzy
 #~ msgid "Could not open, database \"%s\".\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "Error no Director resource defined.\n"
@@ -8623,7 +8623,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Found %d for: %s\n"
-#~ msgstr "Keinen Job gefunden für: %s\n"
+#~ msgstr "Keinen Job gefunden fÃ¼r: %s\n"
 
 #, fuzzy
 #~ msgid "Found %d orphaned File records.\n"
@@ -8651,7 +8651,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Deleting JobMedia records of orphaned Job records.\n"
-#~ msgstr "Fehler beim Holen des job Eintrags für den job Bericht: %s"
+#~ msgstr "Fehler beim Holen des job Eintrags fÃ¼r den job Bericht: %s"
 
 #, fuzzy
 #~ msgid "Deleting Log records of orphaned Job records.\n"
@@ -8683,7 +8683,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Err: Could not stat %s: %s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Err: Could not open directory %s: %s\n"
@@ -8695,15 +8695,15 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "========== Path length is zero. File=%s\n"
-#~ msgstr "Pfadlänge ist null. Datei=%s\n"
+#~ msgstr "PfadlÃ¤nge ist null. Datei=%s\n"
 
 #, fuzzy
 #~ msgid "Could not open include file: %s\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Could not open exclude file: %s\n"
-#~ msgstr "Kann  bootstrap Datei nicht öffnen: %s: ERR=%s\n"
+#~ msgstr "Kann  bootstrap Datei nicht Ã¶ffnen: %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid ""
@@ -8799,7 +8799,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Unable to open xattr space %s on file \"%s\": ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to chdir to xattr space on file \"%s\": ERR=%s\n"
@@ -8811,11 +8811,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Unable to mkfifo xattr %s on file \"%s\": ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to mknod xattr %s on file \"%s\": ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to mkdir xattr %s on file \"%s\": ERR=%s\n"
@@ -8835,7 +8835,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Can't delete working directory %s. ERR=%s\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unknown parameter for %s. Expecting block or file\n"
@@ -8859,19 +8859,19 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Unable to fdopen file %s. ERR=%s\n"
-#~ msgstr "Kann Datenbank=%s.nicht öffen. ERR=%s\n"
+#~ msgstr "Kann Datenbank=%s.nicht Ã¶ffen. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "  Dumping database \"%s\"\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "Unable to detect the MySQL data_directory on this system.\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Can't get server configuration.\n"
-#~ msgstr "Vorherige Konfiguration zurückgesetzt.\n"
+#~ msgstr "Vorherige Konfiguration zurÃ¼ckgesetzt.\n"
 
 #, fuzzy
 #~ msgid "Unable to get the BINLOG list.\n"
@@ -8883,7 +8883,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Unable to detect datadir from MySQL\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to get last LSN from the backup\n"
@@ -8891,11 +8891,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Restoring target database \"%s\"\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "Creating target database \"%s\"\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "Database \"%s\" already exists. Skipping creation.\n"
@@ -8911,7 +8911,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Can't get cluster configuration.\n"
-#~ msgstr "Vorherige Konfiguration zurückgesetzt.\n"
+#~ msgstr "Vorherige Konfiguration zurÃ¼ckgesetzt.\n"
 
 #, fuzzy
 #~ msgid "Can't determine the last WAL file\n"
@@ -8919,31 +8919,31 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Can't determine WAL directory\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Can't open WAL directory %s. ERR=%s\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to detect the PostgreSQL data_directory on this system.\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to find data_directory=%s on this system. ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to determine the first WAL file on this system.\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to analyse tablespaces %s on this system. ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to analyse data_directory %s on this system. ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Can't create the %s file for recovery. ERR=%s\n"
@@ -9041,12 +9041,12 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr ""
 #~ "Kann Verbindung zu MySQL Server nicht aufbauen. \n"
 #~ "Datenbank=%s Benutzer=%s\n"
-#~ "Der Datenbankserver  läuft möglicherweise nicht oder das Passwort ist "
+#~ "Der Datenbankserver  lÃ¤uft mÃ¶glicherweise nicht oder das Passwort ist "
 #~ "nicht korrekt.\n"
 
 #, fuzzy
 #~ msgid "A user name for Ingres must be supplied.\n"
-#~ msgstr "Ein Benutzername für MySQL muss angegeben werden.\n"
+#~ msgstr "Ein Benutzername fÃ¼r MySQL muss angegeben werden.\n"
 
 #, fuzzy
 #~ msgid ""
@@ -9056,7 +9056,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr ""
 #~ "Kann Verbindung zu  PostgreSQL Server nicht aufbauen.\n"
 #~ "Datenbank=%s  Benutzer=%s\n"
-#~ "Der Datenbankserver läuft möglicherweise nicht oder das Passwort ist "
+#~ "Der Datenbankserver lÃ¤uft mÃ¶glicherweise nicht oder das Passwort ist "
 #~ "nicht korrekt.\n"
 
 #, fuzzy
@@ -9068,7 +9068,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Clone JobId %d gestartet.\n"
 
 #~ msgid "Restoring..."
-#~ msgstr "Wiederherstellung läuft..."
+#~ msgstr "Wiederherstellung lÃ¤uft..."
 
 #, fuzzy
 #~ msgid "# Bacula bwx-console Configuration File\n"
@@ -9103,7 +9103,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Can't open /etc/oratab. ERR=%s\n"
-#~ msgstr "Kann inkludierte Datei nicht öffnen: %s. ERR=%s\n"
+#~ msgstr "Kann inkludierte Datei nicht Ã¶ffnen: %s. ERR=%s\n"
 
 #, fuzzy
 #~ msgid "Unable to list schema for %s. exitcode=%d\n"
@@ -9133,7 +9133,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "Failed to initialize database backend\n"
-#~ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
+#~ msgstr "Konnte Datenbank \"%s\" nicht Ã¶ffen.\n"
 
 #, fuzzy
 #~ msgid "disabled"
@@ -9141,7 +9141,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #~ msgid "Name item is required in %s resource, but not found.\n"
 #~ msgstr ""
-#~ "Name item wird benötigt in %s resource, wurde aber nicht gefunden.\n"
+#~ "Name item wird benÃ¶tigt in %s resource, wurde aber nicht gefunden.\n"
 
 #, fuzzy
 #~ msgid "Append data error.\n"
@@ -9149,11 +9149,11 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 
 #, fuzzy
 #~ msgid "A dbi driver for DBI must be supplied.\n"
-#~ msgstr "Ein Benutzername für MySQL muss angegeben werden.\n"
+#~ msgstr "Ein Benutzername fÃ¼r MySQL muss angegeben werden.\n"
 
 #, fuzzy
 #~ msgid "Max sched run time exceeded. Job canceled.\n"
-#~ msgstr "\"Max run time\" überschritten, Job abgebrochen.\n"
+#~ msgstr "\"Max run time\" Ã¼berschritten, Job abgebrochen.\n"
 
 #, fuzzy
 #~ msgid ""
@@ -9179,7 +9179,7 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ msgstr "Sie sollten SQLite, PostgreSQL, oder MySQL benutzen\n"
 
 #~ msgid "Unable to open Catalog DB control file %s: ERR=%s\n"
-#~ msgstr "Kann Catalog DB Steuerdatei nicht öffnen %s: ERR=%s\n"
+#~ msgstr "Kann Catalog DB Steuerdatei nicht Ã¶ffnen %s: ERR=%s\n"
 
 #~ msgid ""
 #~ "Error, catalog DB control file wrong version. Wanted %d, got %d\n"
@@ -9224,13 +9224,13 @@ msgstr "Konnte Datenbank \"%s\" nicht öffen.\n"
 #~ "Usage: dird [-f -s] [-c config_file] [-d debug_level] [config_file]\n"
 #~ "       -c <file>   setze Konfigurationsdatei auf Datei\n"
 #~ "       -dnn        setze debug level auf nn\n"
-#~ "       -f          starte im Vordergrund (für debugging Zwecke)\n"
+#~ "       -f          starte im Vordergrund (fÃ¼r debugging Zwecke)\n"
 #~ "       -g          groupid\n"
 #~ "       -r <job>    starte <job> jetzt\n"
 #~ "       -s          no signals\n"
 #~ "       -t          test - Konfiguration Lesen und beenden\n"
 #~ "       -u          userid\n"
-#~ "       -v          ausführliche Benutzer Meldungen\n"
+#~ "       -v          ausfÃ¼hrliche Benutzer Meldungen\n"
 #~ "       -?          diese Meldung ausgeben.\n"
 #~ "\n"
 

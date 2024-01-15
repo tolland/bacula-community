@@ -50,7 +50,7 @@ Using the Express Edition (free version)
       + When asked for components, you can safely remove documentation,
         samples, and all 64-bit tools and libs if you want to save disk
         space.
-      NOTE: Just after having installed "Windows® Server 2003 SP1 Platform SDK Full Download", 
+      NOTE: Just after having installed "WindowsÂ® Server 2003 SP1 Platform SDK Full Download", 
       my XP was no more considered as "genuine". You are warned.
       That's why it is recommended to download "volume shadow copy service sdk" before installing SDK
 

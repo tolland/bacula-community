@@ -6,7 +6,7 @@
 
 	The generation algorithm is:
 
-            I[j+1] = (I[j] × 16807) & 0x7FFFFFFF
+            I[j+1] = (I[j] Ã— 16807) & 0x7FFFFFFF
 
 	Note that the intermediate value of the multiplication by 16807
 	(7^5) exceeds that representable in 32 bits; this has
