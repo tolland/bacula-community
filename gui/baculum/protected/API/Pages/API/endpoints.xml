@@ -37,6 +37,7 @@
 	<url ServiceParameter="StorageMount" pattern="api/v2/storages/{id}/mount/" parameters.id="\d+" />
 	<url ServiceParameter="StorageUmount" pattern="api/v2/storages/{id}/umount/" parameters.id="\d+" />
 	<url ServiceParameter="StorageRelease" pattern="api/v2/storages/{id}/release/" parameters.id="\d+" />
+	<url ServiceParameter="StorageJobsCancel" pattern="api/v2/storages/{id}/jobs/cancel/" parameters.id="\d+" />
 	<url ServiceParameter="StorageCloudTruncate" pattern="api/v2/storages/{id}/cloud/truncate/" parameters.id="\d+" />
 	<url ServiceParameter="StorageCloudPrune" pattern="api/v2/storages/{id}/cloud/prune/" parameters.id="\d+" />
 	<url ServiceParameter="StorageCloudUpload" pattern="api/v2/storages/{id}/cloud/upload/" parameters.id="\d+" />

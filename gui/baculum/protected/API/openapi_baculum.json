@@ -3541,6 +3541,44 @@
 				]
 			}
 		},
+		"/api/v2/storages/{storageid}/jobs/cancel": {
+			"put": {
+				"tags": ["storages"],
+				"summary": "Cancel all jobs for given storage.",
+				"description": "Cancel all jobs for given storage.",
+				"responses": {
+					"200": {
+						"description": "Output from cancelling all jobs for given storage.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"output": {
+											"type": "array",
+											"items": {
+												"type": "string",
+												"description": "Cancel all jobs for storage output."
+											}
+										},
+										"error": {
+											"type": "integer",
+											"description": "Error code",
+											"enum": [0, 1, 2, 3, 4, 5, 6, 7, 11, 20, 600, 601, 603, 1000]
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+					"$ref": "#/components/parameters/StorageId"
+					}
+				]
+			}
+		},
 		"/api/v2/storages/{storageid}/release": {
 			"get": {
 				"tags": ["storages"],
