@@ -319,7 +319,7 @@ _("This Job is not an Accurate backup so is not equivalent to a Full backup.\n")
          return false;
       }
 
-      if (split_bsr_loop(jcr, info)) { /* create the split list to break volume cycle */
+      if (split_bsr_loop(jcr, info) != 0 ) {
          Jmsg(jcr, M_FATAL, 0, _("Found a volume cycle in the bootstrap, Virtual Full is not possible on this Job\n"));
       }
 

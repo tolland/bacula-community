@@ -307,14 +307,20 @@ bool restore_bootstrap(JCR *jcr)
    bootstrap_info info;
    POOL_MEM restore_cmd(PM_MESSAGE), buf(PM_FNAME);
    bool ret = false;
+   int r;
 
    /* Open the bootstrap file */
    if (!open_bootstrap_file(jcr, info)) {
       goto bail_out;
    }
 
-   if (split_bsr_loop(jcr, info)) { /* create the split list to break volume cycle */
+   r = split_bsr_loop(jcr, info);
+   if (r == 0) {
+      // Everything is ok, no change
+   } else if (r == 1) {
       Jmsg(jcr, M_INFO, 0, _("Found a volume cycle in the bootstrap, fixing automatically the reading process\n"));
+   } else {
+      Jmsg(jcr, M_WARNING, 0, _("Found a volume cycle in the bootstrap that cannot be solved, try to restore the data anyway\n"));
    }
 
    /* Read the bootstrap file */

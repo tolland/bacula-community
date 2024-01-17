@@ -839,7 +839,12 @@ struct bsr_vol_list {
 };
 
 /* Generate a list of split position in the BSR to break any cycle
- * returns true if a cycle was detected
+ * return
+ *  0: OK no split needed
+ *  1: OK but some split are required
+ * -1: ERROR We found a cycles inside one job, the code in the SD must
+ *     be improved to handle this situation. See last sample at the end of the
+ *     comment
  *
  * When a volume appears multiple time into a BSR, interleaved with other
  * volumes, this can be a problem because the SD mount each volume only once and
@@ -867,12 +872,13 @@ struct bsr_vol_list {
  * As the BSR is written job by job the split is enough, no need to reorganize
  * the BSR an move all the parts of the first job before the second one.
  *
- * The only case that this function cannot solve is the end of a job is written
- * before the beginning inside the same volume. This could happens in a copy job
- * if not copying the volume in the wrong order.
+ * This function don't work inside a job. If two parts of a job are already
+ * written in reverse order on the same volume (after a copy job) or if a part
+ * between the two are written into another volume. It can detect the problem
+ * but the "split" must be done inside the SD.
  *
  * It is possible to split the BSR at multiple place, I split it at the beginning
- * of the job where  the problem is detected.
+ * of the job where the problem is detected.
  *
  * For example:
  * number are jobs, letters are volumes
@@ -881,11 +887,11 @@ struct bsr_vol_list {
  * 2 B
  * 2 A
  * 3 A
- * Here I must split between 1A & 2B to be sure that 2A will be read after 2B
- * else the file that span 2B & 2A will never be fully restored as the blocks
- * should have been read just after 1A and befor 2B by the SD
+ * Normally here the SD will mount A once read blocks 1A, 2A, 3A, then mount
+ * B for 2B. Reading 2B before 2A is a mistake.
+ * Here I must split between 1A & 2B to be sure that 2A will be read after 2B.
  *
- * Another example
+ * Another example where offset matter
  * 1 A start=0 end=1000
  * ---
  * 2 A start=0 end=2000
@@ -902,8 +908,26 @@ struct bsr_vol_list {
  * 4 B start=0 end=2000
  * I must split between 3C & 4B to avoid to include blocks of 4B while restoring
  * 2B. But this is handled by the 1st example
+ *
+ * In this case the volume 2 was reused for the same job, despite it was already
+ * full. This is a bug, the DIR don't know about the right size of the volume!
+ * The job start writing (with other jobs) on the volume 2, when the Maximum
+ * Size is reached, the SD close the volume and switch to another volume, that
+ * get full quickly and the DIR tell to continue back on volume 2. The SD
+ * notice the differrence in size between the Catalog and the file but still
+ * write on it.
+ * In this situation despite the data are not "corrupted", the SD is unable
+ * to restore the backup and no split can be used inside a job.
+ * +---------+------------+----------+
+ * | MediaId | StartBlock | EndBlock |
+ * +---------+------------+----------+
+ * | 2       | 10028425   | 10355984 |
+ * | 30      | 10201502   | 10267009 |
+ * | 2       | 10421493   | 10471710 |
+ * +---------+------------+----------+
+ *
  */
-bool split_bsr_loop(JCR *jcr, bootstrap_info &info)
+int split_bsr_loop(JCR *jcr, bootstrap_info &info)
 {
    UAContext *ua = info.ua;
    FILE *bs = info.bs;
@@ -924,7 +948,8 @@ bool split_bsr_loop(JCR *jcr, bootstrap_info &info)
    bool first = true;
    bool after_eof = false;     // used to handle the after EOF inside the loop
    int job_num = 0;            // internal job numbering from 0,1..N
-   int last_split_job_num = 0; // the volumes that matter in "volumes" have a job_num >= last_split_job_num
+   int last_split_job_num = 1; // the volumes that matter in "volumes" have a job_num >= last_split_job_num
+   bool internal_cycle = false; /* no cycle detecte inside a job */
 
    if (info.split_list == NULL) {
       info.split_list = New(alist(100, owned_by_alist));
@@ -972,7 +997,13 @@ bool split_bsr_loop(JCR *jcr, bootstrap_info &info)
                   Dmsg2(120, "BSR: insert volume %s jobnum=%d\n", item->volume, item->job_num);
                } else {
                   /* we already know about this volume, but is it used in the current part of the BSR? */
-                  if (item->job_num >= last_split_job_num) {
+                  if (item->job_num == job_num) {
+                     /* the volume is used again in the same job, we have an issue */
+                     /* This is would be up to the SD to fix the problem */
+                     Dmsg8(1, "BSR: unfixable cycle inside the BSR at off=%lld at the beginning of jobnum=%d sess=%lu:%lu because volume %s is previously used by jobnum=%d sess=%lu:%lu\n",
+                              start_job_off, job_num, VolSessionTime, VolSessionId, volume.c_str(), item->job_num, item->VolSessionTime, item->VolSessionId);
+                     internal_cycle = true;
+                  } else if (item->job_num >= last_split_job_num) {
                      /* the volume is used again in this part, we need to split the BSR into a new part */
                      boffset_t *p = (boffset_t *)malloc(sizeof(boffset_t));
                      *p = start_job_off;
@@ -1049,5 +1080,11 @@ bool split_bsr_loop(JCR *jcr, bootstrap_info &info)
    }
    fseeko(bs, 0, SEEK_SET);
    info.next_split_off = (boffset_t *)info.split_list->first();
-   return info.next_split_off != NULL;
+   if (internal_cycle) {
+      return -1; // we have a probleme that we cannot solve
+   } else if (info.next_split_off != NULL) {
+      return 1; // we have detected cycles and added a splits
+   } else {
+      return 0; // no cycle found
+   }
 }

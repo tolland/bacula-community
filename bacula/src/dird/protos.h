@@ -76,7 +76,7 @@ RBSR_FINDEX *new_findex();
 void make_unique_restore_filename(UAContext *ua, POOLMEM **fname);
 void print_bsr(UAContext *ua, RESTORE_CTX &rx);
 void scan_bsr(JCR *jcr);
-bool split_bsr_loop(JCR *jcr, bootstrap_info &info);
+int split_bsr_loop(JCR *jcr, bootstrap_info &info);
 
 
 /* catreq.c */
