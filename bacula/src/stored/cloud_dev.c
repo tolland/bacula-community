@@ -280,7 +280,7 @@ transfer_state upload_engine(transfer *tpkt)
       if (tpkt->m_do_cache_truncate && tpkt->m_part!=1) {
          bool allow_truncate = false;
          uint64_t cloud_size = 0;
-         if (tpkt->m_state == TRANS_STATE_DONE && tpkt->m_res_size != 0 && tpkt->m_res_mtime != 0) {
+         if (tpkt->m_state == TRANS_STATE_PROCESSED && tpkt->m_res_size != 0 && tpkt->m_res_mtime != 0) {
             /* so far so good for truncation */
             /* double check if the cache size matches the transfer size */
             struct stat statbuf;
