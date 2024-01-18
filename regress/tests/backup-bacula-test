@@ -84,7 +84,7 @@ END_OF_DATA
 #
 touch ${cwd}/build/src/dird/*.o
 echo "test test" > ${cwd}/build/src/dird/xxx
-#
+dd if=/dev/zero of=${cwd}/build/src/dird/yyy bs=65537 count=1
 
 run_bacula
 check_for_zombie_jobs storage=File1
@@ -104,4 +104,7 @@ fi
 
 check_two_logs
 check_restore_diff
+
+rm -f ${cwd}/build/src/dird/xxx ${cwd}/build/src/dird/yyy
+
 end_test
