@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# Copyright (C) 2000-2021 Kern Sibbald
+# Copyright (C) 2021-2023 Bacula Systems SA
+# License: BSD 2-Clause; see file LICENSE-FOSS
+#
+# Runs cloud-test on every cloud directive listed in cloud.conf
+
+sed -n -e '/  Name = /p' cloud.conf| sed 's/  Name =//' | xargs ./tests/multi-cloud cloud-test
