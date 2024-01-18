@@ -5594,7 +5594,7 @@
 					{
 						"name": "content",
 						"in": "query",
-						"description": "Content property value. There is possible to provide whole content value or only a part",
+						"description": "Content property value. There is possible to provide whole content value or only a part. Multiple comma separated values are allowed. Example: 'postgresql,file' value searches for filesets with postgresql OR file OR both.",
 						"required": false,
 						"schema": {
 							"type": "string",

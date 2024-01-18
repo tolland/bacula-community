@@ -34,7 +34,7 @@ class FileSets extends BaculumAPIServer {
 
 	public function get() {
 		$misc = $this->getModule('misc');
-		$content = $this->Request->contains('content') && $misc->isValidName($this->Request['content']) ? $this->Request['content'] : '';
+		$content = $this->Request->contains('content') && $misc->isValidNameList($this->Request['content']) ? $this->Request['content'] : '';
 		$limit = $this->Request->contains('limit') && $misc->isValidInteger($this->Request['limit']) ? (int)$this->Request['limit'] : 0;
 		$offset = $this->Request->contains('offset') && $misc->isValidInteger($this->Request['offset']) ? (int)$this->Request['offset'] : 0;
 		$result = $this->getModule('bconsole')->bconsoleCommand(
@@ -58,9 +58,14 @@ class FileSets extends BaculumAPIServer {
 			];
 
 			if (!empty($content)) {
+				$cnts = explode(',', $content);
+				$cb = function ($item) {
+					return ('%' . trim($item) . '%');
+				};
+				$cnts = array_map($cb, $cnts);
 				$params['FileSet.Content'][] = [
 					'operator' => 'LIKE',
-					'vals' => '%' . $content . '%'
+					'vals' => $cnts
 				];
 			}
 

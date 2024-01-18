@@ -189,6 +189,14 @@ class Database extends APIModule {
 							}
 							$cond[] = "{$key} {$value[$i]['operator']} (" . implode(',', $tcond) . ')';
 							$value[$i]['operator'] = '';
+						} elseif ($value[$i]['operator'] == 'LIKE') {
+							$tcond = [];
+							for ($j = 0; $j < count($value[$i]['vals']); $j++) {
+								$tcond[] = "{$key} {$value[$i]['operator']} :{$kval}{$i}{$j}";
+								$vals[":{$kval}{$i}{$j}"] = $value[$i]['vals'][$j];
+							}
+							$cond[] = implode(' OR ', $tcond);
+							$value[$i]['operator'] = '';
 						} else {
 							// other operators
 							for ($j = 0; $j < count($value[$i]['vals']); $j++) {

@@ -300,6 +300,10 @@ class Miscellaneous extends TModule {
 		return (preg_match('/^[\d,]+$/', $list) === 1);
 	}
 
+	public function isValidNameList($list) {
+		return (preg_match('/^[\w:\.\-\s,]+$/', $list) === 1);
+	}
+
 	public function isValidBvfsPath($path) {
 		return (preg_match('/^b2\d+$/', $path) === 1);
 	}
