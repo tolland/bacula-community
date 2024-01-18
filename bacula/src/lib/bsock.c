@@ -606,7 +606,6 @@ int32_t BSOCK::recv()
          msglen += offset;
       }
       if (nbytes < 0) {
-         Jmsg1(m_jcr, M_ERROR, 0, "Decompress error!!!! ERR=%d\n", nbytes);
          Pmsg3(000, "Decompress error!! pktsiz=%d cmsgsiz=%d nbytes=%d\n", pktsiz,
            psize, nbytes);
          b_errno = EIO;
