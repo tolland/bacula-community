@@ -1,0 +1,138 @@
+#!/bin/sh
+#
+# Copyright (C) 2000-2021 Kern Sibbald
+# Copyright (C) 2021-2023 Bacula Systems SA
+# License: BSD 2-Clause; see file LICENSE-FOSS
+#
+# Basic testing of the upload/truncate cloud options
+#
+TestName="cloud-upload-truncate-options"
+JobName=NightlySave
+. scripts/functions
+
+require_cloud
+
+
+scripts/cleanup
+scripts/copy-test-confs
+
+
+cat <<END_OF_DATA >${cwd}/tmp/templateUTOptions.txt
+NoManualcloud=EMPTY
+NoManualcache=FULL
+NoEachPartcloud=FULL
+NoEachPartcache=FULL
+NoAtEndOfJobcloud=FULL
+NoAtEndOfJobcache=FULL
+AfterUploadManualcloud=EMPTY
+AfterUploadManualcache=FULL
+AfterUploadEachPartcloud=FULL
+AfterUploadEachPartcache=EMPTY
+AfterUploadAtEndOfJobcloud=FULL
+AfterUploadAtEndOfJobcache=EMPTY
+AtEndOfJobManualcloud=EMPTY
+AtEndOfJobManualcache=FULL
+AtEndOfJobEachPartcloud=FULL
+AtEndOfJobEachPartcache=EMPTY
+AtEndOfJobAtEndOfJobcloud=FULL
+AtEndOfJobAtEndOfJobcache=EMPTY
+ConfDefaultManualcloud=EMPTY
+ConfDefaultManualcache=FULL
+ConfDefaultEachPartcloud=FULL
+ConfDefaultEachPartcache=FULL
+ConfDefaultAtEndOfJobcloud=FULL
+ConfDefaultAtEndOfJobcache=FULL
+END_OF_DATA
+
+
+FORCE_FILE_SET=${FORCE_FILE_SET:-"${cwd}/build"}
+echo "$FORCE_FILE_SET" >${cwd}/tmp/file-list
+
+run()
+{
+#$1 : truncate option
+#$2 : upload option
+$bperl -e 'add_attribute("$conf/bacula-sd.conf", "TruncateCache", "'$1'", "Cloud")'
+$bperl -e 'add_attribute("$conf/bacula-sd.conf", "Upload", "'$2'", "Cloud")'
+
+Vol="Vol$1$2"
+Results=""
+
+# do label Vol
+cat <<END_OF_DATA >${cwd}/tmp/bconcmds
+messages
+label storage=File volume=$Vol
+END_OF_DATA
+
+run_bacula
+
+# run backup
+cat <<END_OF_DATA >${cwd}/tmp/bconcmds
+setdebug level=50 tags=cloud trace=1 storage
+run job=$JobName level=Full yes
+wait
+messages
+@# update volume so next job wont write in $Vol
+update volume=$Vol volstatus=Used
+END_OF_DATA
+
+run_bconsole
+
+# get content of cache and cloud
+ls ${cwd}/tmp/$Vol -la > ${cwd}/tmp/cache$1$2.out
+
+cat <<END_OF_DATA >${cwd}/tmp/bconcmds
+@$out ${cwd}/tmp/cloud$1$2.out
+cloud list volume=$Vol storage=File
+wait
+messages
+END_OF_DATA
+
+run_bconsole
+
+stop_bacula
+}
+
+validate()
+{
+#$1 : truncate option
+#$2 : upload option
+cloudparts="$($bperl -ne 'print "$1\n" while /\\|\s*([\d]+)\s*\|\s*[\w\d\s\.]+\s*|\s*[\w\d\s\-\:]+\s*|/g' ${cwd}/tmp/cloud$1$2.out | sed -e /^$/d | sort -n)"
+cacheparts="$($bperl -ne 'print "$1\n" while /part.([0-9]+)/g' ${cwd}/tmp/cache$1$2.out | sort -n)"
+if [ "$cloudparts" = "1" ]; then
+    echo "$1$2cloud=EMPTY" >> ${cwd}/tmp/resultUTOptions.txt
+else
+    # we dont check for size or number of parts: if there's more than part.1, we're full
+    echo "$1$2cloud=FULL" >> ${cwd}/tmp/resultUTOptions.txt
+fi
+if [ "$cacheparts" = "1" ]; then
+    echo "$1$2cache=EMPTY" >> ${cwd}/tmp/resultUTOptions.txt
+else
+    # we dont check for size or number of parts: if there's more than part.1, we're full
+    echo "$1$2cache=FULL" >> ${cwd}/tmp/resultUTOptions.txt
+fi
+}
+
+start_test
+
+$bperl -e 'add_attribute("$conf/bacula-sd.conf", "MaximumPartSize", "10000000", "Device")'
+
+truncate_options="No AfterUpload AtEndOfJob ConfDefault"
+upload_options="Manual EachPart AtEndOfJob"
+
+for truncate_option in $truncate_options; do
+  for upload_option in $upload_options; do
+    run $truncate_option $upload_option
+    validate $truncate_option $upload_option
+  done
+done
+
+if cmp -s "${cwd}/tmp/templateUTOptions.txt" "${cwd}/tmp/resultUTOptions.txt"; then
+    estat=0
+else
+    estat=1
+fi
+
+# we don't want to trigger to volume errors as estat=1
+unset FORCE_CLOUD
+end_test
