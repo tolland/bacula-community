@@ -250,7 +250,8 @@ transfer_state upload_engine(transfer *tpkt)
                /* sucessful + !exists : the source path has not been found -> OK ignore */
             } else {
                /* sucessful + exists : the source part has been moved to target part name */
-               Jmsg(tpkt->m_dcr->jcr, M_INFO, 0, _("%s/part.%d was present on the cloud and has been versioned to %s\n"),
+               //Jmsg(tpkt->m_dcr->jcr, M_INFO, 0, _("%s/part.%d was present on the cloud and has been versioned to %s\n"),
+               Dmsg3(dbglvl, _("%s/part.%d was present on the cloud and has been versioned to %s\n"),
                      tpkt->m_volume_name, tpkt->m_part, msg);
             }
          } else {
