@@ -49,7 +49,12 @@ def pvcdata_list_update_node_names(corev1api, namespace, pvcdatalist):
     """
     # here we collect node_names for proper backup pod deployment
     pods = pods_namespaced_specs(corev1api, namespace=namespace)
+    logging.debug('[CUSTOM] Get pods:{}'.format(pods))
     for pod in pods:
+        logging.debug('[CUSTOM] Pod: {}'.format(pod))
+        logging.debug('[CUSTOM] Pod Specs: {}'.format(pod.spec))
+        if pod.spec is not None:
+            logging.debug('[CUSTOM] POD SPEC is None')
         for vol in pod.spec.volumes:
             if vol.persistent_volume_claim is not None:
                 pvcname = vol.persistent_volume_claim.claim_name
@@ -72,8 +77,12 @@ def pvcdata_get_namespaced(corev1api, namespace, pvcname, pvcalias=None):
         dict: pvc data dict
     """
     pvc = persistentvolumeclaims_read_namespaced(corev1api, namespace, pvcname)
+    logging.debug('[CUSTOM] Read PVC: ')
+    logging.debug(pvc)
+
     pvcspec = pvc.spec
     storageclassname = pvcspec.storage_class_name
+    logging.debug('[CUSTOM] Get size:' + str(pvcspec.resources))
     pvcsize = pvcspec.resources.requests.get('storage', '-1')
     pvcdata = {
         'name': pvcname,
@@ -87,6 +96,8 @@ def pvcdata_get_namespaced(corev1api, namespace, pvcname, pvcalias=None):
                           size=pvcsize),
     }
     pvcdatalist = pvcdata_list_update_node_names(corev1api, namespace, {pvcname: pvcdata})
+    logging.debug('[CUSTOM] Read persistent volume claim completed')
+
     return pvcdatalist.get(pvcname)
 
 

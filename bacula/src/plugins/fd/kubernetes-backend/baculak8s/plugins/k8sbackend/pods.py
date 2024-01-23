@@ -42,6 +42,7 @@ def pods_read_namespaced(corev1api, namespace, name):
 def pods_namespaced_specs(corev1api, namespace, labels=""):
     podslist = []
     pods = corev1api.list_namespaced_pod(namespace=namespace, watch=False, label_selector=labels)
+    logging.debug('[CUSTOM] Get items of pods: {}'.format(pods.items))
     for pod in pods.items:
         podslist.append(pod)
     # logging.debug("pods_namespaced_specs:{}".format(podslist))

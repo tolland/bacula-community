@@ -116,4 +116,4 @@ class Log:
 
     @staticmethod
     def save_exception(e):
-        logging.debug(e)
+        logging.exception(e)
