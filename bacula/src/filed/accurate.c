@@ -377,7 +377,7 @@ static int check_checksum_diff(JCR *jcr, FF_PKT *ff_pkt, CurFile *elt)
     */
    if (ff_pkt->type != FT_LNKSAVED &&
          (S_ISREG(ff_pkt->statp.st_mode) &&
-          ff_pkt->flags & (FO_MD5|FO_SHA1|FO_SHA256|FO_SHA512)))
+          ff_pkt->flags & (FO_MD5|FO_SHA1|FO_SHA256|FO_SHA512|FO_XXHASH64|FO_XXH3_64|FO_XXH3_128)))
    {
 
       if (!*elt->chksum && !jcr->rerunning) {
