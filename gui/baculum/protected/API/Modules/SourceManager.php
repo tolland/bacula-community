@@ -189,6 +189,11 @@ class SourceManager extends APIModule {
 					}
 					$fs_count[$content]++;
 				}
+				$cb = function($el) {
+					return $el['content'];
+				};
+				$cnts = array_map($cb, $fs_content[$fileset]);
+				$sources[$i]['content'] = implode(',', $cnts);
 			}
 			$sources_ft[] = $sources[$i];
 		}
@@ -244,8 +249,6 @@ class SourceManager extends APIModule {
 						// limit reached
 						break;
 					}
-					$sources[$i]['content'] = $content[$j]['content'];
-
 					$res[$content[$j]['content']]['sources'][] = $sources[$i];
 				}
 			}
