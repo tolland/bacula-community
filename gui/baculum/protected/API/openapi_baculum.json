@@ -9325,6 +9325,15 @@
 						}
 					},
 					{
+						"name": "jobstatus",
+						"in": "query",
+						"required": false,
+						"description": "Job status ex: 'T', 'e'. Possible providing multiple values like 'Te' or 'Efe'. Non-existing job status letters are ignored.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
 						"name": "fileset",
 						"in": "query",
 						"description": "FileSet name",

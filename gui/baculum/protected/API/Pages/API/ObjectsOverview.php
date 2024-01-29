@@ -46,7 +46,7 @@ class ObjectsOverview extends BaculumAPIServer {
 		$objectstatus = $this->Request->contains('objectstatus') && $misc->isValidState($this->Request['objectstatus']) ? $this->Request['objectstatus'] : null;
 		$jobname = $this->Request->contains('jobname') && $misc->isValidName($this->Request['jobname']) ? $this->Request['jobname'] : null;
 		$jobids = $this->Request->contains('jobids') && $misc->isValidIdsList($this->Request['jobids']) ? explode(',', $this->Request['jobids']) : [];
-		$jobstatus = $this->Request->contains('jobstatus') && $misc->isValidState($this->Request['jobstatus']) ? $this->Request['jobstatus'] : null;
+		$jobstatus = $this->Request->contains('jobstatus') && $this->Request['jobstatus'] ? $this->Request['jobstatus'] : null;
 		$client = $this->Request->contains('client') && $misc->isValidName($this->Request['client']) ? $this->Request['client'] : '';
 		$fileset = $this->Request->contains('fileset') && $misc->isValidName($this->Request['fileset']) ? $this->Request['fileset'] : '';
 		$joberrors = null;
@@ -175,11 +175,22 @@ class ObjectsOverview extends BaculumAPIServer {
 				];
 			}
 		}
+
 		if (!empty($jobstatus)) {
-			$general_params['Job.JobStatus'] = [];
-			$general_params['Job.JobStatus'][] = [
-				'vals' => $jobstatus
-			];
+			$jobstatuses = array_keys($misc->getJobState());
+			$sts = str_split($jobstatus);
+			$js_counter = 0;
+			for ($i = 0; $i < count($sts); $i++) {
+				if (in_array($sts[$i], $jobstatuses)) {
+					if (!key_exists('Job.JobStatus', $general_params)) {
+						$general_params['Job.JobStatus'] = [];
+						$general_params['Job.JobStatus'][$js_counter] = [
+							'operator' => 'IN'
+						];
+					}
+					$general_params['Job.JobStatus'][$js_counter]['vals'][] = $sts[$i];
+				}
+			}
 		}
 
 		// Scheduled time range
