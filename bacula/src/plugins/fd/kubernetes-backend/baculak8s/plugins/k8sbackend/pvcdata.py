@@ -48,19 +48,20 @@ def pvcdata_list_update_node_names(corev1api, namespace, pvcdatalist):
         dict: updated pvc data list as dictionary
     """
     # here we collect node_names for proper backup pod deployment
+    logging.debug('Init PVCDATALIST: {}'.format(pvcdatalist))
     pods = pods_namespaced_specs(corev1api, namespace=namespace)
-    logging.debug('[CUSTOM] Get pods:{}'.format(pods))
+    logging.debug('Get pods:{}'.format(pods))
     for pod in pods:
-        logging.debug('[CUSTOM] Pod: {}'.format(pod))
-        logging.debug('[CUSTOM] Pod Specs: {}'.format(pod.spec))
-        if pod.spec is not None:
-            logging.debug('[CUSTOM] POD SPEC is None')
-        for vol in pod.spec.volumes:
-            if vol.persistent_volume_claim is not None:
-                pvcname = vol.persistent_volume_claim.claim_name
-                for pvcf in pvcdatalist:
-                    if pvcname == pvcdatalist[pvcf].get('name') and pvcdatalist[pvcf].get('node_name') is None:
-                        pvcdatalist[pvcf]['node_name'] = pod.spec.node_name
+        if pod.spec is not None and pod.spec.volumes is not None:
+            for vol in pod.spec.volumes:
+                if vol.persistent_volume_claim is not None:
+                    pvcname = vol.persistent_volume_claim.claim_name
+                    for pvcf in pvcdatalist:
+                        if pvcname == pvcdatalist[pvcf].get('name') and pvcdatalist[pvcf].get('node_name') is None:
+                            logging.debug('[CUSTOM] Enter in pvcdatalist')
+                            logging.debug('Pvcf: {} -- Node_name: {}'.format(pvcf, pod.spec.node_name))
+                            pvcdatalist[pvcf]['node_name'] = pod.spec.node_name
+    logging.debug('END PVCDATALIST: {}'.format(pvcdatalist))
     return pvcdatalist
 
 
@@ -77,12 +78,10 @@ def pvcdata_get_namespaced(corev1api, namespace, pvcname, pvcalias=None):
         dict: pvc data dict
     """
     pvc = persistentvolumeclaims_read_namespaced(corev1api, namespace, pvcname)
-    logging.debug('[CUSTOM] Read PVC: ')
-    logging.debug(pvc)
+    logging.debug('Read PVC: {}'.format(pvc))
 
     pvcspec = pvc.spec
     storageclassname = pvcspec.storage_class_name
-    logging.debug('[CUSTOM] Get size:' + str(pvcspec.resources))
     pvcsize = pvcspec.resources.requests.get('storage', '-1')
     pvcdata = {
         'name': pvcname,
@@ -96,7 +95,7 @@ def pvcdata_get_namespaced(corev1api, namespace, pvcname, pvcalias=None):
                           size=pvcsize),
     }
     pvcdatalist = pvcdata_list_update_node_names(corev1api, namespace, {pvcname: pvcdata})
-    logging.debug('[CUSTOM] Read persistent volume claim completed')
+    logging.debug('Read persistent volume claim completed')
 
     return pvcdatalist.get(pvcname)
 

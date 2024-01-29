@@ -544,7 +544,7 @@ class KubernetesPlugin(Plugin):
 
     def check_pvc_compatiblity_with_vsnapshot(self, namespace, pvc_name):
         pvc = self.get_pvcdata_namespaced(namespace, pvc_name)
-        logging.debug('[CUSTOM] Check Compatibilidy with Snapshots. Name: {}'.format(pvc_name, pvc))
+        logging.debug('[CUSTOM] Check Compatibilidy with Snapshots. Name: {}'.format(pvc_name))
         logging.debug('[CUSTOM] PVC: {}'.format(pvc))
         return self.check_storage_compatibility_with_vsnapshot(pvc.get('storage_class_name'))
 
