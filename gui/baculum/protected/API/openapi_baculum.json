@@ -5519,6 +5519,76 @@
 				]
 			}
 		},
+		"/api/v2/volumes/stats": {
+			"get": {
+				"tags": ["volumes"],
+				"summary": "Volume statistics.",
+				"description": "Get volume statistics.",
+				"responses": {
+					"200": {
+						"description": "Volume statistics per volume type.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"output": {
+											"type": "object",
+											"properties": {
+												"disk": {
+													"type": "object",
+													"properties": {
+														"total_size": {
+															"type": "integer",
+															"description": "Total size of disk volumes"
+														},
+														"count": {
+															"type": "integer",
+															"description": "Disk volume count"
+														}
+													}
+												},
+												"cloud": {
+													"type": "object",
+													"properties": {
+														"total_size": {
+															"type": "integer",
+															"description": "Total size of cloud volumes"
+														},
+														"count": {
+															"type": "integer",
+															"description": "Cloud volume count"
+														}
+													}
+												},
+												"tape": {
+													"type": "object",
+													"properties": {
+														"total_size": {
+															"type": "integer",
+															"description": "Total size of tape volumes"
+														},
+														"count": {
+															"type": "integer",
+															"description": "Tape volume count"
+														}
+													}
+												}
+											}
+										},
+										"error": {
+											"type": "integer",
+											"description": "Error code",
+											"enum": [0, 1, 2, 3, 5, 6, 7, 1000]
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/api/v2/volumes/names": {
 			"get": {
 				"tags": ["volumes"],

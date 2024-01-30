@@ -103,6 +103,36 @@ class VolumeManager extends APIModule {
 		];
 	}
 
+	/**
+	 * Check if volume type is disk type.
+	 *
+	 * @return boolean true if it is disk type, otherwise false
+	 */
+	private function isDiskVolType($voltype) {
+		$disk_vt = $this->getDiskVolTypes();
+		return in_array($voltype, $disk_vt);
+	}
+
+	/**
+	 * Check if volume type is cloud type.
+	 *
+	 * @return boolean true if it is cloud type, otherwise false
+	 */
+	private function isCloudVolType($voltype) {
+		$cloud_vt = $this->getCloudVolTypes();
+		return in_array($voltype, $cloud_vt);
+	}
+
+	/**
+	 * Check if volume type is tape type.
+	 *
+	 * @return boolean true if it is tape type, otherwise false
+	 */
+	private function isTapeVolType($voltype) {
+		$tape_vt = $this->getTapeVolTypes();
+		return in_array($voltype, $tape_vt);
+	}
+
 	public function getVolumes($criteria = array(), $props = [], $limit_val = 0, $offset_val = 0, $order_by = null, $order_direction = 'DESC') {
 		$order_pool_id = 'PoolId';
 		$order_volume = 'VolumeName';
@@ -487,6 +517,36 @@ LEFT JOIN Storage USING (StorageId)
 		$result = $statement->fetchAll(\PDO::FETCH_GROUP);
 		$volumes = array_keys($result);
 		return $volumes;
+	}
+
+	/**
+	 * Get volume statistics per volume type (disk, cloud, tape...)
+	 *
+	 * @return array statistics or empty array if no volume record found
+	 */
+	public function getVolumeStatsByType() {
+		$sql = 'SELECT VolType AS voltype, 
+			       SUM(VolBytes) AS total_size, 
+			       COUNT(1) AS count
+			FROM Media
+			GROUP BY voltype';
+		$statement = Database::runQuery($sql);
+		$result = $statement->fetchAll(\PDO::FETCH_GROUP);
+		$stats = [];
+		foreach ($result as $voltype => $item) {
+			$res = [
+				'total_size' => (int)$item[0]['total_size'],
+				'count' => $item[0]['count']
+			];
+			if ($this->isDiskVolType($voltype)) {
+				$stats[self::VOLTYPE_GROUP_DISK] = $res;
+			} elseif ($this->isCloudVolType($voltype)) {
+				$stats[self::VOLTYPE_GROUP_CLOUD] = $res;
+			} elseif ($this->isTapeVolType($voltype)) {
+				$stats[self::VOLTYPE_GROUP_TAPE] = $res;
+			}
+		}
+		return $stats;
 	}
 }
 ?>

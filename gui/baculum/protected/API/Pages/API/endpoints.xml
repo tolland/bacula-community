@@ -62,6 +62,7 @@
 	<url ServiceParameter="VolumeLabelBarcodes" pattern="api/v2/volumes/label/barcodes/" />
 	<url ServiceParameter="SlotsUpdate" pattern="api/v2/volumes/update/" />
 	<url ServiceParameter="SlotsUpdate" pattern="api/v2/volumes/update/{barcodes}/" parameters.barcodes="barcodes" />
+	<url ServiceParameter="VolumeStatsByVolType" pattern="api/v2/volumes/stats/" />
 	<url ServiceParameter="VolumeNames" pattern="api/v2/volumes/names/" />
 	<!-- pools endpoints -->
 	<url ServiceParameter="Pools" pattern="api/v2/pools/" />
