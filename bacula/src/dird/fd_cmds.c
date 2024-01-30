@@ -75,7 +75,6 @@ static void delete_bsock_end_cb(JCR *jcr, void *ctx)
 /* 16.0.10 (12Jan24) x86_64-pc-linux-gnu,ubuntu,20.04 -> 160010 */
 static uint64_t scan_version(char *str)
 {
-   Enter(0);
    uint64_t version = 0;
 
    regex_t r1;
