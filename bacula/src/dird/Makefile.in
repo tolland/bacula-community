@@ -13,9 +13,9 @@ VPATH = 	.
 dir_group=@dir_group@
 
 # one up
-basedir = @BUILD_DIR@/src
+basedir = ..
 # top dir
-topdir = @BUILD_DIR@
+topdir = ../..
 # this dir relative to top dir
 thisdir = src/dird
 

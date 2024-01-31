@@ -9,9 +9,9 @@ VPATH = 	.
 .PATH:		.
 
 # one up
-basedir = @BUILD_DIR@
+basedir = ..
 # top dir
-topdir = @BUILD_DIR@
+topdir = ..
 # this dir relative to top dir
 thisdir = src
 
