@@ -31,6 +31,7 @@ def volumesnapshotclass_list_all(custom_api, filter_names=None):
     vol_snap_list = {}
     volume_snapshot_classes = custom_api.list_cluster_custom_object(K8SOBJ_SNAPSHOT_GROUP, K8SOBJ_SNAPSHOT_VERSION, K8SOBJ_SNAPSHOT_PLURAL, watch=False)
     
+    logging.debug("Volume snapshot classes:{}".format(volume_snapshot_classes))
     for vol_snap in volume_snapshot_classes.get('items'):
         if filter_names is not None and len(filter_names) > 0:
             logging.debug("filter_names-glob-for: {}".format(vol_snap.get('metadata').get('name')))
@@ -48,8 +49,13 @@ def volumesnapshotclass_list_all(custom_api, filter_names=None):
 
 def get_snapshot_drivers_compatible(custom_api):
     compatible_drivers = []
-    volume_snapshot_classes = volumesnapshotclass_list_all(custom_api)
-
+    try:
+        volume_snapshot_classes = volumesnapshotclass_list_all(custom_api)
+    except Exception as e:
+        logging.error('Controlled exception. This exception is because the volumesnapshotclasses is nos available. We can confirm this fact with `kubectl api-resources`')
+        logging.exception(e)
+        pass
+    
     for vol_snap_name in volume_snapshot_classes:
         compatible_drivers.append(volume_snapshot_classes[vol_snap_name].get('driver'))
     return compatible_drivers
