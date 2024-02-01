@@ -1233,21 +1233,21 @@ fs_device *mtab::search(char *file) {
       Dmsg1(DT_SNAPSHOT, "%s not found\n", file);
       return NULL;              /* not found */
    }
-   
+
    fs_device *elt = (fs_device *)entries->search((void *)((intptr_t)(statp.st_dev)),
                                                  search_entry);
    if (!elt) {
-      Dmsg2(DT_SNAPSHOT, "Device %d for file %s not found in our mount list\n",
-            statp.st_dev, file);
+      Dmsg2(DT_SNAPSHOT, "Device %llu for file %s not found in our mount list\n",
+            (uint64_t)statp.st_dev, file);
       return NULL;        /* not found in our list, skip it */
    }
 
    if (!elt->can_do_snapshot()) {
-      Dmsg2(DT_SNAPSHOT, "Device %d for file %s not snapshotable\n",
-            statp.st_dev, file);
+      Dmsg2(DT_SNAPSHOT, "Device %llu for file %s not snapshotable\n",
+            (uint64_t)statp.st_dev, file);
       return NULL;
    }
-   Dmsg2(DT_SNAPSHOT, "Found device %d for file %s\n", elt->dev, file);
+   Dmsg2(DT_SNAPSHOT, "Found device %llu for file %s\n", (uint64_t)elt->dev, file);
    return elt;
 }
 
@@ -1618,8 +1618,8 @@ static void add_handler(void *user_ctx,
                         const char *mntopts,
                         const char *device)
 {
-   Dmsg5(DT_SNAPSHOT|50, "dev=%ld device=%s mountpoint=%s fstype=%s mntopts=%s\n",
-         st->st_dev, device, mountpoint, fstype, mntopts);
+   Dmsg5(DT_SNAPSHOT|50, "dev=%llu device=%s mountpoint=%s fstype=%s mntopts=%s\n",
+         (int64_t)st->st_dev, device, mountpoint, fstype, mntopts);
 
    /* TODO: If the fstype is btrfs or zfs, the fs might contains subvolumes,
     * and these subvolumes may not be reported in the mntent list. In this
@@ -1899,8 +1899,8 @@ bool snapshot_convert_path(JCR *jcr, FF_PKT *ff, dlist *filelist, dlistString *n
 
    /* Convert the filename to the original path */
    if (!elt->snap->convert_path(ff)) {
-      Dmsg2(DT_SNAPSHOT, "Device %d for file %s not snapshotable\n",
-            elt->dev, ff->top_fname);
+      Dmsg2(DT_SNAPSHOT, "Device %llu for file %s not snapshotable\n",
+            (uint64_t)elt->dev, ff->top_fname);
       return true;
    }
    return true;
