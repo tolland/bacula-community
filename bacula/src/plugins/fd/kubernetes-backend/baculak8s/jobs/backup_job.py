@@ -16,6 +16,7 @@
 #   Bacula(R) is a registered trademark of Kern Sibbald.
 
 import logging
+import time
 
 from baculak8s.entities.file_info import DIRECTORY
 from baculak8s.entities.plugin_object import PluginObject
@@ -126,15 +127,25 @@ class BackupJob(EstimationJob):
             self._handle_error(response['error'])
             return False
         return True
-
+    
     def process_pvcdata(self, namespace, pvcdata, backup_with_pod = False):
         status = None
         vsnapshot = None
+        is_cloned = False
+        cloned_pvc_name = None
         # Detect if pvcdata is compatible with snapshots
         if not backup_with_pod:
+            logging.debug('Backup without pod')
             vsnapshot, pvcdata = self.handle_create_vsnapshot_backup(namespace, pvcdata.get('name'))
-
-        logging.debug('Process_pvcdata (Backup_job): {} {}'.format(vsnapshot, pvcdata))
+        logging.debug('Process_pvcdata (Backup_job): {} --- {}'.format(vsnapshot, pvcdata))
+        # if vsnapshot is None:
+        #     self._io.send_info(CHANGE_BACKUP_MODE_FOR_INCOMPATIBLITY_PVC.format(pvcdata.get('name')))
+        #     cloned_pvc_name = self.create_pvcclone(namespace, pvcdata.get('name'))
+        #     cloned_pvc = self._plugin.get_pvcdata_namespaced(namespace, cloned_pvc_name)
+        #     logging.debug('Cloned pvc fi:{}'.format(cloned_pvc.get('fi')))
+        #     cloned_pvc.get('fi').set_name(pvcdata.get('fi').name)
+        #     pvcdata = cloned_pvc
+        #     is_cloned = True
         if self.prepare_bacula_pod(pvcdata, namespace=namespace, mode='backup'):
             super()._estimate_file(pvcdata)     # here to send info about pvcdata to plugin
             status = self.__backup_pvcdata(namespace=namespace)
@@ -145,6 +156,8 @@ class BackupJob(EstimationJob):
         # Both prepare_bacula_pod fails or not, we must remove snapshot and pvc
         if not backup_with_pod:
             self.handle_delete_vsnapshot_backup(namespace, vsnapshot, pvcdata)
+        if is_cloned:
+            self.delete_pvcclone(namespace, cloned_pvc_name)
         return status
 
     def handle_pod_container_exec_command(self, corev1api, namespace, pod, runjobparam, failonerror=False):
@@ -222,6 +235,7 @@ class BackupJob(EstimationJob):
                     return False
 
             if backupmode == BaculaBackupMode.Snapshot:
+                logging.debug('Snapshot mode chosen')
                 vsnapshot, pvc_from_vsnap = self.handle_create_vsnapshot_backup(namespace, pvcname)
                 logging.debug("The vsnapshot created from pvc {} is: {}".format(pvcname, vsnapshot))
                 logging.debug("The pvc create from vsnapshot {} is: {}. FI: {}".format(vsnapshot, pvc_from_vsnap, pvc_from_vsnap.get('fi')))

@@ -534,7 +534,7 @@ class KubernetesPlugin(Plugin):
 
     # TODO: export/move all checks into k8sbackend
     def check_storage_compatibility_with_vsnapshot(self, storage_class_name):
-        logging.debug("Check Storage compatibility. {}".format(storage_class_name))
+        logging.debug("Check Storage class compatibility.{}".format(storage_class_name))
         storage_provisioner = get_provisioner(self.storagev1api, storage_class_name)
         logging.debug("Provisioner {}".format(storage_provisioner))
         logging.debug('Compatible Drivers: {} '.format(get_snapshot_drivers_compatible(self.crd_api)))
@@ -544,8 +544,8 @@ class KubernetesPlugin(Plugin):
 
     def check_pvc_compatiblity_with_vsnapshot(self, namespace, pvc_name):
         pvc = self.get_pvcdata_namespaced(namespace, pvc_name)
-        logging.debug('[CUSTOM] Check Compatibilidy with Snapshots. Name: {}'.format(pvc_name))
-        logging.debug('[CUSTOM] PVC: {}'.format(pvc))
+        logging.debug('Check Compatibility with Snapshots. Name: {}'.format(pvc_name))
+        logging.debug('PVC: {}'.format(pvc))
         return self.check_storage_compatibility_with_vsnapshot(pvc.get('storage_class_name'))
 
     def _check_config_map(self, file_info):

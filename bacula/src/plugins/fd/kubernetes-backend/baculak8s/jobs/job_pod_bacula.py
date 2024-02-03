@@ -342,8 +342,10 @@ class JobPodBacula(Job, metaclass=ABCMeta):
         Manage operations to create snapshot and new pvc from this snapshot to do backup. 
         """
         pvc = self._plugin.get_pvcdata_namespaced(namespace, pvcname)
+        
         # Check if pvc is compatible with vsnapshot
         if not self._plugin.check_pvc_compatiblity_with_vsnapshot(namespace, pvc.get('name')):
+            logging.debug('The pvc is not compatible with vsnapshots. Name:{}'.format(pvc.get('name')))
             return None, pvc
         logging.debug('Origin pvcdata FileInfo:\n{}'.format(pvc.get('fi')))
         self._io.send_info(VSNAPSHOT_BACKUP_COMPATIBLE_INFO.format(pvc.get('name')))

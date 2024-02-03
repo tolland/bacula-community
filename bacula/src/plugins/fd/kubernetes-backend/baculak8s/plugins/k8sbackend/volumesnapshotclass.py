@@ -22,6 +22,7 @@
 
 import logging
 import pathlib
+from kubernetes import client
 
 K8SOBJ_SNAPSHOT_GROUP = 'snapshot.storage.k8s.io'
 K8SOBJ_SNAPSHOT_VERSION = 'v1'
@@ -29,27 +30,43 @@ K8SOBJ_SNAPSHOT_PLURAL = 'volumesnapshotclasses'
 
 def volumesnapshotclass_list_all(custom_api, filter_names=None):
     vol_snap_list = {}
+    # volume_snapshot_classes = []
     volume_snapshot_classes = custom_api.list_cluster_custom_object(K8SOBJ_SNAPSHOT_GROUP, K8SOBJ_SNAPSHOT_VERSION, K8SOBJ_SNAPSHOT_PLURAL, watch=False)
     
     logging.debug("Volume snapshot classes:{}".format(volume_snapshot_classes))
-    for vol_snap in volume_snapshot_classes.get('items'):
-        if filter_names is not None and len(filter_names) > 0:
-            logging.debug("filter_names-glob-for: {}".format(vol_snap.get('metadata').get('name')))
-            found = False
-            for vol_glob in filter_names:
-                logging.debug("checking vol_glob: {}".format(vol_glob))
-                if pathlib.Path(vol_snap.get('metadata').get('name')).match(vol_glob):
-                    found = True
-                    logging.debug('Found volSnap.')
-                    break
-            if not found:
-                continue
-        vol_snap_list[vol_snap.get('metadata').get('name')] = vol_snap
+    if volume_snapshot_classes:
+        for vol_snap in volume_snapshot_classes.get('items'):
+            if filter_names is not None and len(filter_names) > 0:
+                logging.debug("filter_names-glob-for: {}".format(vol_snap.get('metadata').get('name')))
+                found = False
+                for vol_glob in filter_names:
+                    logging.debug("checking vol_glob: {}".format(vol_glob))
+                    if pathlib.Path(vol_snap.get('metadata').get('name')).match(vol_glob):
+                        found = True
+                        logging.debug('Found volSnap.')
+                        break
+                if not found:
+                    continue
+            vol_snap_list[vol_snap.get('metadata').get('name')] = vol_snap
     return vol_snap_list
+
+def snapshot_api_is_supported():
+    for api in client.ApisApi().get_api_versions().groups:
+        if api.name == K8SOBJ_SNAPSHOT_GROUP:
+            for v in api.versions:
+                if v.version == K8SOBJ_SNAPSHOT_VERSION:
+                    logging.debug('Cluster support snapshots API')
+                    return True
+    logging.debug('Cluster does not support snapshots API')
+    return False
 
 def get_snapshot_drivers_compatible(custom_api):
     compatible_drivers = []
+    if not snapshot_api_is_supported():
+        return compatible_drivers
+    volume_snapshot_classes = []
     try:
+        # raise Exception("This is a probe")
         volume_snapshot_classes = volumesnapshotclass_list_all(custom_api)
     except Exception as e:
         logging.error('Controlled exception. This exception is because the volumesnapshotclasses is nos available. We can confirm this fact with `kubectl api-resources`')
