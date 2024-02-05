@@ -132,7 +132,7 @@ char     *escape_filename_pathsep(const char *fname, char *buf, int len);
 char     *unescape_filename_pathsep(const char *fname, char *buf, int len);
 int       Zdeflate(char *in, int in_len, char *out, int &out_len);
 int       Zinflate(char *in, int in_len, char *out, int &out_len);
-void      stack_trace();
+void      stack_trace(FILE *file = NULL);
 void      gdb_stack_trace();
 void      gdb_traceback();
 void      gdb_print_local(int level);

@@ -232,11 +232,16 @@ extern "C" void signal_handler(int sig)
          Dmsg0(500, "Doing sleep\n");
          bmicrosleep(30, 0);
       }
-      if (WEXITSTATUS(chld_status) == 0) {
+      if (WIFEXITED(chld_status) && WEXITSTATUS(chld_status) == 0) {
          fprintf(stderr, "%s", _("It looks like the traceback worked...\n"));
       } else {
          fprintf(stderr, _("The btraceback call returned %d\n"),
                            WEXITSTATUS(chld_status));
+         FILE *fd;
+         fd = bfopen(buf, "a+");
+         stack_trace(fd);
+         fprintf(fd, _("\nPlease install GDB.\n"));
+         fclose(fd);
       }
 
 #ifndef DEVELOPER /* When DEVELOPER set, this is done above */

@@ -1082,7 +1082,7 @@ char * unescape_filename_pathsep(const char* fname, char *buf, int len)
  */
 #include <cxxabi.h>
 #include <execinfo.h>
-void stack_trace()
+void stack_trace(FILE *file)
 {
    const size_t max_depth = 100;
    size_t stack_depth;
@@ -1108,9 +1108,12 @@ void stack_trace()
             final = j;
          }
       }
+      if (file) {
+         fprintf(file, "    %s\n", stack_strings[i]);
+      }
       ok = false;
       if (begin && end && end>(begin+1)) {
-         /* /home/bac/workspace2/bee/regress/bin/bacula-dir(+0x3c400) */
+         /* we have a function name ./prog(myfunc+0x21) [0x8048894] */
          char *function = (char *)actuallymalloc(sz);
          *begin++ = '\0';
          *end = '\0';
@@ -1126,7 +1129,11 @@ void stack_trace()
             bstrncpy(function, begin, sz);
             bstrncat(function, "()", sz);
          }
-         Pmsg2(000, "    %s:%s\n", stack_strings[i], function);
+         if (file) {
+            fprintf(file, "    %s:%s\n", stack_strings[i], function);
+         } else {
+            Pmsg2(000, "    %s:%s\n", stack_strings[i], function);
+         }
          actuallyfree(function);
          ok = true;
       } else if (begin) {
@@ -1142,7 +1149,11 @@ void stack_trace()
                char buf[1000];
                *buf = '\0';
                while (fgets(buf, sizeof(buf), bpipe->rfd)) {
-                  Pmsg1(000, "    %s", buf);
+                  if (file) {
+                     fprintf(file, "    %s", buf);
+                  } else {
+                     Pmsg1(000, "    %s", buf);
+                  }
                }
                if (close_bpipe(bpipe) == 0) {
                   ok = true;
@@ -1152,7 +1163,11 @@ void stack_trace()
       }
       if (!ok) {
          /* didn't find the mangled name, just print the whole line */
-         Pmsg1(000, "    %s\n", stack_strings[i]);
+         if (file) {
+            fprintf(file, "    %s\n", stack_strings[i]);
+         } else {
+            Pmsg1(000, "    %s\n", stack_strings[i]);
+         }
       }
    }
    actuallyfree(stack_strings); /* malloc()ed by backtrace_symbols */
@@ -1285,7 +1300,7 @@ bail_out:
 }
 
 #else /* HAVE_BACKTRACE && HAVE_GCC */
-void stack_trace() {}
+void stack_trace(FILE *file) { (void)file; }
 void gdb_stack_trace() {}
 void gdb_print_local(int level) {}
 #endif /* HAVE_BACKTRACE && HAVE_GCC */
