@@ -5,6 +5,68 @@ This is a new feature release. Almost all changes are for the API part.
 It extends the API capabilities for new functions.
 
 New changes and fixes:
+ - Add volume statistics endpoint
+ - Add jobstatus filter to objects overview endpoint
+ - Fix content property in sources endpoint
+ - Add using multiple content values in filesets endpoint
+ - Add cancel jobs running on storage endpoint
+ - Mask sensitive AWS data in debug log
+ - Tweak improve directive filter in config endpoints
+ - Add directive filter to config endpoints
+ - Add endpoint to list AWS cloud buckets
+ - Fix count property in volume overview endpoint
+ - Add jobdefs list endpoint
+ - Adapt storage file ls command parameters to new form
+ - Update API documentation
+ - Add client plugin list endpoint
+ - Add content parameter to filesets endpoint
+ - Add enabled filter to clients show endpoint
+ - List only reachable/unreachable clients in clients endpoint
+ - Add job type parameter to objects overview endpoint
+ - Add endpoint to list SCSI tape devices on storage daemon host
+ - Add parser for diskperf command output
+ - Fix using error module
+ - Tweak using component status
+ - Add option to interpret Bacula error codes by API
+ - Add name parameter to storages endpoint
+ - Add endpoint to get device disk usage on storage daemon host
+ - Add endpoint to create directory on storage daemon host
+ - Update API documentation
+ - Add fileset filter to objects overview endpoint
+ - Add type parameter to clients endpoint
+ - baculum :Split client overview endpoint into reachable and unreachable clients
+ - Fix name parameter in jobs objects endpoint
+ - Add restricting resources in objects overview endpoint
+ - Add job name and fileset to status client endpoint
+ - Add regex operator support in queries
+ - Update API documentation
+ - Add delete client endpoint
+ - Add joberrors parameter to jobs endpoint
+ - Add fileset parameter to objects endpoint
+ - Add filename and path properties to fileevent endpoints
+ - Add sorting parameters to clients endpoint
+ - Add running jobs property to clients endpoint
+ - Add documentation for os and version filters in clients endpoint
+ - Add os and version parameters to clients endpoint
+ - Add os, version properties and overview parameter to clients endpoint
+ - Add endpoint to check disk archive device prformance on storage daemon host
+ - Add endpoint to list files and dirs on storage daemon host
+ - Add delete pool endpoint
+ - Add delete object endpoint
+ - Use new delete module in volume and job endpoints
+ - Add module for delete command
+ - Add client name parameter to clients endpoint
+ - Add file events API endpoint
+ - Improve extended name validator
+ - Speed up dashboard page loading
+ - Fix parsing director time in time endpoint
+ - Add objecttype parameter to object categories endpoint
+ - Add sorting by objectcategory in objects overview endpoint
+ - Add sorting by fileset in objects overview endpoint
+ - Add second dimensional sorting and use it for sorting jobstatus in sources overview endpoint
+ - Add modify default object sorting in object overview endpoint
+ - Fix support for PHP 5.4 in web interface layer
+ - Tweak remove not used getting db connection
  - Fix content field in job record
  - Improve support for newer PostgreSQL versions
  - Add fileset content property to jobs endpoint
