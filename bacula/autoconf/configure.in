@@ -2295,7 +2295,7 @@ have_aws=no
 
 if test x$support_aws = xyes; then
    AC_ARG_WITH(aws,
-      AC_HELP_STRING([--with-aws], [specify Google Storage Cloud]),
+      AC_HELP_STRING([--with-aws], [specify Amazon Storage Cloud]),
       [
 	  case "$with_aws" in
 	  no)
