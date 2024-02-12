@@ -1851,7 +1851,7 @@ Optional Packages:
                           number of common places for the SQLite3 files.
   --with-x                use the X Window System
   --with-s3[=DIR]         specify s3 library directory
-  --with-aws              specify Google Storage Cloud
+  --with-aws              specify Amazon Storage Cloud
   --with-afsdir[=DIR]     Directory holding AFS includes/libs
   --with-lzo[=DIR]        specify lzo library directory
   --with-gpfsdir[=DIR]    Directory holding GPFS includes/libs
