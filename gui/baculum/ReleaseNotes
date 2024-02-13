@@ -1,7 +1,7 @@
 
-                Release Notes for Baculum 15.0.0
+                Release Notes for Baculum 15.0.1 (beta)
 
-This is a new feature release. Almost all changes are for the API part.
+This is a new feature beta release. Almost all changes are for the API part.
 It extends the API capabilities for new functions.
 
 New changes and fixes:
@@ -40,6 +40,14 @@ New changes and fixes:
  - Add job name and fileset to status client endpoint
  - Add regex operator support in queries
  - Update API documentation
+
+
+                Release Notes for Baculum 15.0.0 (beta)
+
+This is a new feature beta release. Almost all changes are for the API part.
+It extends the API capabilities for new functions.
+
+New changes and fixes:
  - Add delete client endpoint
  - Add joberrors parameter to jobs endpoint
  - Add fileset parameter to objects endpoint
