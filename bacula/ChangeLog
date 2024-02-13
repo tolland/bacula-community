@@ -1,3 +1,186 @@
+        ChangeLog for Bacula Enterprise version 15.0.1
+
+12Feb24
+ - Enable Amazon cloud driver
+
+31Jan24
+ - Fix org#2440 Improve Makefiles to use relative paths
+
+30Jan24
+ - baculum: Add volume statistics endpoint
+
+29Jan24
+ - baculum: Add jobstatus filter to objects overview endpoint
+ - baculum: Fix content property in sources endpoint
+
+27Jan24
+ - Fix org#2705 about issue with accurate checking of new file signature attributes
+
+24Jan24
+ - Fix org#2704 about old FD compatibility
+
+18Jan24
+ - cloud: regress test for Upload and TruncateCode options
+ - cloud: create a multitest for CDash invocation
+ - Fix #10631 (1) remove unauthorized Jmsg() in BSOCK::recv()
+ - baculum: Add using multiple content values in filesets endpoint
+
+17Jan24
+ - cloud: Fix #10685 TruncateCache at endofjob was not processed due to wrong transfer status verification
+
+15Jan24
+ - baculum: Add cancel jobs running on storage endpoint
+ - Fix org#2561 Convert text from ISO-8859 to UTF8
+
+12Jan24
+ - baculum: Mask sensitive AWS data in debug log
+
+11Jan24
+ - Add directive filter to config endpoints
+
+10Jan24
+ - Add endpoint to list AWS cloud buckets
+
+08Jan24
+ - baculum: Fix count property in volume overview endpoint
+
+05Jan24
+ - baculum: Add jobdefs list endpoint
+ - baculum: Adapt storage file ls command parameters to new form
+ - Update API documentation
+
+22Dec23
+ - Add client plugin list endpoint
+
+21Dec23
+ - Add a regression test for exercising MT10291
+
+19Dec23
+ - Add content parameter to filesets endpoint
+ - Add enabled filter to clients show endpoint
+
+18Dec23
+ - k8s: Fix compilation problem
+
+15Dec23
+ - cloud storage: Fix #10291 Assume that driver ls can return error 1 when the path doesnt exist. Handle it in generic driver
+ - cloud storage: Fix #10291 Assume that driver ls can return an error when scanning an unexistant cloud volume and loosen the conditions that handle this case
+
+13Dec23
+ - k8s: Fix problem when it restores a 'namespace'
+
+12Dec23
+ - cloud: proof guard truncation
+
+11Dec23
+ - aws_cloud_driver: Fix #10604 upload() might not exit with correct error code
+
+08Dec23
+ - baculum: List only reachable/unreachable clients in clients endpoint
+
+07Dec23
+ - baculum: Add job type parameter to objects overview endpoint
+
+06Dec23
+ - aws driver: Fix #10591 missing \n in returned lists
+
+30Nov23
+ - Fix zlib compression was disable in FD
+
+28Nov23
+ - Fix and improve BSR cycle detection and resolution
+ - k8s: Fix pvc naming error in csi snapshots
+
+27Nov23
+ - baculum: Add endpoint to list SCSI tape devices on storage daemon host
+ - baculum: Add parser for diskperf command output
+
+24Nov23
+ - baculum: Fix using error module
+ - baculum: Add option to interpret Bacula error codes by API
+
+23Nov23
+ - Fix JSON output in .status dir running
+
+22Nov23
+ - baculum: Add name parameter to storages endpoint
+
+17Nov23
+ - Fix openssl 3.x don't tolerate to call EVP_CipherFinal_ex() twice
+ - Fix restore issue when compression is enabled but not available
+
+16Nov23
+ - Fix #10453 volume with a wrong label
+
+15Nov23
+ - Fix #2699 About SQLite update script
+
+14Nov23
+ - Fix #2701 compilation of bjoblist
+
+13Nov23
+ - baculum: Add endpoint to get device disk usage on storage daemon host
+
+10Nov23
+ - baculum: Add endpoint to create directory on storage daemon host
+
+09Nov23
+ - cloud: test compare upload to AWS with 4 different methods, including bacula post-upload
+ - Fix: #0010535. Problem with k8s snapshot version
+ - Fix #10163 Add %i (jobid) to edit_device_codes()
+ - baculum: Update API documentation
+ - baculum: Add fileset filter to objects overview endpoint
+ - baculum: Add type parameter to clients endpoint
+
+07Nov23
+ - All the rest: missing matching Leave() outside the cloud classes
+ - All the missing Leave() in cloud code
+ - cloud: create a regress test to validate cloud work queue thread resizing
+
+06Nov23
+ - Cloud Storage: Fix #10525 Add device name to the transfer fields
+ - Fix #10524 About adding JobTimestamp variable for volume format
+
+03Nov23
+ - rpms: fix cloud spec file for redhat8
+ - Fix warning about BSOCK::send()
+
+02Nov23
+ - Fix #10513 About show command issue with incorrect storage configuration
+ - Fix org#2698 about error with osx platform
+ - update DEPKGS version
+ - baculum :Split client overview endpoint into reachable and unreachable clients
+
+31Oct23
+ - k8s: Fix csi compatibility
+
+24Oct23
+ - baculum: Fix name parameter in jobs objects endpoint
+
+05Oct23
+ - baculum: Add restricting resources in objects overview endpoint
+
+29Sep23
+ - baculum: Add job name and fileset to status client endpoint
+
+26Sep23
+ - Fix #10401 About issue when truncating immutable volume
+ - baculum: Add regex operator support in queries
+
+22Sep23
+ - Implement OT_PINT32 for OutputWriter class
+
+15Sep23
+ - baculum: Update API documentation
+ - baculum: Add delete client endpoint
+
+30Aug23
+ - Fix #10365 Pass comment field to copy/migration jobs from the control job
+
+Bugs fixed/closed since last release:
+ 10163 10291 10365 10401 10453 10513 10524 10525 10535 10591 10604 10631 10685 2699 2701
+
+
         ChangeLog for Bacula version 15.0.0
 
 31Oct23

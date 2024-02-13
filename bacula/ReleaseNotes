@@ -43,7 +43,7 @@ database, be sure to shutdown Bacula and be aware that running the script can
 take some time depending on your database size.
 
 ----------------------------------------------------------------
-Beta Release 15.0.0 / 01 November 2023
+Beta Release 15.0.1 / 13 February 2024
 ----------------------------------------------------------------
 
 Security:
@@ -163,7 +163,34 @@ Baculum and Rest API changes:
  - Add director time endpoint
  - Change M365 tenants endpoint output to contain tenant names
  - Update documentation
+
  - Add object overview endpoint
+ - Add client plugin list endpoint
+ - Add content parameter to filesets endpoint
+ - Add directive filter to config endpoints
+ - Add enabled filter to clients show endpoint
+ - Add endpoint to list AWS cloud buckets
+ - Split client overview endpoint into reachable and unreachable clients
+ - Adapt storage file ls command parameters to new form
+ - Add cancel jobs running on storage endpoint
+ - Add delete client endpoint
+ - Add endpoint to create directory on storage daemon host
+ - Add endpoint to get device disk usage on storage daemon host
+ - Add endpoint to list SCSI tape devices on storage daemon host
+ - Add fileset filter to objects overview endpoint
+ - Add job name and fileset to status client endpoint
+ - Add job type parameter to objects overview endpoint
+ - Add jobdefs list endpoint
+ - Add jobstatus filter to objects overview endpoint
+ - Add name parameter to storages endpoint
+ - Add option to interpret Bacula error codes by API
+ - Add parser for diskperf command output
+ - Add regex operator support in queries
+ - Add restricting resources in objects overview endpoint
+ - Add type parameter to clients endpoint
+ - Add usage of multiple content values in filesets endpoint
+ - Add volume statistics endpoint
+ - List only reachable/unreachable clients in clients endpoint
 
 Misc:
  - Add XXHASH to FileSet signature option
@@ -171,6 +198,91 @@ Misc:
  - Display mtime instead of ctime in estimate listing output
  - Add specific jobstatus when executing Runscripts
  - New man pages
+
+ - Add %i (jobid) to edit_device_codes(), can be used in storage daemon scripts
+ - Pass comment field to copy/migration jobs from the control job
+ - Add JobTimestamp variable for volume label format
+ - Improve BSR cycle detection and resolution
+
+Release 15.0.1 / 13 February 2024
+----------------------------------------------------------------
+
+15.0.1 is a minor bug fix beta release.
+
+ - cloud: Fix #10525 Add device name to the transfer fields
+
+ - Fix #10163 Add %i (jobid) to edit_device_codes()
+ - Fix #10365 Pass comment field to copy/migration jobs from the control job
+ - Fix #10524 About adding JobTimestamp variable for volume format
+
+ - Fix #10401 About issue when truncating immutable volume
+ - Fix #10453 volume with a wrong label
+ - Fix #10513 About show command issue with incorrect storage configuration
+ - Fix #10631 remove unauthorized Jmsg() in BSOCK::recv()
+ - Fix #2699 About SQLite update script
+ - Fix #2701 compilation of bjoblist
+ - Fix JSON output in .status dir running
+
+ - Fix openssl 3.x don't tolerate to call EVP_CipherFinal_ex() twice
+ - Fix org#2440 Improve Makefiles to use relative paths
+ - Fix org#2561 Convert text from ISO-8859 to UTF8
+ - Fix org#2698 about error with osx platform
+ - Fix org#2704 about old FD compatibility
+ - Fix org#2705 about issue with accurate checking of new file signature attributes
+ - Fix restore issue when compression is enabled but not available
+ - Fix warning about BSOCK::send()
+ - Fix zlib compression was disable in FD
+ - Fix: #0010535. Problem with k8s snapshot version
+
+ - baculum: Add client plugin list endpoint
+ - baculum: Add content parameter to filesets endpoint
+ - baculum: Add directive filter to config endpoints
+ - baculum: Add enabled filter to clients show endpoint
+ - baculum: Add endpoint to list AWS cloud buckets
+ - baculum :Split client overview endpoint into reachable and unreachable clients
+ - baculum: Adapt storage file ls command parameters to new form
+ - baculum: Add cancel jobs running on storage endpoint
+ - baculum: Add delete client endpoint
+ - baculum: Add endpoint to create directory on storage daemon host
+ - baculum: Add endpoint to get device disk usage on storage daemon host
+ - baculum: Add endpoint to list SCSI tape devices on storage daemon host
+ - baculum: Add fileset filter to objects overview endpoint
+ - baculum: Add job name and fileset to status client endpoint
+ - baculum: Add job type parameter to objects overview endpoint
+ - baculum: Add jobdefs list endpoint
+ - baculum: Add jobstatus filter to objects overview endpoint
+ - baculum: Add name parameter to storages endpoint
+ - baculum: Add option to interpret Bacula error codes by API
+ - baculum: Add parser for diskperf command output
+ - baculum: Add regex operator support in queries
+ - baculum: Add restricting resources in objects overview endpoint
+ - baculum: Add type parameter to clients endpoint
+ - baculum: Add using multiple content values in filesets endpoint
+ - baculum: Add volume statistics endpoint
+ - baculum: Fix content property in sources endpoint
+ - baculum: Fix count property in volume overview endpoint
+ - baculum: Fix name parameter in jobs objects endpoint
+ - baculum: Fix using error module
+ - baculum: List only reachable/unreachable clients in clients endpoint
+ - baculum: Mask sensitive AWS data in debug log
+ - baculum: Update API documentation
+
+ - cloud: Fix #10291 Assume that driver ls can return an error when scanning an unexistant cloud volume and loosen the conditions that handle this case
+ - cloud: Fix #10685 TruncateCache at endofjob was not processed due to wrong transfer status verification
+ - cloud: proof guard truncation
+ - cloud: test compare upload to AWS with 4 different methods, including bacula post-upload
+
+ - k8s: Fix compilation problem
+ - k8s: Fix csi compatibility
+ - k8s: Fix problem when it restores a 'namespace'
+ - k8s: Fix pvc naming error in csi snapshots
+
+ - rpms: Fix cloud spec file for redhat8
+
+
+Bugs fixed/closed since last release:
+ 10163 10291 10365 10401 10453 10513 10524 10525 10535 10591 10604 10631 10685 2699 2701
+
 
 ----------------------------------------------------------------
 Release 13.0.3 / 02 May 2023
