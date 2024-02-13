@@ -46,6 +46,18 @@
 %define depkgs ../depkgs
 %define depkgs_was ../depkgs-was
 
+%define rhel9 0
+%{?build_rhel9:%define rhel9 1}
+%{?build_el8:%define rhel9 1}
+
+%define rhel8 0
+%{?build_rhel8:%define rhel8 1}
+%{?build_el8:%define rhel8 1}
+
+%define rhel7 0
+%{?build_rhel7:%define rhel7 1}
+%{?build_el7:%define rhel7 1}
+
 #--------------------------------------------------------------------------
 # it should not be necessary to change anything below here for a release
 # except for patch macros in the setup section
@@ -73,6 +85,20 @@ Distribution: Bacula Cloud Storage
 
 Source0: http://www.prdownloads.sourceforge.net/bacula/depkgs-%{depkgs_version}.tar.gz
 Source1: https://www.bacula.org/downloads/bacula-%{_version}.tar.gz
+
+%if %{rhel7} == 1
+Requires: bacula-sd, %{base_package_name}-libs = %{_version}, libcurl
+%else
+Requires: bacula-sd, %{base_package_name}-libs = %{_version}, (libcurl or libcurl4)
+%endif
+
+%if %{rhel8} == 1 || %{rhel9} == 1
+BuildRequires: python3-Cython
+%endif
+
+%if %{rhel7} == 1
+BuildRequires: Cython
+%endif
 
 Requires: bacula-sd, %{base_package_name}-libs = %{_version}, libcurl, awscli
 
@@ -104,6 +130,13 @@ cd ..
 cd $cwd
 
 cd ../bacula-%{_version}
+
+%if %{rhel8} == 1 || %{rhel9} == 1
+# Pool RHEL8 management of python programs, not the same PYTHONPATH through SSH and for commands
+export PATH=$PATH:/usr/local/bin
+export PYTHONPATH=$HOME/.local/lib64/python3.6/site-packages:$HOME/.local/lib/python3.6/site-packages:/usr/local/lib64/python3.6/site-packages/:/usr/local/lib/python3.6/site-packages/
+%endif
+
 ./configure \
         --prefix=%{_prefix} \
         --sbindir=%{_sbindir} \
@@ -140,7 +173,16 @@ cd ../bacula-%{_version}
         --with-mon-fd-password="XXX_REPLACE_WITH_CLIENT_MONITOR_PASSWORD_XXX" \
         --with-mon-sd-password="XXX_REPLACE_WITH_STORAGE_MONITOR_PASSWORD_XXX" \
         --with-openssl  \
-        --with-cython=cython-3.8
+%if %{rhel8} == 1 ||  %{rhel9} == 1
+        --with-cython=/usr/local/bin/cython3 
+%endif
+
+# Make sure libs3 is built correctly or die
+grep "S3 support:" config.out | grep yes
+if [ $? != 0 ] ; then
+  echo "libs3 not found"
+  exit 1
+fi
 
 make
 
