@@ -202,7 +202,7 @@ static RES_ITEM dev_items[] = {
 #ifdef SD_DEDUP_SUPPORT
    {"Dedupengine",           store_res,    ITEM(res_dev.dedup), R_DEDUP, 0, 0},
 #endif
-   {"SyncOnClose",           store_bit,    ITEM(res_dev.cap_bits), CAP_SYNCONCLOSE, ITEM_DEFAULT, 0},
+   {"SyncOnClose",           store_bit,    ITEM(res_dev.cap_bits), CAP_SYNCONCLOSE, ITEM_DEFAULT, 1},
    {"VolumeEncryption",      store_enctype,ITEM(res_dev.volume_encryption), 0, ITEM_DEFAULT, 0},
 
    {NULL, NULL, {0}, 0, 0, 0}
