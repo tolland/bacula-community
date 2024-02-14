@@ -2140,6 +2140,9 @@ static bRC baculaGetValue(bpContext *ctx, bVariable var, void *value)
    case bVarMinDedupBlockSize:
       *((int*)value) = jcr->min_dedup_block_size;
       break;
+   case bVarEstimate:
+      *((int*)value) = jcr->estimate?1:0;
+      break;
    case bVarFDName:             /* get warning with g++ if we missed one */
    case bVarWorkingDir:
    case bVarPluginDir:

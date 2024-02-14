@@ -1419,6 +1419,7 @@ static int estimate_cmd(UAContext *ua, const char *cmd)
    jcr->setJobType(JT_BACKUP);
    jcr->start_time = time(NULL);
    jcr->setJobLevel(L_FULL);
+   jcr->estimate = true;
 
    for (int i=1; i<ua->argc; i++) {
       if (strcasecmp(ua->argk[i], NT_("client")) == 0 ||

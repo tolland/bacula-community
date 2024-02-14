@@ -456,24 +456,25 @@ bool send_level_command(JCR *jcr)
    const char *accurate = jcr->accurate?"accurate_":"";
    const char *not_accurate = "";
    const char *rerunning = jcr->rerunning?" rerunning ":" ";
+   const char *estimate = jcr->estimate?" estimate ": "";
    /*
     * Send Level command to File daemon
     */
    switch (jcr->getJobLevel()) {
    case L_BASE:
-      fd->fsend(levelcmd, not_accurate, "base", rerunning, 0, "", "");
+      fd->fsend(levelcmd, not_accurate, "base", rerunning, 0, estimate, "");
       break;
    /* L_NONE is the console, sending something off to the FD */
    case L_NONE:
    case L_FULL:
-      fd->fsend(levelcmd, not_accurate, "full", rerunning, 0, "", "");
+      fd->fsend(levelcmd, not_accurate, "full", rerunning, 0, estimate, "");
       break;
    case L_DIFFERENTIAL:
-      fd->fsend(levelcmd, accurate, "differential", rerunning, 0, "", "");
+      fd->fsend(levelcmd, accurate, "differential", rerunning, 0, estimate, "");
       send_since_time(jcr);
       break;
    case L_INCREMENTAL:
-      fd->fsend(levelcmd, accurate, "incremental", rerunning, 0, "", "");
+      fd->fsend(levelcmd, accurate, "incremental", rerunning, 0, estimate, "");
       send_since_time(jcr);
       break;
    case L_SINCE:

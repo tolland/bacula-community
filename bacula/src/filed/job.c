@@ -2660,6 +2660,9 @@ static int level_cmd(JCR *jcr)
    if (strstr(dir->msg, "rerunning")) {
       jcr->rerunning = true;
    }
+   if (strstr(dir->msg, "estimate")) {
+      jcr->estimate = true;
+   }
    if (sscanf(dir->msg, "level = %s ", level) != 1) {
       goto bail_out;
    }

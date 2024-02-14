@@ -464,6 +464,7 @@ public:
    bool use_all_JobIds;               /* Use all jobids present in command line */
    bool sd_client;                    /* This job runs as SD client */
    bool dummy_jobmedia;               /* Dummy JobMedia written */
+   bool estimate;                     /* if the job is an estimate instead of a run */
 #endif /* DIRECTOR_DAEMON */
 
 #ifdef FILE_DAEMON
@@ -527,6 +528,7 @@ public:
    alist *plugin_verify;              /* Registered plugins that need a copy of the data in verify job */
    alist *plugin_options_list;        /* list of the options to use in a job */
    alist *fileevents;                  /* list of the current file events to record and send to the DIR */
+   bool estimate;                     /* if the job is an estimate instead of a run */
 #endif /* FILE_DAEMON */
 
 
@@ -632,6 +634,9 @@ struct s_last_job {
    char Job[MAX_NAME_LENGTH];
 };
 
+union plugin_event_level {
+
+};
 extern struct s_last_job last_job;
 extern DLL_IMP_EXP dlist *last_jobs;
 
