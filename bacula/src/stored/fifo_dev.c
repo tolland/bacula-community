@@ -52,7 +52,12 @@ const char *fifo_dev::print_type()
 
 int fifo_dev::device_specific_init(JCR *jcr, DEVRES *device)
 {
-   capabilities |= CAP_STREAM;
+   set_cap(CAP_STREAM);
+
+   /* Apparently it is not possible to sync the file descriptor on /dev/null */
+   if (strcmp(device->device_name, "/dev/null") == 0) {
+      clear_cap(CAP_SYNCONCLOSE);
+   }
    return 0;
 }
 
