@@ -111,9 +111,9 @@ public:
    bool is_fs_nearly_full(uint64_t threshold);
    int rehydrate_record(DCR *dcr, DEV_RECORD *rec);
 
-   int set_writable(int fd, const char *vol_name);
-   int set_readonly(int fd, const char *vol_name);
-   int set_atime(int fd, const char *vol_name, btime_t val);
+   int set_writable(int fd, const char *vol_name, POOLMEM **error);
+   int set_readonly(int fd, const char *vol_name, POOLMEM **error);
+   int set_atime(int fd, const char *vol_name, btime_t val, POOLMEM **error);
 
    /*
     * Locking and blocking calls

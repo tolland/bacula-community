@@ -1339,7 +1339,7 @@ static bool volumeprotect_cmd(JCR *jcr)
    BSOCK *dir = jcr->dir_bsock;
    char mediatype[MAX_NAME_LENGTH];
    char volume[MAX_NAME_LENGTH];
-   POOL_MEM device, tmp;
+   POOL_MEM device, tmp, error;
    uint32_t retention;
    int32_t drive;
    bool ok;
@@ -1364,10 +1364,10 @@ static bool volumeprotect_cmd(JCR *jcr)
          if (dev->device->set_vol_immutable || dev->device->set_vol_read_only) {
             uint32_t when = MAX(dev->device->min_volume_protection_time, retention);
             btime_t now = time(NULL);
-            if (dev->set_atime(-1, volume, now + when) < 0) {
-               berrno be;
-               Mmsg(tmp, _(" Failed to set the volume %s on device %s in atime retention, ERR=%s.\n"),
-                    volume, dev->print_name(), be.bstrerror());
+            if (dev->set_atime(-1, volume, now + when, error.handle()) < 0) {
+               MmsgD3(DT_VOLUME|50, tmp,
+		      _(" Failed to set the volume %s on device %s in atime retention, ERR=%s.\n"),
+		      volume, dev->print_name(), error.c_str());
             }
             pm_strcpy(tmp, "");
             bstrftime(buf2, sizeof(buf2), now+when);
@@ -1375,9 +1375,9 @@ static bool volumeprotect_cmd(JCR *jcr)
          }
          if (dev->device->set_vol_immutable) {
             /* Set volume as immutable */
-            if (!dev->set_immutable(volume, tmp.handle())) {
+            if (!dev->set_immutable(volume, error.handle())) {
                /* We may proceed with that but warn the user */
-               dir->fsend(_("3900 Unable to set immutable flag %s\n"), tmp.c_str());
+               dir->fsend(_("3900 Unable to set immutable flag %s\n"), error.c_str());
 
             } else {
                dir->fsend(_("3000 Mark volume \"%s\" as immutable. Retention set to %s (%s).\n"), volume, buf2, buf);
@@ -1387,11 +1387,10 @@ static bool volumeprotect_cmd(JCR *jcr)
 
          } else if (dev->device->set_vol_read_only) {
             /* Set volume as immutable/read only */
-            if (dev->set_readonly(-1, volume) < 0) {
-               berrno be;
+            if (dev->set_readonly(-1, volume, error.handle()) < 0) {
                /* We may proceed with that but warn the user */
                dir->fsend(_("3900 Failed to set the volume %s on device %s in read-only, ERR=%s.%s\n"),
-                          volume, dev->print_name(), be.bstrerror(), tmp.c_str());
+                          volume, dev->print_name(), error.c_str(), tmp.c_str());
             } else {
                dir->fsend(_("3000 Marking volume \"%s\" as read-only. Retention set to %s (%s).\n"),
                           volume,buf2, buf);

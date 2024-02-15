@@ -53,9 +53,9 @@ public:
    bool check_for_read_only(int fd, const char *vol_name);
    bool get_os_device_freespace();
    bool is_fs_nearly_full(uint64_t threshold);
-   int set_writable(int fd, const char *vol_name);
-   int set_readonly(int fd, const char *vol_name);
-   int set_atime(int fd, const char *vol_name, btime_t val);
+   int set_writable(int fd, const char *vol_name, POOLMEM **error);
+   int set_readonly(int fd, const char *vol_name, POOLMEM **error);
+   int set_atime(int fd, const char *vol_name, btime_t val, POOLMEM **error);
    int use_protect();
 };
 

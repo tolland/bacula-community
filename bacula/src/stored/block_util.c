@@ -843,8 +843,8 @@ bool terminate_writing_volume(DCR *dcr)
    if (dev->device->set_vol_immutable || dev->device->set_vol_read_only) {
       uint32_t when = MAX(dev->device->min_volume_protection_time, dev->VolCatInfo.VolRetention);
       btime_t now = time(NULL);
-      if (dev->set_atime(-1, dev->getVolCatName(), now + when) < 0) {
-         Jmsg(dcr->jcr, M_WARNING, 0, _(" Failed to set the volume %s on device %s in atime retention, ERR=%s.\n"),
+      if (dev->set_atime(-1, dev->getVolCatName(), now + when, &dev->errmsg) < 0) {
+         Jmsg(dcr->jcr, M_WARNING, 0, _(" Failed to set the atime retention on volume %s on device %s. %s.\n"),
               dev->getVolCatName(), dev->print_name(), dev->errmsg);
       }
       bstrftime(buf2, sizeof(buf2), now+when);
@@ -854,11 +854,10 @@ bool terminate_writing_volume(DCR *dcr)
 
    if (dev->device->set_vol_read_only) {
       /* Set volume as immutable/read only */
-      if (dev->set_readonly(dev->m_fd, dev->getVolCatName()) < 0) {
-         berrno be;
+      if (dev->set_readonly(dev->m_fd, dev->getVolCatName(), &dev->errmsg) < 0) {
          /* We may proceed with that but warn the user */
-         Jmsg(dcr->jcr, M_WARNING, 0, _("Failed to set the volume %s on device %s in read-only, ERR=%s.\n"),
-              dev->getVolCatName(), dev->print_name(), be.bstrerror());
+         Jmsg(dcr->jcr, M_WARNING, 0, _("Failed to set the volume %s on device %s in read-only. %s.\n"),
+              dev->getVolCatName(), dev->print_name(), dev->errmsg);
       } else {
          Jmsg(dcr->jcr, M_INFO, 0, _("Marking Volume \"%s\" as read-only. Retention set to %s (%s).\n"),
               dev->getVolCatName(), buf2, buf);
@@ -873,7 +872,7 @@ bool terminate_writing_volume(DCR *dcr)
       /* Set volume as immutable */
       if (!dev->set_immutable(dev->getVolCatName(), &dev->errmsg)) {
          /* We may proceed with that but warn the user */
-         Jmsg(dcr->jcr, M_WARNING, 0, _("Failed to set the volume %s on device %s as immutable, ERR=%s.\n"),
+         Jmsg(dcr->jcr, M_WARNING, 0, _("Failed to set the volume %s on device %s as immutable, %s.\n"),
               dev->getVolCatName(), dev->print_name(), dev->errmsg);
       } else {
          Jmsg(dcr->jcr, M_INFO, 0, _("Marking Volume \"%s\" as immutable. Retention set to %s (%s).\n"),

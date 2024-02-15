@@ -219,7 +219,7 @@ bool file_dev::open_device(DCR *dcr, int omode)
                if (immutable && clear_immutable(getVolCatName(), &errmsg)) {
                   tryopen = true;
                }
-               if (readonly && set_writable(-1, getVolCatName()) == 0) {
+               if (readonly && set_writable(-1, getVolCatName(), &errmsg) == 0) {
                   tryopen = true;
                }
                if (tryopen) { /* It should be now possible to open the device with desired mode */
@@ -275,7 +275,7 @@ bool file_dev::open_device(DCR *dcr, int omode)
    return m_fd >= 0;
 }
 
-int file_dev::set_writable(int fd, const char *vol_name)
+int file_dev::set_writable(int fd, const char *vol_name, POOLMEM **error)
 {
    POOL_MEM fname;
    get_volume_fpath(vol_name, fname.handle());
@@ -286,12 +286,12 @@ int file_dev::set_writable(int fd, const char *vol_name)
    int ret = bchmod(fd, fname.c_str(), 0600);
    if (ret < 0) {
       berrno be;
-      Dmsg1(DT_VOLUME|50, _("Unable to change permission to 0600. ERR=%s\n"), be.bstrerror());
+      MmsgD1(DT_VOLUME|50, error, _("Unable to change permission to 0600. ERR=%s\n"), be.bstrerror());
    }
    return ret;
 }
 
-int file_dev::set_readonly(int fd, const char *vol_name)
+int file_dev::set_readonly(int fd, const char *vol_name, POOLMEM **error)
 {
    POOL_MEM fname;
    get_volume_fpath(vol_name, fname.handle());
@@ -299,12 +299,12 @@ int file_dev::set_readonly(int fd, const char *vol_name)
    int ret = bchmod(fd, fname.c_str(), 0400);
    if (ret < 0) {
       berrno be;
-      Dmsg1(DT_VOLUME|50, _("Unable to change permission to 0400. ERR=%s\n"), be.bstrerror());
+      MmsgD1(DT_VOLUME|50, error, _("Unable to change permission to 0400. ERR=%s\n"), be.bstrerror());
    }
    return ret;
 }
 
-int file_dev::set_atime(int fd, const char *vol_name, btime_t val)
+int file_dev::set_atime(int fd, const char *vol_name, btime_t val, POOLMEM **error)
 {
    struct stat sp;
    int ret;
@@ -312,13 +312,13 @@ int file_dev::set_atime(int fd, const char *vol_name, btime_t val)
    get_volume_fpath(vol_name, fname.handle());
    if (bstat(fd, fname.c_str(), &sp) < 0) {
       berrno be;
-      Dmsg2(DT_VOLUME|50, _("Unable to stat %s. ERR=%s\n"), fname.c_str(), be.bstrerror());
+      MmsgD2(DT_VOLUME|50, error, _("Unable to stat %s. ERR=%s\n"), fname.c_str(), be.bstrerror());
       return -1;
    }
    ret = set_own_time(fd, fname.c_str(), val, sp.st_mtime);
    if (ret < 0) {
       berrno be;
-      Dmsg2(DT_VOLUME|50, _("Unable to set atime/mtime to %s. ERR=%s\n"), fname.c_str(), be.bstrerror());
+      MmsgD2(DT_VOLUME|50, error, _("Unable to set atime/mtime to %s. ERR=%s\n"), fname.c_str(), be.bstrerror());
    }
    return ret;
 }
@@ -355,10 +355,9 @@ bool DEVICE::truncate(DCR *dcr)
    }
 
    if (dev->device->set_vol_read_only) {
-      if (set_writable(dev->m_fd, dcr->VolumeName) < 0) {
-         berrno be;
+      if (set_writable(dev->m_fd, dcr->VolumeName, &errmsg) < 0) {
          Mmsg3(errmsg, _("Unable to set write permission for volume %s on device %s. %s\n"),
-               dcr->VolumeName, print_name(), be.bstrerror());
+               dcr->VolumeName, print_name(), errmsg);
          return false;
       }
    }

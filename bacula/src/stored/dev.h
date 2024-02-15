@@ -618,9 +618,9 @@ public:
    virtual bool check_volume_protection_time(const char *vol_name) { return true; };
    virtual bool check_for_immutable(const char *vol_name) { return false; };
    virtual bool check_for_read_only(int fd, const char *vol_name) { return false; };
-   virtual int set_writable(int fd, const char *vol_name) { errno=ENOSYS; return -1;};
-   virtual int set_readonly(int fd, const char *vol_name) { errno=ENOSYS; return -1;};
-   virtual int set_atime(int fd, const char *vol_name, btime_t val) { errno=ENOSYS; return -1;};
+   virtual int set_writable(int fd, const char *vol_name, POOLMEM **error) { pm_strcpy(error, "Not implemented"); errno=ENOSYS; return -1;};
+   virtual int set_readonly(int fd, const char *vol_name, POOLMEM **error) { pm_strcpy(error, "Not implemented"); errno=ENOSYS; return -1;};
+   virtual int set_atime(int fd, const char *vol_name, btime_t val, POOLMEM **error) { pm_strcpy(error, "Not implemented"); errno=ENOSYS; return -1;};
    virtual int use_protect() { return 0; };
    virtual int use_volume_encryption();
    virtual const char *print_type() = 0;        /* in dev.c */
