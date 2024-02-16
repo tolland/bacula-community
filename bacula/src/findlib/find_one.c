@@ -230,29 +230,33 @@ static bool no_dump(JCR *jcr, FF_PKT *ff_pkt)
    bool ret = false; /* do backup */
    int attr;
    int fd = -1;
+   
    if (ff_pkt->flags & FO_HONOR_NODUMP) {
-      fd = open(ff_pkt->fname, O_RDONLY|O_CLOEXEC);
-      if (fd < 0) {
-         Dmsg2(50, "Failed to open file: %s err: %d\n",
-               ff_pkt->fname, errno);
-         goto bail_out;
-      }
+      if (S_ISDIR(ff_pkt->statp.st_mode) || S_ISREG(ff_pkt->statp.st_mode)) {
+	 /* lsattr and chattr in the e2fsprogs package only works for files and dirs */
+	 fd = open(ff_pkt->fname, O_RDONLY|O_CLOEXEC);
+	 if (fd < 0) {
+	    Dmsg2(50, "Failed to open file: %s err: %d\n",
+		  ff_pkt->fname, errno);
+	    goto bail_out;
+	 }
 
-      int ioctl_ret = ioctl(fd, FS_IOC_GETFLAGS, &attr);
-      if (ioctl_ret < 0) {
-         if (errno == ENOTTY) {
-            Dmsg2(50, "Failed to check for NODUMP flag for file: %s errno: %d, "
-                      "probably because of wrong filesystem used.\n",
-                  ff_pkt->fname, errno);
-         } else {
-            Dmsg2(50, "Failed to send Getflags IOCTL for: %s err: %d\n",
-                  ff_pkt->fname, errno);
-         }
-         goto bail_out;
-      }
+	 int ioctl_ret = ioctl(fd, FS_IOC_GETFLAGS, &attr);
+	 if (ioctl_ret < 0) {
+	    if (errno == ENOTTY) {
+	       Dmsg2(50, "Failed to check for NODUMP flag for file: %s errno: %d, "
+		     "probably because of wrong filesystem used.\n",
+		     ff_pkt->fname, errno);
+	    } else {
+	       Dmsg2(50, "Failed to send Getflags IOCTL for: %s err: %d\n",
+		     ff_pkt->fname, errno);
+	    }
+	    goto bail_out;
+	 }
 
-      /* Check if file has NODUMP flag set */
-      ret = attr & FS_NODUMP_FL;
+	 /* Check if file has NODUMP flag set */
+	 ret = attr & FS_NODUMP_FL;
+      }
    }
 
 bail_out:
