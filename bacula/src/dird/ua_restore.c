@@ -208,6 +208,18 @@ int restore_cmd(UAContext *ua, const char *cmd)
             goto bail_out;
          }
          rx.job_group = ua->argv[i];
+      } else if (strcasecmp(ua->argk[i], "storage") == 0) {
+         STORE *store;
+         LockRes();
+         foreach_res(store, R_STORAGE) {
+            if (strcasecmp(ua->argv[i], store->name()) == 0 &&
+                store->is_enabled() &&
+                acl_access_ok(ua, Storage_ACL, store->name())) {
+               rx.store = store;
+               break;
+            }
+         }
+         UnlockRes();
       }
    }
 
