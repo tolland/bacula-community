@@ -58,6 +58,17 @@ Device {
 }
 
 Device {
+  Name = FileStorage2
+  Media Type = File
+  Archive Device = @tmpdir@
+  LabelMedia = yes;                   # lets Bacula label unlabelled media
+  Random Access = Yes;
+  AutomaticMount = yes;               # when device opened, read it
+  RemovableMedia = no;
+  AlwaysOpen = no;
+}
+
+Device {
   Name = Dummy
   Media Type = Dummy
   Device Type = Fifo
