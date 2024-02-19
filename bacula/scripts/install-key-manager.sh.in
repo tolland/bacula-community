@@ -101,8 +101,10 @@ install()
 
    GNUPG_SCRIPT=`mktemp`
    cat > $GNUPG_SCRIPT <<EOF
-Key-Type: default
-Subkey-Type: default
+Key-Type: RSA
+Subkey-Type: RSA
+Key-length: 2048
+Subkey-Length: 2048
 Name-Real: Bacula
 Name-Email: bacula@localhost
 Expire-Date: 0
