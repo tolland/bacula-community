@@ -21,6 +21,7 @@
  */
 
 use Baculum\API\Modules\BaculumAPIServer;
+use Baculum\API\Modules\ClientManager;
 use Baculum\Common\Modules\Errors\BconsoleError;
 
 /**
@@ -32,7 +33,13 @@ use Baculum\Common\Modules\Errors\BconsoleError;
  */
 class ClientResNames extends BaculumAPIServer {
 	public function get() {
-		$limit = $this->Request->contains('limit') ? (int)$this->Request['limit'] : 0;
+		$misc = $this->getModule('misc');
+		$limit = $this->Request->contains('limit') && $misc->isValidInteger($this->Request['limit']) ? (int) $this->Request['limit'] : 0;
+		$mode = $this->Request->contains('overview') && $misc->isValidBooleanTrue($this->Request['overview']) ? ClientManager::CLIENT_RESULT_MODE_OVERVIEW : ClientManager::CLIENT_RESULT_MODE_NORMAL;
+		if ($mode == ClientManager::CLIENT_RESULT_MODE_OVERVIEW) {
+			// For overview mode, limit is not taken into account
+			$limit = 0;
+		}
 		$clients_cmd = ['.client'];
 
 		$directors = $this->getModule('bconsole')->getDirectors();
@@ -74,6 +81,25 @@ class ClientResNames extends BaculumAPIServer {
 			$this->output = BconsoleError::MSG_ERROR_WRONG_EXITCODE . $emsg;
 			$this->error = BconsoleError::ERROR_WRONG_EXITCODE;
 		} else {
+			if ($mode == ClientManager::CLIENT_RESULT_MODE_OVERVIEW) {
+				$clis = [
+					'reachable' => [],
+					'unreachable' => []
+				];
+				$clients_cat = $this->getModule('client')->getClients();
+				foreach ($clients as $director => $clients_bac) {
+					for ($i = 0; $i < count($clients_cat); $i++) {
+						if (in_array($clients_cat[$i]['name'], $clients_bac)) {
+							if (empty($clients_cat[$i]['uname'])) {
+								$clis['unreachable'][] = $clients_cat[$i]['name'];
+							} else {
+								$clis['reachable'][] = $clients_cat[$i]['name'];
+							}
+						}
+					}
+				}
+				$clients = $clis;
+			}
 			$this->output = $clients;
 			$this->error =  BconsoleError::ERROR_NO_ERRORS;
 		}

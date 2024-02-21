@@ -929,6 +929,15 @@
 				"parameters": [
 					{
 						"$ref": "#/components/parameters/Limit"
+					},
+					{
+						"name": "overview",
+						"in": "query",
+						"required": false,
+						"description": "If set, it provides the client list split into reacheable and unreachable clients. Offset and limit parameters do not apply to overview counts.",
+						"schema": {
+							"type": "boolean"
+						}
 					}
 				]
 			}
