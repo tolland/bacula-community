@@ -1365,7 +1365,7 @@ static bool volumeprotect_cmd(JCR *jcr)
             uint32_t when = MAX(dev->device->min_volume_protection_time, retention);
             btime_t now = time(NULL);
             if (dev->set_atime(-1, volume, now + when, error.handle()) < 0) {
-               MmsgD3(DT_VOLUME|50, tmp,
+               MmsgD3(DT_VOLUME|50, tmp.addr(),
 		      _(" Failed to set the volume %s on device %s in atime retention, ERR=%s.\n"),
 		      volume, dev->print_name(), error.c_str());
             }
