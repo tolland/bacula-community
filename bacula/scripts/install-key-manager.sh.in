@@ -136,9 +136,9 @@ uid=bacula@localhost
 passphrase=$PASSPHRASE
 stealth=off
 EOF
-   if [ "$USER" = root -o "$UID" = 0  ]; then
+   if [ "$USER" = root ] || [ "$(id -u)" = 0  ]; then
       echo change ownership to user bacula
-      chown -R bacula.bacula $KEYMAN_CONF $GNUPGHOME
+      chown -R bacula:bacula $KEYMAN_CONF $GNUPGHOME
    fi
    echo "public and private keys have been created in $GNUPGHOME"
    echo "the key-manager configuration file is in $KEYMAN_CONF"
