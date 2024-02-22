@@ -31,7 +31,7 @@ namespace Baculum\API\Modules;
  * @package Baculum API
  */
 class Ls extends APIModule {
-	const LS_OUTPUT_PATTERN = '/^(?P<perm>[a-z\-\.]+)\s+(?P<nb_hardlink>\d+)\s+(?P<owner>\w+)\s+(?P<group>\w+)\s+(?P<size>\d+)\s+(?P<mtime>[\d\-]+\s+[\d:]+)\s+(?P<item>(?U:[\S\s]+))(?P<dest>(?(?=\s+\-\>\s+)[\S\s]*))$/i';
+	const LS_OUTPUT_PATTERN = '/^(?P<perm>[a-z\-\.]+)\s+(?P<nb_hardlink>\d+)\s+(?P<owner>[\w-.]+)\s+(?P<group>[\w-.]+)\s+(?P<size>\d+)\s+(?P<mtime>[\d\-]+\s+[\d:]+)\s+(?P<item>(?U:[\S\s]+))(?P<dest>(?(?=\s+\-\>\s+)[\S\s]*))$/i';
 
 	public function parseOutput(array $output) {
 		$result = array();
