@@ -37,6 +37,7 @@ class FileSets extends BaculumAPIServer {
 		$content = $this->Request->contains('content') && $misc->isValidNameList($this->Request['content']) ? $this->Request['content'] : '';
 		$limit = $this->Request->contains('limit') && $misc->isValidInteger($this->Request['limit']) ? (int)$this->Request['limit'] : 0;
 		$offset = $this->Request->contains('offset') && $misc->isValidInteger($this->Request['offset']) ? (int)$this->Request['offset'] : 0;
+		$unique_filesets = $this->Request->contains('unique_filesets') && $misc->isValidBooleanTrue($this->Request['unique_filesets']) ? true : false;
 		$result = $this->getModule('bconsole')->bconsoleCommand(
 			$this->director,
 			['.fileset']
@@ -69,7 +70,12 @@ class FileSets extends BaculumAPIServer {
 				];
 			}
 
-			$filesets = $this->getModule('fileset')->getFileSets($params, $limit, $offset);
+			$filesets = $this->getModule('fileset')->getFileSets(
+				$params,
+				$limit,
+				$offset,
+				$unique_filesets
+			);
 			$this->output = $filesets;
 			$this->error = FileSetError::ERROR_NO_ERRORS;
 		} else {

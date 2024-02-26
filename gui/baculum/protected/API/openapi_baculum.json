@@ -5679,6 +5679,15 @@
 							"type": "string",
 							"pattern": "[a-zA-Z0-9:.-_ ]+"
 						}
+					},
+					{
+						"name": "unique_filesets",
+						"in": "query",
+						"required": false,
+						"description": "Display only latest unique filesets without taking into account fileset versions.",
+						"schema": {
+							"type": "boolean"
+						}
 					}
 				]
 			}

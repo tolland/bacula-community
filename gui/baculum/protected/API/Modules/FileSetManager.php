@@ -33,7 +33,7 @@ use PDO;
  */
 class FileSetManager extends APIModule {
 
-	public function getFileSets($criteria, $limit_val = 0, $offset_val = 0) {
+	public function getFileSets($criteria, $limit_val = 0, $offset_val = 0, $unique_vals = false) {
 		$limit = '';
 		if (is_int($limit_val) && $limit_val > 0) {
 			$limit = ' LIMIT ' . $limit_val;
@@ -43,10 +43,28 @@ class FileSetManager extends APIModule {
 			$offset = ' OFFSET ' . $offset_val;
 		}
 		$where = Database::getWhere($criteria);
-
-		$sql = 'SELECT FileSet.* 
+		if ($unique_vals) {
+			$sql = '
+SELECT
+	fs.FileSetId AS filesetid,
+	fs.FileSet AS fileset,
+	fs.Md5 AS md5,
+	fs.CreateTime AS createtime,
+	fs.Content AS content
+FROM (
+	SELECT
+		FileSet.*,
+		ROW_NUMBER() OVER (PARTITION BY FileSet ORDER BY CreateTime DESC) AS pos
+	FROM FileSet
+	' . $where['where'] . '
+) AS fs
+WHERE fs.pos=1 '
+ . $limit . $offset;
+		} else {
+			$sql = 'SELECT FileSet.* 
 FROM FileSet '
-. $where['where'] . $limit . $offset;
+ . $where['where'] . $limit . $offset;
+		}
 
 		$statement = Database::runQuery($sql, $where['params']);
 		return $statement->fetchAll(PDO::FETCH_OBJ);
