@@ -45,7 +45,7 @@ abstract class ConsoleOutputShowPage extends ConsoleOutputPage {
 				$key = strtolower($match[1]);
 				$ret[$key] = $match[2];
 			}
-			$mcount = preg_match_all('/(?<=\s)\w+=.+?(?=\s+\w+=.+|$)/i', $output[$i], $matches);
+			$mcount = preg_match_all('/(?<=\s)\w+=.*?(?=\s+\w+=.+|$)/i', $output[$i], $matches);
 			if ($mcount === 0) {
 				continue;
 			}
