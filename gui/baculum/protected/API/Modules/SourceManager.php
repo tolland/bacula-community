@@ -213,7 +213,7 @@ class SourceManager extends APIModule {
 					$order_by,
 					$order_direction,
 					'joberrors',
-					$misc::ORDER_DIRECTION_ASC
+					$order_direction
 				);
 			} else {
 				$misc::sortResultsByField(
