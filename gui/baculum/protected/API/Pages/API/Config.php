@@ -63,20 +63,36 @@ class Config extends BaculumAPIServer {
 			$resource_name,
 			$opts
 		);
-		if ($config['exitcode'] === 0 && count($config['output']) == 0) {
+		$resource_config = [];
+		if ($config['exitcode'] === 0) {
+			$resource_config = $config['output'];
+		} else {
+			$emsg = sprintf(
+				'%s, Output=>%s, Error=>%d',
+				BaculaConfigError::MSG_ERROR_WRONG_EXITCODE,
+				var_export($config['output'], true),
+				$config['exitcode']
+			);
+			$this->output = $emsg;
+			$this->error = BaculaConfigError::ERROR_WRONG_EXITCODE;
+			return;
+			// END
+		}
+
+		if (is_string($resource_name) && count($resource_config) == 0) {
 			// Config does not exists. Nothing to get.
 			$this->output = BaculaConfigError::MSG_ERROR_CONFIG_DOES_NOT_EXIST;
 			$this->error = BaculaConfigError::ERROR_CONFIG_DOES_NOT_EXIST;
 		} else {
 			if (is_string($filter_directive) && is_string($filter_value)) {
-				$config['output'] = BaculaConfig::filterResources(
-					$config['output'],
+				$resource_config = BaculaConfig::filterResources(
+					$resource_config,
 					$filter_directive,
 					$filter_value
 				);
 			}
-			$this->output = $config['output'];
-			$this->error = $config['exitcode'];
+			$this->output = $resource_config;
+			$this->error = BaculaConfigError::ERROR_NO_ERRORS;
 		}
 	}
 
