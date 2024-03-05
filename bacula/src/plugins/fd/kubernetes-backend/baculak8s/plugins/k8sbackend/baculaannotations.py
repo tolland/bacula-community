@@ -55,12 +55,13 @@ class BaculaBackupMode(object):
         Returns:
             str: backup mode normalized to consts, `None` when error
         """
-        if mode is not None:
-            mode = mode.lower()
-            for p in BaculaBackupMode.params:
-                if p == mode:
-                    return p
-        return None
+        if mode is None:
+            return None
+        mode = mode.lower()
+        for p in BaculaBackupMode.params:
+            if p == mode:
+                return p
+        raise Exception('This backup mode `{}` is not supported. Only supported: snapshot, clone or standard.'.format(mode))
 
 
 class BaculaAnnotationsClass(object):

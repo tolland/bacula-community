@@ -68,6 +68,7 @@ const char * valid_params[] =
    "ssl_ca_cert",
    "timeout",
    "debug",
+   "backup_mode",
    "namespace",
    "ns",
    "persistentvolume",

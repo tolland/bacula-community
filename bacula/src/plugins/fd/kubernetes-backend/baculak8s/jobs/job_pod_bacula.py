@@ -45,7 +45,7 @@ POD_EXIST_ERR = "Job already running in '{namespace}' namespace. Check logs or d
 TAR_STDERR_UNKNOWN = "Unknown error. You should check Pod logs for possible explanation."
 PLUGINPORT_VALUE_ERR = "Cannot use provided pluginport={port} option. Used default!"
 FDPORT_VALUE_ERR = "Cannot use provided fdport={port} option. Used default!"
-POD_YAML_PREPARED_INFO = "Prepare backup Pod with: {image} <{pullpolicy}> {pluginhost}:{pluginport}"
+POD_YAML_PREPARED_INFO = "Prepare bacula-backup Pod with: {image} <{pullpolicy}> {pluginhost}:{pluginport}"
 POD_YAML_PREPARED_INFO_NODE = "Prepare Bacula Pod on: {nodename} with: {image} <{pullpolicy}> {pluginhost}:{pluginport}"
 CANNOT_CREATE_BACKUP_POD_ERR = "Cannot create backup pod. Err={}"
 CANNOT_REMOVE_BACKUP_POD_ERR = "Cannot remove backup pod. Err={}"
@@ -58,6 +58,7 @@ CANNOT_REMOVE_PVC_CLONE_ERR = "Cannot remove PVC snapshot. Err={}"
 CANNOT_REMOVE_VSNAPSHOT_ERR = "Unable to remove volume snapshot {vsnapshot}! Please you must remove it manually."
 CANNOT_START_CONNECTIONSERVER = "Cannot start ConnectionServer. Err={}"
 
+WARNING_CLONED_PVC_WAS_NOT_WORKED = "As clone backup is empty. It will retry again to do a backup with standard mode."
 VSNAPSHOT_BACKUP_COMPATIBLE_INFO = "The pvc `{}` is compatible with volume snapshot backup. Doing backup with this technology."
 PVC_FROM_SNAPSHOT_CREATED = "The pvc `{}` was created from volume snapshot from pvc `{}`."
 CREATING_PVC_FROM_VSNAPSHOT = "Creating pvc from volume snapshot of pvc `{}`."
@@ -93,10 +94,13 @@ class JobPodBacula(Job, metaclass=ABCMeta):
         self.tarexitcode = None
         self.backupimage = params.get('baculaimage', BACULABACKUPIMAGE)
         self.imagepullpolicy = ImagePullPolicy.process_param(params.get('imagepullpolicy'))
+        self.backup_clone_compatibility = True
 
     def handle_pod_logs(self, connstream):
         logmode = ''
         self.tarstderr = ''
+        file_count = 0
+        bytes_count = 0
         with connstream.makefile(mode='r') as fd:
             self.tarexitcode = fd.readline().strip()
             logging.debug('handle_pod_logs:tarexitcode:{}'.format(self.tarexitcode))
@@ -118,7 +122,20 @@ class JobPodBacula(Job, metaclass=ABCMeta):
                     continue
                 elif logmode == 'list':
                     # no listing feature yet
+                    file_count += 1
+                    try:
+                        file_props = data.split()
+                        logging.debug('Data Split:{}'.format(','.join(file_props)))
+                        bytes_count += int(file_props[2]) 
+                    except Exception as e:
+                        logging.exception(e)
                     continue
+        logging.debug('Bytes/files in backup: {}/{}'.format(bytes_count, file_count))
+        logging.debug('Type of job:' + str(self._params.get('type')))
+        if self._params.get('type') == 'b' and bytes_count == 0 and file_count < 3:
+            self._io.send_non_fatal_error(WARNING_CLONED_PVC_WAS_NOT_WORKED)
+            self.backup_clone_compatibility = False
+
 
     def handle_pod_data_recv(self, connstream):
         while True:

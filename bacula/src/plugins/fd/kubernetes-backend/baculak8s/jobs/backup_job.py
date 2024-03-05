@@ -39,8 +39,10 @@ BA_MODE_ERROR = "Invalid annotations for Pod: {namespace}/{podname}. Backup Mode
 BA_EXEC_STDOUT = "{}:{}"
 BA_EXEC_STDERR = "{} Error:{}"
 BA_EXEC_ERROR = "Pod Container execution: {}"
-POD_BACKUP_SELECTED = "The backup mode selected to the pvc `{}` is `{}`"
-CHANGE_BACKUP_MODE_FOR_INCOMPATIBLITY_PVC = "The pvc `{}` is not compatible with snapshot backup, changing mode to standard. Only pvc with storage that they use CSI driver are compatible."
+POD_BACKUP_SELECTED = "The selected backup mode in pod to the pvc `{}` is `{}`"
+CHANGE_BACKUP_MODE_FOR_INCOMPATIBLITY_PVC = "The pvc `{}` is not compatible with snapshot backup, changing mode to clone. Only pvc with storage that they use CSI driver are compatible."
+PVC_BACKUP_MODE_APPLIED_INFO = "The pvc `{}` will be backup with {} mode."
+RETRY_BACKUP_WITH_STANDARD_MODE = "If the clone backup is empty. It will try again to do a backup using standard mode."
 
 class BackupJob(EstimationJob):
     """
@@ -53,8 +55,10 @@ class BackupJob(EstimationJob):
     def __init__(self, plugin, params):
         super().__init__(plugin, params, BACKUP_START_PACKET)
         _label = params.get('labels', None)
+        self.fs_backup_mode = BaculaBackupMode.process_param(params.get("backup_mode", BaculaBackupMode.Snapshot)) # Fileset backup mode defined.
         if _label is not None:
             self._io.send_info(BACKUP_PARAM_LABELS.format(_label))
+        self._io.send_info("The selected default backup mode to do pvc backup is `{}`.".format(self.fs_backup_mode))
 
     def execution_loop(self):
         super().processing_loop(estimate=False)
@@ -128,24 +132,36 @@ class BackupJob(EstimationJob):
             return False
         return True
     
-    def process_pvcdata(self, namespace, pvcdata, backup_with_pod = False):
+    def process_pvcdata(self, namespace, pvcdata, backup_with_pod = False, retry_backup = False):
         status = None
         vsnapshot = None
         is_cloned = False
         cloned_pvc_name = None
+        # For retry if clone backup is incompatible.
+        orig_pvcdata = pvcdata
         # Detect if pvcdata is compatible with snapshots
-        if not backup_with_pod:
-            logging.debug('Backup without pod')
-            vsnapshot, pvcdata = self.handle_create_vsnapshot_backup(namespace, pvcdata.get('name'))
+        if not backup_with_pod and not retry_backup:
+            logging.debug('Backup mode {} of pvc {} without pod:'.format(self.fs_backup_mode, pvcdata.get('name')))
+            if self.fs_backup_mode == BaculaBackupMode.Snapshot:
+                logging.debug('Snapshot is activated')
+                vsnapshot, pvcdata = self.handle_create_vsnapshot_backup(namespace, pvcdata.get('name'))
+                self._io.send_info(PVC_BACKUP_MODE_APPLIED_INFO.format(pvcdata.get('name'), BaculaBackupMode.Snapshot))
+
+            if (vsnapshot is None and self.fs_backup_mode != BaculaBackupMode.Standard) or self.fs_backup_mode == BaculaBackupMode.Clone:
+                if self.fs_backup_mode != BaculaBackupMode.Clone:
+                    self._io.send_info(CHANGE_BACKUP_MODE_FOR_INCOMPATIBLITY_PVC.format(pvcdata.get('name')))
+                self._io.send_info(PVC_BACKUP_MODE_APPLIED_INFO.format(pvcdata.get('name'), BaculaBackupMode.Clone))
+                cloned_pvc_name = self.create_pvcclone(namespace, pvcdata.get('name'))
+                cloned_pvc = self._plugin.get_pvcdata_namespaced(namespace, cloned_pvc_name)
+                logging.debug('Cloned pvc fi:{}'.format(cloned_pvc.get('fi')))
+                cloned_pvc.get('fi').set_name(pvcdata.get('fi').name)
+                pvcdata = cloned_pvc
+                is_cloned = True
+
+            if self.fs_backup_mode == BaculaBackupMode.Standard:
+                self._io.send_info(PVC_BACKUP_MODE_APPLIED_INFO.format(pvcdata.get('name'), BaculaBackupMode.Standard))
         logging.debug('Process_pvcdata (Backup_job): {} --- {}'.format(vsnapshot, pvcdata))
-        # if vsnapshot is None:
-        #     self._io.send_info(CHANGE_BACKUP_MODE_FOR_INCOMPATIBLITY_PVC.format(pvcdata.get('name')))
-        #     cloned_pvc_name = self.create_pvcclone(namespace, pvcdata.get('name'))
-        #     cloned_pvc = self._plugin.get_pvcdata_namespaced(namespace, cloned_pvc_name)
-        #     logging.debug('Cloned pvc fi:{}'.format(cloned_pvc.get('fi')))
-        #     cloned_pvc.get('fi').set_name(pvcdata.get('fi').name)
-        #     pvcdata = cloned_pvc
-        #     is_cloned = True
+
         if self.prepare_bacula_pod(pvcdata, namespace=namespace, mode='backup'):
             super()._estimate_file(pvcdata)     # here to send info about pvcdata to plugin
             status = self.__backup_pvcdata(namespace=namespace)
@@ -158,6 +174,14 @@ class BackupJob(EstimationJob):
             self.handle_delete_vsnapshot_backup(namespace, vsnapshot, pvcdata)
         if is_cloned:
             self.delete_pvcclone(namespace, cloned_pvc_name)
+        # It retries when the backup is not with pod annotation (it is controlled in their function)
+        if not backup_with_pod and not retry_backup and not self.backup_clone_compatibility:
+            # It is important set to True before recall the process.
+            self.backup_clone_compatibility = True # We only try once
+
+            self._io.send_info(RETRY_BACKUP_WITH_STANDARD_MODE)
+
+            status = self.process_pvcdata(namespace, orig_pvcdata, backup_with_pod, True)
         return status
 
     def handle_pod_container_exec_command(self, corev1api, namespace, pod, runjobparam, failonerror=False):
@@ -222,36 +246,45 @@ class BackupJob(EstimationJob):
         logging.debug("iterate over requested vols for backup: {}".format(requestedvolumes))
         for pvc in requestedvolumes:
             pvcname = pvc
+            original_pvc = self._plugin.get_pvcdata_namespaced(namespace, pvcname)
             vsnapshot = None
             logging.debug("handling vol before backup: {}".format(pvcname))
             self._io.send_info(POD_BACKUP_SELECTED.format(pvcname, backupmode))
-            # self._io.send_info("The pvc `{}` will be backedup with {} mode".format(pvcname, backupmode))
-            if backupmode == BaculaBackupMode.Clone:
-                # snapshot if requested
-                pvcname = self.create_pvcclone(namespace, pvcname)
-                if pvcname is None:
-                    # error
-                    logging.error("create_pvcclone failed!")
-                    return False
 
             if backupmode == BaculaBackupMode.Snapshot:
                 logging.debug('Snapshot mode chosen')
                 vsnapshot, pvc_from_vsnap = self.handle_create_vsnapshot_backup(namespace, pvcname)
                 logging.debug("The vsnapshot created from pvc {} is: {}".format(pvcname, vsnapshot))
                 logging.debug("The pvc create from vsnapshot {} is: {}. FI: {}".format(vsnapshot, pvc_from_vsnap, pvc_from_vsnap.get('fi')))
-                if vsnapshot == None:
+                if vsnapshot is None:
                     logging.debug(CHANGE_BACKUP_MODE_FOR_INCOMPATIBLITY_PVC.format(pvcname))
                     # backupmode = BaculaBackupMode.Clone
                     self._io.send_info(CHANGE_BACKUP_MODE_FOR_INCOMPATIBLITY_PVC.format(pvcname))
+                    backupmode = BaculaBackupMode.Clone
                 else:
                     pvc = pvc_from_vsnap
                     pvcname = pvc_from_vsnap.get("name")
+
+            if backupmode == BaculaBackupMode.Clone:
+                pvcname = self.create_pvcclone(namespace, pvcname)
+                cloned_pvc = self._plugin.get_pvcdata_namespaced(namespace, pvcname)
+                if pvcname is None:
+                    # error
+                    logging.error("create_pvcclone failed!")
+                    return False
+                else:
+                    logging.debug('Original_pvc: {}'.format(original_pvc.get('fi')))
+                    logging.debug('Cloned_pvc->fi: {}'.format(cloned_pvc.get('fi')))
+                    cloned_pvc.get('fi').set_name(original_pvc.get('fi').name)
+                    pvc = cloned_pvc
 
             logging.debug("handling vol after snapshot/clone: {}".format(pvcname))
             handledvolumes.append({
                 'pvcname': pvcname,
                 'pvc': pvc,
-                'vsnapshot': vsnapshot
+                'vsnapshot': vsnapshot,
+                'backupmode': backupmode,
+                'original_pvc': original_pvc
                 })
 
         failonerror = BoolParam.handleParam(pod.get(BaculaAnnotationsClass.RunAfterSnapshotonError), False)     # the default is ignore errors
@@ -276,22 +309,26 @@ class BackupJob(EstimationJob):
             else:
                 # Modify the name in FileInfo because we need save the file like original name 
                 # and not the new pvc (from vsnapshot) name.
-                if volumes.get('vsnapshot') is not None:
+                if volumes.get('backupmode') == BaculaBackupMode.Snapshot or volumes.get('backupmode') == BaculaBackupMode.Clone:
                     logging.debug('We change the name of FileInfo to adapt the original pvc name with the new pvc name')
                     pvcdata.get('fi').set_name(pvc.get('fi').name)
 
                 if len(pvcdata) > 0:
                     status = self.process_pvcdata(namespace, pvcdata, True)
+                    # Control the compatibility of snapshot or clone. If it is not compatible, retry again with standard backup mode.
+                    logging.debug('Call again process_pvcdata from process_pod_pvcdata? {}'.format(self.backup_clone_compatibility))
+                    if not self.backup_clone_compatibility:
+                        status = self.process_pvcdata(namespace, volumes['original_pvc'], True)
 
         # iterate on requested volumes for delete snap
         logging.debug("iterate over requested vols for delete snap: {}".format(handledvolumes))
         for volumes in handledvolumes:
             pvcname = volumes['pvcname']
             logging.debug("Should remove this pvc: {}".format(pvcname))
-            if backupmode == BaculaBackupMode.Clone:
+            if volumes.get('backupmode') == BaculaBackupMode.Clone:
                 # snapshot delete if snapshot requested
                 status = self.delete_pvcclone(namespace, pvcname)
-            if backupmode == BaculaBackupMode.Snapshot and volumes['vsnapshot'] is not None:
+            if volumes.get('backupmode') == BaculaBackupMode.Snapshot and volumes['vsnapshot'] is not None:
                 status = self.handle_delete_vsnapshot_backup(namespace, volumes['vsnapshot'], volumes['pvc'])
         logging.debug("Finish removing pvc clones and vsnapshots. Status {}".format(status))
 
