@@ -11522,6 +11522,41 @@
 					}
 				]
 			}
+		},
+		"/api/v2/system/app/version": {
+			"get": {
+				"tags": ["system"],
+				"summary": "Get application version.",
+				"description": "Get application version.",
+				"responses": {
+					"200": {
+						"description": "Application version",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"output": {
+											"type": "object",
+											"properties": {
+												"version": {
+													"type": "string",
+													"description": "Application version in format X.Y.Z"
+												}
+											}
+										},
+										"error": {
+											"type": "integer",
+											"description": "Error code",
+											"enum": [0, 1000]
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"definitions": {

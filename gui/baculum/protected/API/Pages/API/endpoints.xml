@@ -10,6 +10,8 @@
 	<!-- general endpoint -->
 	<url ServiceParameter="Welcome" pattern="api/v2/welcome/" />
 	<url ServiceParameter="SearchItems" pattern="api/v2/search/" />
+	<!-- system endpoints -->
+	<url ServiceParameter="AppVersion" pattern="api/v2/system/app/version" />
 	<!-- bconsole endpoints -->
 	<url ServiceParameter="ConsoleCommand" pattern="api/v2/console/" />
 	<!-- database endpoints -->
