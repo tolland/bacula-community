@@ -150,6 +150,12 @@ stop_bacula
 check_two_logs
 check_restore_diff
 
+grep "Migration Error" $tmp/log1.out > /dev/null
+if [ $? -eq 0 ]; then
+    print_debug "ERROR: shouldn't get a Migration Error in $tmp/log1.out"
+    estat=1
+fi
+
 trap - INT
 
 PID=`cat $cwd/working2/bacula-sd.*.pid`
