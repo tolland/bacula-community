@@ -16,6 +16,11 @@ scripts/copy-test-confs
 echo "${cwd}/build/po/fr.po" >${cwd}/tmp/file-list
 #echo "${cwd}/build" >${cwd}/tmp/file-list
 
+if ! grep ZSTD $cwd/build/config.out | grep yes > /dev/null ; then
+    print_debug "ERROR: ZSTD not available here"
+    exit 1
+fi
+
 start_test
 
 if [ "$ZSTD_LEVEL" = "NONE" ] ; then
