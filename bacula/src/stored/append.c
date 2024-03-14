@@ -49,9 +49,13 @@ void possible_incomplete_job(JCR *jcr, uint32_t last_file_index)
     * We cannot mark a job Incomplete if we have already flushed
     *  a bad JobMedia record (i.e. one beyond the last FileIndex
     *  that is known to be good).
+    * Only backups of type JT_BACKUP are handled for now.
+    * Be careful MAC backups keep the type of the source job aka JT_BACKUP
+    * but have the jcr->sd_client set.
     */
    if (jcr->spool_attributes && last_file_index > 10 &&
-       dir->get_lastFlushIndex() < last_file_index) {
+       dir->get_lastFlushIndex() < last_file_index &&
+       jcr->getJobType() == JT_BACKUP && !jcr->sd_client) {
       jcr->setJobStatus(JS_Incomplete);
    }
 }
