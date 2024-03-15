@@ -1126,10 +1126,7 @@ bool generic_driver::clean_cloud_volume(const char *VolumeName, cleanup_cb_type 
 
    int rtn=0;
    int i;
-   for (i=0; (i <= (int)parts.last_index()); i++) {
-      if (!parts.get(i)) {
-         continue;
-      }
+   for (i=0; i < parts.last_index(); i++) {
       int r = call_fct("delete", VolumeName, (char*)parts.get(i), NULL, NULL, cancel_cb, err);
       if (r == 0) {
          Dmsg2(dbglvl, "clean_cloud_volume for %s: Unlink file %s.\n", VolumeName, (char*)parts.get(i));
