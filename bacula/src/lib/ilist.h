@@ -50,7 +50,6 @@ public:
    ilist(int num = 100, bool own=true);
    ~ilist();
    void init(int num = 100, bool own=true);
-   void append(void *item);
    void *get(int index);
    bool empty() const;
    int last_index() const { return last_item; };

@@ -65,20 +65,13 @@ void ilist::grow_list()
    }
 }
 
-void ilist::append(void *item)
-{
-   grow_list();
-   items[last_item++] = item;
-   num_items++;
-}
-
 /*
  * Put an item at a particular index
  */
 void ilist::put(int index, void *item)
 {
    if (index > last_item) {
-      last_item = index; // FIXME: On alist, last_item is pointing after the last item
+      last_item = index;
    }
    grow_list();
    if (items[index] == NULL) {
