@@ -1048,14 +1048,14 @@ bool generic_driver::truncate_cloud_volume(const char *volume_name, ilist *trunc
 
 struct clean_cloud_volume_read_cb_arg {
    POOLMEM **remain;
-   ilist *parts;
+   alist *parts;
    cleanup_cb_type *cb;
    cleanup_ctx_type *ctx;
 };
 
 size_t clean_cloud_volume_read_cb(char *res, size_t sz, void* arg)
 {
-   ilist *parts = NULL;
+   alist *parts = NULL;
    bool wrong_string = false;
    size_t left = sz;
    POOLMEM **remain = NULL;
@@ -1108,7 +1108,7 @@ bool generic_driver::clean_cloud_volume(const char *VolumeName, cleanup_cb_type 
       return false;
    }
 
-   ilist parts;
+   alist parts;
 
    clean_cloud_volume_read_cb_arg arg;
    arg.parts = &parts;
@@ -1125,13 +1125,13 @@ bool generic_driver::clean_cloud_volume(const char *VolumeName, cleanup_cb_type 
    free_pool_memory(*arg.remain);
 
    int rtn=0;
-   int i;
-   for (i=0; i < parts.last_index(); i++) {
-      int r = call_fct("delete", VolumeName, (char*)parts.get(i), NULL, NULL, cancel_cb, err);
+   char *part = NULL;
+   foreach_alist(part, &parts) {
+      int r = call_fct("delete", VolumeName, part, NULL, NULL, cancel_cb, err);
       if (r == 0) {
-         Dmsg2(dbglvl, "clean_cloud_volume for %s: Unlink file %s.\n", VolumeName, (char*)parts.get(i));
+         Dmsg2(dbglvl, "clean_cloud_volume for %s: Unlink file %s.\n", VolumeName, part);
       } else {
-         Dmsg4(dbglvl, "clean_cloud_volume delete %s/%s returns %d. err=%s\n", VolumeName, (char*)parts.get(i), r, err);
+         Dmsg4(dbglvl, "clean_cloud_volume delete %s/%s returns %d. err=%s\n", VolumeName, part, r, err);
       }
       rtn |= r;
       if ((cancel_cb && cancel_cb->fct && cancel_cb->fct(cancel_cb->arg))) {
