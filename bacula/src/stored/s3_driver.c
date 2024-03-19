@@ -255,6 +255,7 @@ public:
    transfer *xfer;
    POOLMEM *&errMsg;
    ilist *parts;
+   alist *aparts;
    int isTruncated;
    char* nextMarker;
    int64_t obj_len;
@@ -267,7 +268,7 @@ public:
    cleanup_cb_type *cleanup_cb;
    cleanup_ctx_type *cleanup_ctx;
    bool isRestoring;
-   bacula_ctx(POOLMEM *&err) : cancel_cb(NULL), xfer(NULL), errMsg(err), parts(NULL),
+   bacula_ctx(POOLMEM *&err) : cancel_cb(NULL), xfer(NULL), errMsg(err), parts(NULL), aparts(NULL),
                               isTruncated(0), nextMarker(NULL), obj_len(0), caller(NULL),
                               infile(NULL), outfile(NULL), volumes(NULL), status(S3StatusOK),
                               limit(NULL), cleanup_cb(NULL), cleanup_ctx(NULL), isRestoring(false)
@@ -275,7 +276,7 @@ public:
       /* reset error message (necessary in case of retry) */
       errMsg[0] = 0;
    }
-   bacula_ctx(transfer *t) : cancel_cb(NULL), xfer(t), errMsg(t->m_message), parts(NULL),
+   bacula_ctx(transfer *t) : cancel_cb(NULL), xfer(t), errMsg(t->m_message), parts(NULL), aparts(NULL),
                               isTruncated(0), nextMarker(NULL), obj_len(0), caller(NULL),
                               infile(NULL), outfile(NULL), volumes(NULL), status(S3StatusOK),
                               limit(NULL), cleanup_cb(NULL), cleanup_ctx(NULL), isRestoring(false)
@@ -676,7 +677,7 @@ static S3Status partsAndCopieslistBucketCallback(
    for (int i = 0; (cleanup_ctx && (i < numObj)); i++) {
       const S3ListBucketContent *obj = &(object[i]);
       if (obj && cb(obj->key, cleanup_ctx)) {
-         ctx->parts->append(bstrdup(obj->key));
+         ctx->aparts->append(bstrdup(obj->key));
          Dmsg1(dbglvl, "partsAndCopieslistBucketCallback: %s retrieved\n", obj->key);
       }
 
@@ -721,11 +722,11 @@ bool s3_driver::clean_cloud_volume(const char *VolumeName, cleanup_cb_type *cb, 
       return false;
    }
 
-   ilist parts;
+   alist parts;
 
    bacula_ctx ctx(err);
    ctx.cancel_cb = cancel_cb;
-   ctx.parts = &parts;
+   ctx.aparts = &parts;
    ctx.isTruncated = 1; /* pass into the while loop at least once */
    ctx.caller = "S3_list_bucket";
    ctx.cleanup_cb = cb;
@@ -734,7 +735,7 @@ bool s3_driver::clean_cloud_volume(const char *VolumeName, cleanup_cb_type *cb, 
    while (ctx.isTruncated!=0) {
       ctx.isTruncated = 0;
       S3_list_bucket(&s3ctx, VolumeName, ctx.nextMarker, NULL, 0, NULL, 0, &partsAndCopiesListBucketHandler, &ctx);
-      Dmsg4(dbglvl, "get_cloud_volume_parts_list isTruncated=%d, nextMarker=%s, nbparts=%d, err=%s\n", ctx.isTruncated, ctx.nextMarker, ctx.parts->size(), ctx.errMsg?ctx.errMsg:"None");
+      Dmsg4(dbglvl, "clean_cloud_volume isTruncated=%d, nextMarker=%s, nbparts=%d, err=%s\n", ctx.isTruncated, ctx.nextMarker, ctx.aparts->size(), ctx.errMsg?ctx.errMsg:"None");
       if (ctx.status != S3StatusOK) {
          pm_strcpy(err, S3Errors[ctx.status]);
          bfree_and_null(ctx.nextMarker);
@@ -744,12 +745,9 @@ bool s3_driver::clean_cloud_volume(const char *VolumeName, cleanup_cb_type *cb, 
    }
    bfree_and_null(ctx.nextMarker);
 
-   int last_index = (int)parts.last_index();
-   for (int i=0; (i<=last_index); i++) {
-      char *part = (char *)parts.get(i);
-      if (!part) {
-         continue;
-      }
+   char *part = NULL;
+   foreach_alist(part, &parts)
+   {
       if (cancel_cb && cancel_cb->fct && cancel_cb->fct(cancel_cb->arg)) {
          Mmsg(err, _("Job cancelled.\n"));
          Leave(dbglvl);
