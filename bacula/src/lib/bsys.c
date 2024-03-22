@@ -1489,9 +1489,24 @@ int fd_wait_data(int fd, fd_wait_mode mode, int sec, int msec)
       return -1;
 
    default:
+      /* POLLNVAL, POLLERR & POLLHUP are inevitable in "revents" and must be handled */
+      if (fds[0].revents & POLLNVAL) {
+         return -1; // the FD is not open
+      }
+      if (fds[0].revents & POLLERR) {
+         return -1; // something wrong, can also warn you about SIGPIPE if you try to write into a closed pipe
+      }
+      if (fds[0].revents & POLLHUP) {
+         /* The peer as closed the connection */
+         if (mode == WAIT_READ) {
+            /* lets read the last bytes until the EOF (read = 0 bytes) */
+         } else {
+            /* trying to write into a closed socket or pipe ? */
+            return -1; // maybe this error was already handled by POLLERR above
+         }
+      }
       if (fds[0].revents & POLLIN || fds[0].revents & POLLOUT) {
          return 1;
-
       } else {
          return -1;             /* unexpected... */
       }
