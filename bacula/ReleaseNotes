@@ -234,6 +234,7 @@ Release 15.0.1 / 13 February 2024
  - Fix zlib compression was disable in FD
  - Fix: #0010535. Problem with k8s snapshot version
 
+ - baculum: Add application version endpoint
  - baculum: Add client plugin list endpoint
  - baculum: Add content parameter to filesets endpoint
  - baculum: Add directive filter to config endpoints

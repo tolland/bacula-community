@@ -25,6 +25,10 @@
 04Mar24
  - win32: update openssl 1.1.1w
 
+03Mar24
+ - baculum: Update oauth2 scope list
+ - baculum: Add application version endpoint
+
 29Feb24
  - baculum: Fix config does not exist error in resource list endpoint
 
@@ -85,6 +89,10 @@
 21Dec23
  - cloud: Fix #10291 clean_cloud_volume uses "ls", so we handle its return code 
   the same way
+
+05Sep23
+ - build: avoid warning with extra parenthesis
+
 
 Bugs fixed/closed since last release:
 10291 10752 2706 2707 9882
