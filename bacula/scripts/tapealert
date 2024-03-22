@@ -34,17 +34,13 @@ fi
 
 
 if [ x$DEBUG = x ] ; then
-out=`mktemp`
-$tapeinfo -f $1 >$out
-ret=$?
-awk '/^TapeAlert/ { $1=""; gsub(/^ */, "", $0); print $0 }' $out
-rm -f $out
-exit $ret
+$tapeinfo -f $1 |grep "^TapeAlert" - |cut -b1-13
+exit $?
 
 else
 
 # For testing only
-cat <<EOF |grep "^TapeAlert" - | awk '/^TapeAlert/ { $1=""; gsub(/^ */, "", $0); print $0 }'
+cat <<EOF |grep "^TapeAlert" - |cut -b1-13
 Product Type: Tape Drive
 Vendor ID: 'IBM     '
 Product ID: 'ULTRIUM-TD6     '
