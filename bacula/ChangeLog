@@ -1,3 +1,94 @@
+        ChangeLog for Bacula Enterprise version 15.0.2
+
+22Mar24
+ - Revert "Fix #9882 About tapealert script issue on rhel8"
+
+19Mar24
+ - cloud: Fix 10788 s3 driver clean uses alist instead of ilist
+
+18Mar24
+ - cloud: generic driver clean uses alist instead of ilist
+ - ilist: remove append function since it's not used, but in generic driver and 
+  it's buggy
+
+15Mar24
+ - could: Fix 10788 cloud volume deletion crash
+
+14Mar24
+ - Only normal backup jobs can become "Incomplete", MAC must return errors
+ - Add a new command code to bsock for dedup2 protocol
+
+05Mar24
+ - k8s: Add backup_mode parameter, add resiliance when snapshot backup is not 
+  compatible and clone backup fails and minor fixes
+
+04Mar24
+ - win32: update openssl 1.1.1w
+
+29Feb24
+ - baculum: Fix config does not exist error in resource list endpoint
+
+27Feb24
+ - baculum: Fix level property in show job endpoint if level is not provided in 
+  config
+ - baculum: Make sources order by jobstatus consistent in asc/desc sorting
+
+26Feb24
+ - baculum: Add to filesets endpoint parameter to list unique filesets without 
+  versions
+
+23Feb24
+ - baculum: Fix regular expression in list client files/dirs endpoint
+
+22Feb24
+ - Cleaner shell code in install-key-manager.sh.in
+ - baculum: Fix displaying items in list client files/dirs endpoint
+
+21Feb24
+ - Fix compilation
+ - baculum: Add overview parameter to client resources endpoint
+
+19Feb24
+ - Fix org#2706 Volume encryption force RSA:2048 instead of gpg default
+
+16Feb24
+ - Fix #10752 storage option on the restore command line not working
+ - Fix org#2707 Check the NODUMP flag only on files and directories
+
+15Feb24
+ - Report immutable/readonly error messages to the job log
+ - Disable SyncOnClose on Fifo device using /dev/null
+
+14Feb24
+ - add bVarEstimate to let the FD knows this is an estimate and not a real 
+  backup
+ - Enable Device/SyncOnClose by default
+
+13Feb24
+ - rpms: update cloud plugin
+
+03Feb24
+ - k8s:Add check snapshot api-resource available
+
+01Feb24
+ - Use llu for st_dev in snapshot code
+
+31Jan24
+ - Fix when 'volumesnapshotclasses' resource is not available in cluster
+
+29Jan24
+ - k8s: Fix 0010669: When a node have not any pvc
+
+23Jan24
+ - Added custom version to get more verbose
+
+21Dec23
+ - cloud: Fix #10291 clean_cloud_volume uses "ls", so we handle its return code 
+  the same way
+
+Bugs fixed/closed since last release:
+10291 10752 2706 2707 9882
+
         ChangeLog for Bacula Enterprise version 15.0.1
 
 12Feb24
