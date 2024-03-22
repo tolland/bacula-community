@@ -1,4 +1,20 @@
 
+                Release Notes for Baculum 15.0.2
+
+This is a new feature release. Almost all changes are for the API part.
+It extends the API capabilities for new functions.
+
+ - Update oauth2 scope list
+ - Add application version endpoint
+ - Fix config does not exist error in resource list endpoint
+ - Fix level property in show job endpoint if level is not provided in config
+ - Make sources order by jobstatus consistent in asc/desc sorting
+ - Add to filesets endpoint parameter to list unique filesets without versions
+ - Fix regular expression in list client files/dirs endpoint
+ - Fix displaying items in list client files/dirs endpoint
+ - Add overview parameter to client resources endpoint
+
+
                 Release Notes for Baculum 15.0.1 (beta)
 
 This is a new feature beta release. Almost all changes are for the API part.
