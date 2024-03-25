@@ -41,7 +41,7 @@ extern "C" {
 
 static const int dbglvl = 000;
 
-#define PLUGIN_LICENSE      "Bacula Systems(R) SA"
+#define PLUGIN_LICENSE      "AGPLv3"
 #define PLUGIN_AUTHOR       "Kern Sibbald"
 #define PLUGIN_DATE         "September 2017"
 #define PLUGIN_VERSION      "4"
