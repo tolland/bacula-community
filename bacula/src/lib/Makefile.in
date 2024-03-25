@@ -273,13 +273,13 @@ dlist_test: Makefile libbac.la dlist.c unittests.o
 	$(RMF) dlist.o
 	$(CXX) $(DEFS) $(DEBUG) -c $(CPPFLAGS) -I$(srcdir) -I$(basedir) $(DINCLUDE) $(CFLAGS) dlist.c
 
-crc32_test: Makefile libbac.la org_lib_crc32.c unittests.o
-	$(RMF) org_lib_crc32.o
-	$(CXX) -DTEST_PROGRAM $(DEFS) $(DEBUG) -c $(CPPFLAGS) -I$(srcdir) -I$(basedir) $(DINCLUDE) $(CFLAGS) org_lib_crc32.c
-	$(LIBTOOL_LINK) $(CXX) $(LDFLAGS) -L. -o $@ org_lib_crc32.o unittests.o $(DLIB) -lbac -lm $(LIBS) $(OPENSSL_LIBS)
+crc32_test: Makefile libbac.la bcrc32.c unittests.o
+	$(RMF) bcrc32.o
+	$(CXX) -DTEST_PROGRAM $(DEFS) $(DEBUG) -c $(CPPFLAGS) -I$(srcdir) -I$(basedir) $(DINCLUDE) $(CFLAGS) bcrc32.c
+	$(LIBTOOL_LINK) $(CXX) $(LDFLAGS) -L. -o $@ bcrc32.o unittests.o $(DLIB) -lbac -lm $(LIBS) $(OPENSSL_LIBS)
 	$(LIBTOOL_INSTALL) $(INSTALL_PROGRAM) $@ $(DESTDIR)$(sbindir)/
-	$(RMF) org_lib_crc32.o
-	$(CXX) $(DEFS) $(DEBUG) -c $(CPPFLAGS) -I$(srcdir) -I$(basedir) $(DINCLUDE) $(CFLAGS) org_lib_crc32.c
+	$(RMF) bcrc32.o
+	$(CXX) $(DEFS) $(DEBUG) -c $(CPPFLAGS) -I$(srcdir) -I$(basedir) $(DINCLUDE) $(CFLAGS) bcrc32.c
 
 sellist_test: Makefile libbac.la sellist.c unittests.o
 	$(RMF) sellist.o
