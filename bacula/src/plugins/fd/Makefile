@@ -147,7 +147,7 @@ install: all $(EXTRA_INSTALL_TARGET)
 install-docker:
 	$(MAKE) -C docker install-docker
 
-install-test-plugin: all test-plugins test-bpipe-fd.la
+install-test-plugin: all test-plugins test-bpipe-fd.la rot13-fd.la
 	$(MKDIR) $(DESTDIR)$(plugindir)
 	$(LIBTOOL_INSTALL) $(INSTALL_PROGRAM) test-plugin-fd.la $(DESTDIR)$(plugindir)
 	$(RMF) $(DESTDIR)$(plugindir)/test-plugin-fd.la
@@ -157,6 +157,8 @@ install-test-plugin: all test-plugins test-bpipe-fd.la
 	$(RMF) $(DESTDIR)$(plugindir)/test-handlexacl-plugin-fd.la
 	$(LIBTOOL_INSTALL) $(INSTALL_PROGRAM) test-bpipe-fd.la $(DESTDIR)$(plugindir)
 	$(RMF) $(DESTDIR)$(plugindir)/test-bpipe-fd.la
+	$(LIBTOOL_INSTALL) $(INSTALL_PROGRAM) rot13-fd.la $(DESTDIR)$(plugindir)
+	$(RMF) $(DESTDIR)$(plugindir)/rot13-fd.la
 
 install-test-dedup: test-dedup-fd.la
 	$(MKDIR) $(DESTDIR)$(plugindir)
