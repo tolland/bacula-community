@@ -1547,8 +1547,8 @@ if ! grep "TestVolume003 | Append" $fn-recreate > /dev/null; then
     estat=1
 fi
 
-if ! grep "17 | TestVolume003" $fn-recreate > /dev/null; then
-    print_debug "ERROR: Should find TestVolume003 in $fn-recreate"
+if ! grep "16 | TestVolume003" $fn-recreate > /dev/null; then
+    print_debug "ERROR: Should find Job 16 on TestVolume003 in $fn-recreate"
     estat=1
 fi
 
@@ -1605,7 +1605,7 @@ $bin/bconsole -c $conf/bconsole.conf.old < $tmp/bconcmds
 cat <<EOF > $tmp/bconcmds
 @##############################################
 @$out $fn-purge
-restart jobid=18
+restart jobid=17
 wait
 message
 list files jobid=18
@@ -1639,7 +1639,7 @@ fi
 cat <<EOF > $tmp/bconcmds
 @##############################################
 @$out $fn-after-purge
-restart jobid=18
+restart jobid=17
 wait
 message
 list files jobid=18
