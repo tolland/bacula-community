@@ -5671,6 +5671,16 @@
 						"$ref": "#/components/parameters/Offset"
 					},
 					{
+						"name": "name",
+						"in": "query",
+						"required": false,
+						"description": "FileSet name",
+						"schema": {
+							"type": "string",
+							"pattern": "[a-zA-Z0-9:.-_ ]+"
+						}
+					},
+					{
 						"name": "content",
 						"in": "query",
 						"description": "Content property value. There is possible to provide whole content value or only a part. Multiple comma separated values are allowed. Example: 'postgresql,file' value searches for filesets with postgresql OR file OR both.",
@@ -5687,6 +5697,25 @@
 						"description": "Display only latest unique filesets without taking into account fileset versions.",
 						"schema": {
 							"type": "boolean"
+						}
+					},
+					{
+						"name": "order_by",
+						"in": "query",
+						"required": false,
+						"description": "Sort by selected fileset property (default by fileset). There can be any fileset property.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "order_direction",
+						"in": "query",
+						"required": false,
+						"description": "Order direction. It can be 'asc' (ascending order) or 'desc' (descending order - default)",
+						"schema": {
+							"type": "string",
+							"enum": ["asc", "desc"]
 						}
 					}
 				]
