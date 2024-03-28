@@ -34,17 +34,27 @@ class FileSets extends BaculumAPIServer {
 
 	public function get() {
 		$misc = $this->getModule('misc');
+		$fileset = $this->Request->contains('name') && $misc->isValidName($this->Request['name']) ? $this->Request['name'] : '';
 		$content = $this->Request->contains('content') && $misc->isValidNameList($this->Request['content']) ? $this->Request['content'] : '';
 		$limit = $this->Request->contains('limit') && $misc->isValidInteger($this->Request['limit']) ? (int)$this->Request['limit'] : 0;
 		$offset = $this->Request->contains('offset') && $misc->isValidInteger($this->Request['offset']) ? (int)$this->Request['offset'] : 0;
+		$order_by = $this->Request->contains('order_by') && $misc->isValidColumn($this->Request['order_by']) ? $this->Request['order_by']: null;
+		$order_direction = $this->Request->contains('order_direction') && $misc->isValidOrderDirection($this->Request['order_direction']) ? $this->Request['order_direction']: null;
 		$unique_filesets = $this->Request->contains('unique_filesets') && $misc->isValidBooleanTrue($this->Request['unique_filesets']) ? true : false;
 		$result = $this->getModule('bconsole')->bconsoleCommand(
 			$this->director,
-			['.fileset']
+			['.fileset'],
+			null,
+			true
 		);
 		if ($result->exitcode === 0) {
-			array_shift($result->output);
-			$vals = array_filter($result->output);
+			$vals = [];
+			if (!empty($fileset)) {
+				$vals = [$fileset];
+			} else {
+				$vals = array_filter($result->output);
+			}
+
 			if (count($vals) == 0) {
 				// no $vals criteria means that user has no fileset resource assigned.
 				$this->output = [];
@@ -57,6 +67,26 @@ class FileSets extends BaculumAPIServer {
 				'operator' => 'IN',
 				'vals' => $vals
 			];
+
+			$sort = [];
+			if (!is_null($order_by)) {
+				if (is_null($order_direction)) {
+					$order_direction = 'ASC';
+				}
+				$cr = new \ReflectionClass('Baculum\API\Modules\FileSetRecord');
+				$sort_cols = $cr->getProperties();
+				$order_by_lc = strtolower($order_by);
+				$columns = [];
+				foreach ($sort_cols as $cols) {
+					$columns[] = $cols->getName();
+				}
+				if (!in_array($order_by_lc, $columns)) {
+					$this->output = FileSetError::MSG_ERROR_INVALID_PROPERTY;
+					$this->error = FileSetError::ERROR_INVALID_PROPERTY;
+					return;
+				}
+				$sort = [[$order_by_lc, $order_direction]];
+			}
 
 			if (!empty($content)) {
 				$cnts = explode(',', $content);
@@ -74,6 +104,7 @@ class FileSets extends BaculumAPIServer {
 				$params,
 				$limit,
 				$offset,
+				$sort,
 				$unique_filesets
 			);
 			$this->output = $filesets;
