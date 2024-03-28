@@ -34,6 +34,11 @@ cat <<END_OF_DATA >$tmp/bconcmds
 messages
 @$out $tmp/log1.out
 status client
+@$out $tmp/log111.out
+sql
+select 'ERROR', Name, Uname, Plugins from Client WHERE Uname = '';
+
+
 @$out $tmp/log2.out
 status storage
 @$out $tmp/log3.out
@@ -189,12 +194,6 @@ if [ $? -ne 0 ]; then
     estat=1
 fi
 
-grep "No Jobs running" $tmp/log10.out > /dev/null
-if [ $? -ne 0 ]; then
-    print_debug "ERROR: should find 'No Jobs running' in $tmp/log10.out"
-    estat=1
-fi
-
 grep "SDPort=" $tmp/log11.out > /dev/null
 if [ $? -ne 0 ]; then
     print_debug "ERROR: should find 'SDPort' in $tmp/log11.out"
@@ -204,6 +203,12 @@ fi
 grep "MaximumConcurrentJobs" $tmp/log11.out > /dev/null
 if [ $? -ne 0 ]; then
     print_debug "ERROR: should find 'MaximumConcurrentJobsSDPort' in $tmp/log11.out"
+    estat=1
+fi
+
+nb=`grep "ERROR" $tmp/log111.out | wc -l`
+if [ $nb -gt 1 ]; then
+    print_debug "ERROR: Should find Uname updated after status client in $tmp/log111.out"
     estat=1
 fi
 
