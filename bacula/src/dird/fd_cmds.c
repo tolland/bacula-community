@@ -200,27 +200,53 @@ int connect_to_file_daemon(JCR *jcr, int retry_interval, int max_retry_time,
              jcr->client->hdr.name, fd->msg);
           return 0;
 
-       } else if (jcr->db) {
-          CLIENT_DBR cr;
-          memset(&cr, 0, sizeof(cr));
-          bstrncpy(cr.Name, jcr->client->hdr.name, sizeof(cr.Name));
-          cr.AutoPrune = jcr->client->AutoPrune;
-          cr.FileRetention = jcr->client->FileRetention;
-          cr.JobRetention = jcr->client->JobRetention;
+       } else {
+	  bool close_db = false;
+	  if (!jcr->db) {
+	     close_db = true;
+	     CAT *cat = jcr->client->catalog;
+	     jcr->db = db_init_database(jcr, cat->db_driver, cat->db_name,
+					cat->db_user,
+					cat->db_password, cat->db_address,
+					cat->db_port, cat->db_socket,
+					cat->db_ssl_mode, cat->db_ssl_key,
+					cat->db_ssl_cert, cat->db_ssl_ca,
+					cat->db_ssl_capath, cat->db_ssl_cipher,
+					cat->mult_db_connections,
+					cat->disable_batch_insert);
+	     if (!jcr->db || !db_open_database(jcr, jcr->db)) {
+		if (jcr->db) {
+		   db_close_database(jcr, jcr->db);
+		   jcr->db = NULL;
+		}
+	     }
+	  }
+	  if (jcr->db) {
+	     CLIENT_DBR cr;
+	     memset(&cr, 0, sizeof(cr));
+	     bstrncpy(cr.Name, jcr->client->hdr.name, sizeof(cr.Name));
+	     cr.AutoPrune = jcr->client->AutoPrune;
+	     cr.FileRetention = jcr->client->FileRetention;
+	     cr.JobRetention = jcr->client->JobRetention;
 
-          /* information about plugins can be found after the Uname */
-          char *pos = strchr(fd->msg+strlen(OKjob)+1, ';');
-          if (pos) {
-             *pos = 0;
-             bstrncpy(cr.Plugins, pos+1, sizeof(cr.Plugins));
-          }
-          bstrncpy(cr.Uname, fd->msg+strlen(OKjob)+1, sizeof(cr.Uname));
-          jcr->client_version = scan_version(cr.Uname);
+	     /* information about plugins can be found after the Uname */
+	     char *pos = strchr(fd->msg+strlen(OKjob)+1, ';');
+	     if (pos) {
+		*pos = 0;
+		bstrncpy(cr.Plugins, pos+1, sizeof(cr.Plugins));
+	     }
+	     bstrncpy(cr.Uname, fd->msg+strlen(OKjob)+1, sizeof(cr.Uname));
+	     jcr->client_version = scan_version(cr.Uname);
 
-          if (!db_update_client_record(jcr, jcr->db, &cr)) {
-             Jmsg(jcr, M_WARNING, 0, _("[DE0028] Error updating Client record. ERR=%s\n"),
-                  db_strerror(jcr->db));
-          }
+	     if (!db_update_client_record(jcr, jcr->db, &cr)) {
+		Jmsg(jcr, M_WARNING, 0, _("[DE0028] Error updating Client record. ERR=%s\n"),
+		     db_strerror(jcr->db));
+	     }
+	     if (close_db) {
+		db_close_database(jcr, jcr->db);
+		jcr->db = NULL;
+	     }
+	  }
        }
    } else {
       Mmsg(jcr->errmsg, _("[DE0031] FD gave bad response to JobId command: %s\n"),
