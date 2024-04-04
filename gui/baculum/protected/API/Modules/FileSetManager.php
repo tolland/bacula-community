@@ -63,7 +63,7 @@ FROM (
 	' . $where['where'] . '
 ) AS fs
 WHERE fs.pos=1 '
- . $limit . $offset;
+. $order . $limit . $offset;
 		} else {
 			$sql = 'SELECT FileSet.* 
 FROM FileSet '
