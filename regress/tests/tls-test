@@ -18,6 +18,10 @@ echo "${cwd}/build" >${cwd}/tmp/file-list
 
 change_jobname CompressedTest $JobName
 start_test
+
+# useful for testing Fix org#2714, define "me" in you /etc/hosts file as an alias of your localhost
+# $bperl -e 'add_attribute("$conf/bacula-dir.conf", "Address", "me", "Client", localhost-fd)'
+# $bperl -e 'add_attribute("$conf/bacula-dir.conf", "TLS Allowed CN", "localhost", "Client", localhost-fd)'
       
 cat <<END_OF_DATA >tmp/bconcmds
 messages
