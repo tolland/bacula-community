@@ -44,7 +44,6 @@ tls_remote_need(BNET_TLS_NONE),
 tls_authenticate(false),
 tls_verify_peer(false),
 tls_verify_list(NULL),
-verify_list(NULL),
 tls_ctx(NULL),
 psk_ctx(NULL),
 ctx(NULL),
@@ -589,8 +588,8 @@ bool AuthenticateBase::HandleTLS()
       // Qmsg0(jcr, M_INFO, 0, _("Start connection in CLEAR-TEXT\n"));
    }
    if (ctx != NULL) {
-      if ((local_type==dtCli && !bnet_tls_client(ctx, bsock, verify_list, password)) ||
-          (local_type==dtSrv && !bnet_tls_server(ctx, bsock, verify_list, password)))
+      if ((local_type==dtCli && !bnet_tls_client(ctx, bsock, tls_verify_list, password)) ||
+          (local_type==dtSrv && !bnet_tls_server(ctx, bsock, tls_verify_list, password)))
       {
          // errmsg set by bnet_tls_server/bnet_tls_client
          pm_strcpy(errmsg, bsock->errmsg);

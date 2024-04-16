@@ -57,7 +57,6 @@ protected:
    bool tls_authenticate;
    bool tls_verify_peer;
    alist *tls_verify_list;
-   alist *verify_list;
    TLS_CONTEXT *tls_ctx;
    TLS_CONTEXT *psk_ctx;
    TLS_CONTEXT *ctx;
