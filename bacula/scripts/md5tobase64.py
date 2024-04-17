@@ -18,6 +18,7 @@ parser.add_argument('--keep-padding', action='store_true', help="keep the '=' at
 args=parser.parse_args()
 
 def handle_file(input_file, remove_padding):
+    nb=0
     for line in input_file:
         line=line.rstrip()
         if md5_re.match(line):
@@ -27,13 +28,19 @@ def handle_file(input_file, remove_padding):
             if remove_padding:
                 b64=b64.rstrip('=')
             print(b64)
+            nb = nb + 1
+    return nb
 
+nb=0
 remove_padding=not args.keep_padding
 if args.file:
     for filename in args.file:
         input_file=open(filename)
-        handle_file(input_file, remove_padding)
+        nb += handle_file(input_file, remove_padding)
 else:
     # use stdin
-    handle_file(sys.stdin, remove_padding)
+    nb += handle_file(sys.stdin, remove_padding)
+
+# Raise an error if we have converted nothing
+sys.exit(nb == 0)
 
