@@ -1324,15 +1324,6 @@ bool decompress_data(JCR *jcr, int32_t stream, char **data, uint32_t *length)
    {
       uint32_t comp_magic, comp_len;
       uint16_t comp_level, comp_version;
-#ifdef HAVE_LZO
-      lzo_uint compress_len;
-      const unsigned char *cbuf;
-      int r, real_compress_len;
-#endif
-#ifdef HAVE_ZSTD
-      unsigned long long rSize;
-#endif
-
       /* read compress header */
       unser_declare;
       unser_begin(*data, sizeof(comp_stream_header));
@@ -1357,9 +1348,11 @@ bool decompress_data(JCR *jcr, int32_t stream, char **data, uint32_t *length)
       switch(comp_magic) {
 #ifdef HAVE_LZO
          case COMPRESS_LZO1X:
-            compress_len = jcr->compress_buf_size;
-            cbuf = (const unsigned char*)*data + sizeof(comp_stream_header);
-            real_compress_len = *length - sizeof(comp_stream_header);
+	 {
+	    int r;
+            lzo_uint compress_len = jcr->compress_buf_size;
+            const unsigned char *cbuf = (const unsigned char*)*data + sizeof(comp_stream_header);
+            int real_compress_len = *length - sizeof(comp_stream_header);
             Dmsg2(200, "Comp_len=%d msglen=%d\n", compress_len, *length);
             while ((r=lzo1x_decompress_safe(cbuf, real_compress_len,
                                             (unsigned char *)jcr->compress_buf, &compress_len, NULL)) == LZO_E_OUTPUT_OVERRUN)
@@ -1381,32 +1374,35 @@ bool decompress_data(JCR *jcr, int32_t stream, char **data, uint32_t *length)
             *length = compress_len;
             Dmsg2(200, "Write uncompressed %d bytes, total before write=%s\n", compress_len, edit_uint64(jcr->JobBytes, ec1));
             return true;
+	 }
 #endif
 #ifdef HAVE_ZSTD
-         case COMPRESS_ZSTD:
-            compress_len = jcr->compress_buf_size;
-            cbuf = (const unsigned char*)*data + sizeof(comp_stream_header);
-            real_compress_len = *length - sizeof(comp_stream_header);
-            Dmsg2(200, "Comp_len=%d msglen=%d\n", compress_len, *length);
-            rSize = ZSTD_getFrameContentSize(cbuf, real_compress_len);
-            if (rSize == ZSTD_CONTENTSIZE_ERROR || rSize == ZSTD_CONTENTSIZE_UNKNOWN) {
-               Qmsg(jcr, M_ERROR, 0, _("ZSTD uncompression error on file %s. Invalid content size. ERR=%d\n"),
-                    jcr->last_fname, rSize);
-               return false;
-            }
-            jcr->compress_buf = check_pool_memory_size(jcr->compress_buf, rSize);
-            rSize = ZSTD_decompressDCtx((ZSTD_DCtx*)jcr->ZSTD_decompress_workset,
-                                        (unsigned char *)jcr->compress_buf, compress_len, cbuf, real_compress_len);
+      case COMPRESS_ZSTD:
+      {
+	 size_t compress_len = jcr->compress_buf_size;
+	 const unsigned char*cbuf = (const unsigned char*)*data + sizeof(comp_stream_header);
+	 size_t real_compress_len = *length - sizeof(comp_stream_header);
+	 Dmsg2(200, "Comp_len=%d msglen=%d\n", compress_len, *length);
+	 unsigned long long rSize = ZSTD_getFrameContentSize(cbuf, real_compress_len);
+	 if (rSize == ZSTD_CONTENTSIZE_ERROR || rSize == ZSTD_CONTENTSIZE_UNKNOWN) {
+	    Qmsg(jcr, M_ERROR, 0, _("ZSTD uncompression error on file %s. Invalid content size. ERR=%d\n"),
+		 jcr->last_fname, rSize);
+	    return false;
+	 }
+	 jcr->compress_buf = check_pool_memory_size(jcr->compress_buf, rSize);
+	 rSize = ZSTD_decompressDCtx((ZSTD_DCtx*)jcr->ZSTD_decompress_workset,
+				     (unsigned char *)jcr->compress_buf, compress_len, cbuf, real_compress_len);
 
-            if (rSize == ZSTD_CONTENTSIZE_ERROR || rSize == ZSTD_CONTENTSIZE_UNKNOWN) {
-               Qmsg(jcr, M_ERROR, 0, _("ZSTD uncompression error on file %s. Decompress error. ERR=%d\n"),
-                    jcr->last_fname, rSize);
-               return false;
-            }
-            *data = jcr->compress_buf;
-            *length = compress_len = rSize;
-            Dmsg2(200, "Write uncompressed %d bytes, total before write=%s\n", compress_len, edit_uint64(jcr->JobBytes, ec1));
-            return true;
+	 if (rSize == ZSTD_CONTENTSIZE_ERROR || rSize == ZSTD_CONTENTSIZE_UNKNOWN) {
+	    Qmsg(jcr, M_ERROR, 0, _("ZSTD uncompression error on file %s. Decompress error. ERR=%d\n"),
+		 jcr->last_fname, rSize);
+	    return false;
+	 }
+	 *data = jcr->compress_buf;
+	 *length = compress_len = rSize;
+	 Dmsg2(200, "Write uncompressed %d bytes, total before write=%s\n", compress_len, edit_uint64(jcr->JobBytes, ec1));
+	 return true;
+      }
 #endif
          default:
             Qmsg(jcr, M_ERROR, 0, _("Compression algorithm 0x%x found, but not supported!\n"), comp_magic);
