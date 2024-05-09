@@ -27,6 +27,7 @@ class K8SObjType(object):
     K8SOBJ_DAEMONSET = 'ds'
     K8SOBJ_DEPLOYMENT = 'dp'
     K8SOBJ_ENDPOINT = 'ep'
+    K8SOBJ_INGRESS = 'ing'
     K8SOBJ_LIMITRANGE = 'lr'
     K8SOBJ_NAMESPACE = 'ns'
     K8SOBJ_POD = 'pod'
@@ -54,6 +55,7 @@ class K8SObjType(object):
         K8SOBJ_DAEMONSET: 'daemonsets',
         K8SOBJ_DEPLOYMENT: 'deployments',
         K8SOBJ_ENDPOINT: 'endpoints',
+        K8SOBJ_INGRESS: 'ingress',
         K8SOBJ_LIMITRANGE: 'limitranges',
         K8SOBJ_NAMESPACE: K8SOBJ_NAMESPACE_Path,
         K8SOBJ_POD: 'pods',
@@ -76,6 +78,7 @@ class K8SObjType(object):
         K8SOBJ_DAEMONSET: 'daemon_set',
         K8SOBJ_DEPLOYMENT: 'deployment',
         K8SOBJ_ENDPOINT: 'endpoint',
+        K8SOBJ_INGRESS: 'ingress',
         K8SOBJ_LIMITRANGE: 'limitrange',
         K8SOBJ_NAMESPACE: 'namespace',
         K8SOBJ_POD: 'pod',

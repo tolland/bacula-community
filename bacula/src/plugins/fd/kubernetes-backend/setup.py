@@ -27,7 +27,7 @@ setup(
     version='2.2.0',
     author='Radoslaw Korzeniewski, Francisco Manuel Garcia Botella',
     author_email='radekk@korzeniewski.net, francisco.garcia@baculasystems.com',
-    packages=find_packages(exclude=('tests', 'tests.*')),
+    packages=find_packages(exclude=('tests', 'tests.*', 'docker')),
     # packages=packages,
     license="Bacula® - The Network Backup Solution",
     data_files=[

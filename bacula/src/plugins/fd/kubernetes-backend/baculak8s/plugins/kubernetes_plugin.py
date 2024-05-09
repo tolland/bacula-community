@@ -36,6 +36,7 @@ from baculak8s.plugins.k8sbackend.csi_snapshot import *
 from baculak8s.plugins.k8sbackend.daemonset import *
 from baculak8s.plugins.k8sbackend.deployment import *
 from baculak8s.plugins.k8sbackend.endpoints import *
+from baculak8s.plugins.k8sbackend.ingress import *
 from baculak8s.plugins.k8sbackend.k8sfileinfo import NOW_TIMESTAMP
 from baculak8s.plugins.k8sbackend.limitrange import *
 from baculak8s.plugins.k8sbackend.namespaces import *
@@ -118,6 +119,7 @@ class KubernetesPlugin(Plugin):
         self.storagev1api = None
         self.clientConfiguration = None
         self.clientAPI = None
+        self.networkv1api = None
         self.k8s = {
             K8SObjType.K8SOBJ_PVOLUME: {},
             K8SObjType.K8SOBJ_NAMESPACE: {},
@@ -187,6 +189,7 @@ class KubernetesPlugin(Plugin):
         self.appsv1api = client.AppsV1Api(api_client=self.clientAPI)
         self.storagev1api = client.StorageV1Api(api_client=self.clientAPI)
         self.crd_api = client.CustomObjectsApi(api_client=self.clientAPI) # To manage csi snapshots
+        self.networkv1api = client.NetworkingV1Api(api_client=self.clientAPI) # To manage ingress
 
         logging.getLogger(requests.packages.urllib3.__package__).setLevel(logging.ERROR)
         logging.getLogger(client.rest.__package__).setLevel(logging.ERROR)
@@ -409,6 +412,9 @@ class KubernetesPlugin(Plugin):
         return self.__execute(lambda: stateful_sets_list_namespaced(self.appsv1api, namespace, estimate,
                                                                     self.config['labels']))
 
+    def get_ingresses(self, namespace, estimate=False):
+        return self.__execute(lambda: ingress_list_namespaced(self.networkv1api, namespace, estimate,
+                                                                      self.config['labels']))
     def list_all_persistentvolumes_names(self):
         self.k8s[K8SObjType.K8SOBJ_PVOLUME] = self.__execute(lambda: persistentvolumes_list_all_names(self.corev1api))
         return self.k8s[K8SObjType.K8SOBJ_PVOLUME]
@@ -444,6 +450,7 @@ class KubernetesPlugin(Plugin):
             self.get_stateful_sets(namespace, estimate),
             self.get_deployments(namespace, estimate),
             self.get_replication_controller(namespace, estimate),
+            self.get_ingresses(namespace,estimate),
         ]
         return data
 
@@ -502,6 +509,9 @@ class KubernetesPlugin(Plugin):
 
     def upload_stateful_set(self, file_info, file_content):
         return self.__execute(lambda: stateful_sets_restore_namespaced(self.appsv1api, file_info, file_content))
+
+    def upload_ingress(self, file_info, file_content):
+        return self.__execute(lambda: ingress_restore_namespaced(self.networkv1api, file_info, file_content))
 
     def __restore_k8s_object(self, file_info, file_content_source=None):
         file_content = b''
@@ -606,6 +616,9 @@ class KubernetesPlugin(Plugin):
         return self.__exec_check_object(
             lambda: self.appsv1api.read_namespaced_stateful_set(k8sfile2objname(file_info.name), file_info.namespace))
 
+    def _check_ingress(self, file_info):
+        return self.__exec_check_object(lambda: ingress_check(self.networkv1api, file_info))
+    
     def _check_replication_controller(self, file_info):
         return self.__exec_check_object(
             lambda: self.corev1api.read_namespaced_replication_controller(k8sfile2objname(file_info.name),
