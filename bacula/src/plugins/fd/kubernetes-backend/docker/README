@@ -1,0 +1,97 @@
+# Target
+
+This docker image is to compile k8s plugin independent of ubuntu/debian platform. I had problems with libc library, so to isolate this problem, we create this docker image.
+
+If you want change this version, modify the image tag and dockerfile FROM.
+
+**Note:** The difference between Ubuntu and Debian in this compilation is that `rm` binary is allocated in other place:
+ - Ubuntu: `/usr/bin/rm`
+ - Debian: `/bin/rm`
+
+So, the Makefile will be modified to avoid errors.
+
+# Create the Docker image
+
+We need copy the requirements to docker context folder. For this reason, we do:
+```bash
+cp -a ../requirements.txt .
+```
+
+```bash
+docker build -t k8s_compilation:jammy .
+```
+
+# Pre-Run docker container
+
+To compile in docker container, we need modify the `regress config file` to adapt.
+
+Add BACULA_SOURCE:
+
+```bash
+# Where to get the source to be tested
+BACULA_SOURCE="/mnt/bacula/"
+```
+
+Discomment --disable-sd-dedup:
+```bash
+# DEDUP allows to disable deduplication on the SD
+# If you don't have TokyoCabinet
+DEDUP=--disable-sd-dedup
+#DEDUP=
+```
+
+
+Set postgresql database:
+```bash
+# Set your database here
+#WHICHDB="--with-sqlite3=${SQLITE3_DIR}"
+WHICHDB="--with-postgresql"
+#WHICHDB="--with-mysql"
+```
+
+We need compile with this config because unless we can't compile k8s.
+
+
+Also we need modify the `regress/Makefile` and add the next rule at the end of file:
+
+```
+async:
+	rsync -av -i ../bacula/src/ build/src/
+```
+
+# Run docker container
+In root project (bacula-bee folder), execute:
+
+```bash
+docker run --rm -it -v $(pwd):/mnt k8s_compilation:jammy /bin/bash
+```
+
+# Compile k8s plugin
+
+Execute:
+```bash
+make async
+```
+
+```bash
+make -C build/src/plugins/fd install-kubernetes
+```
+
+```bash
+make -C build/src/plugins/fd/kubernetes-backend clean
+```
+
+```bash
+make -C build/src/plugins/fd/kubernetes-backend install-kubernetes
+```
+
+Or in one command:
+```bash
+make async; make -C build/src/plugins/fd install-kubernetes; make -C build/src/plugins/fd/kubernetes-backend clean; make -C build/src/plugins/fd/kubernetes-backend install-kubernetes
+```
+
+# Get the k8s_backend binary
+
+Will be in `~/regress/bin/k8s_backend`.
+
+The last action to do in this file is change the permissions or owner.

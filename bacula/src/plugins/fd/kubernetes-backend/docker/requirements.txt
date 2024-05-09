@@ -1,0 +1,26 @@
+# -*- coding: UTF-8 -*-
+#
+#  Bacula® - The Network Backup Solution
+#
+#     Copyright (C) 2000-2019 Bacula Systems SA
+#     All rights reserved.
+#
+#     The main author of Bacula is Kern Sibbald, with contributions from many
+#     others, a complete list can be found in the file AUTHORS.
+#
+#     Licensees holding a valid Bacula Systems SA license may use this file
+#     and others of this release in accordance with the proprietary license
+#     agreement provided in the LICENSE file.  Redistribution of any part of
+#     this release is not permitted.
+#
+#     Bacula® is a registered trademark of Kern Sibbald.
+#
+#     Copyright (c) 2019 by Inteos sp. z o.o.
+#     All rights reserved. IP transfered to Bacula Systems according to agreement.
+#     Author: Radosław Korzeniewski, radekk@inteos.pl, Inteos Sp. z o.o.
+#
+
+pyyaml == 6.0
+kubernetes <= 26.1.0
+urllib3 == 1.26.16
+requests == 2.27.1
