@@ -51,8 +51,8 @@ def services_list_namespaced(corev1api, namespace, estimate=False, labels=""):
 def services_restore_namespaced(corev1api, file_info, file_content):
     srv = encoder_load(file_content, file_info.name)
     metadata = prepare_metadata(srv.metadata)
-    # Instantiate the services object
-    services = client.V1Service(
+    # Instantiate the service object
+    service = client.V1Service(
         api_version=srv.api_version,
         kind="Service",
         spec=srv.spec,
@@ -60,15 +60,16 @@ def services_restore_namespaced(corev1api, file_info, file_content):
     )
     # If it is headless service, we need put 'None' in cluster_ip.
     # In other case, we need put None to assign another IP in cluster.
-    if services.spec.cluster_ip != 'None':
+    if service.spec.cluster_ip != 'None' and service.spec.type == 'ClusterIP':
         # clean some data
-        services.spec.cluster_ip = None
+        service.spec.cluster_ip = None
+        service.spec.cluster_i_ps = []
 
     if file_info.objcache is not None:
         # object exist so we replace it
         response = corev1api.replace_namespaced_service(k8sfile2objname(file_info.name),
-                                                        file_info.namespace, services, pretty='true')
+                                                        file_info.namespace, service, pretty='true')
     else:
         # object does not exist, so create one as required
-        response = corev1api.create_namespaced_service(file_info.namespace, services, pretty='true')
+        response = corev1api.create_namespaced_service(file_info.namespace, service, pretty='true')
     return {'response': response}
