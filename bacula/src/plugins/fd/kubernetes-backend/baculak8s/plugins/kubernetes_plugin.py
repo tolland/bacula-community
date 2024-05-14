@@ -596,6 +596,11 @@ class KubernetesPlugin(Plugin):
             lambda: self.corev1api.read_namespaced_persistent_volume_claim(k8sfile2objname(file_info.name),
                                                                            file_info.namespace))
 
+    def _check_persistentvolume_claim_status(self, namespace, pvc_name):
+        return self.__exec_check_object(
+            lambda: self.corev1api.read_namespaced_persistent_volume_claim_status(pvc_name, namespace)
+        )
+
     def _check_persistentvolume(self, file_info):
         return self.__exec_check_object(
             lambda: self.corev1api.read_persistent_volume(k8sfile2objname(file_info.name)))
@@ -895,6 +900,27 @@ class KubernetesPlugin(Plugin):
         status = response.status
         logging.debug("pvc_isready:status:{}".format(status))
         return status.phase == 'Bound'
+
+    # Check if the pvc is terminating status.
+    # This can be checked if the property 'metadata'>'deletion_timestamp' is not None
+    def pvc_is_terminating(self, namespace, pvc):
+        if not isinstance(pvc, dict):
+            raise Exception('Error when try to get pvc status. PVC must be a `dict`')
+        logging.debug('PVC is terminating status?. Namespace:{}.\nPVC Name:{}'.format(namespace,pvc.get('name')))
+
+        pvc_status = self._check_persistentvolume_claim_status(namespace, pvc.get('name'))
+        logging.debug('Pvc status:{}'.format(pvc_status))
+        try:
+            deletion_timestamp = pvc_status.metadata.deletion_timestamp
+            logging.debug('Deletion_Timestamp:{}'.format(deletion_timestamp))
+            if deletion_timestamp is not None:
+                return True
+            return False
+        except Exception as ex:
+            logging.debug('Exception ocurrs:{}'.format(ex))
+            logging.exception(ex)
+        logging.error('Had a error when try to get deletion_timestamp of pvc status')
+        return True
 
     def remove_backup_pod(self, namespace, podname=BACULABACKUPPODNAME):
         logging.debug('remove_backup_pod')

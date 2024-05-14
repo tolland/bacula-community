@@ -187,7 +187,7 @@ class BackupJob(EstimationJob):
     def handle_pod_container_exec_command(self, corev1api, namespace, pod, runjobparam, failonerror=False):
         podname = pod.get('name')
         containers = pod.get('containers')
-        logging.debug("pod {} containers: {}".format(podname, containers))
+        logging.debug("[{}] pod {} containers: {}".format(runjobparam, podname, containers))
         # now check if run before job
         container, command = BaculaAnnotationsClass.handle_run_job_container_command(pod.get(runjobparam))
         if container is not None:
@@ -250,6 +250,12 @@ class BackupJob(EstimationJob):
             vsnapshot = None
             logging.debug("handling vol before backup: {}".format(pvcname))
             self._io.send_info(POD_BACKUP_SELECTED.format(pvcname, backupmode))
+
+            # Check if pvc has status: 'Terminating'. Because in this state, the backup raise error.
+            if self._plugin.pvc_is_terminating(namespace, original_pvc):
+                logging.debug("Skip pvc. Cause Terminating status")
+                self._io.send_warning("Skip pvc `{}` because it is in Terminating status.".format(pvcname))
+                continue
 
             if backupmode == BaculaBackupMode.Snapshot:
                 logging.debug('Snapshot mode chosen')

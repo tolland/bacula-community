@@ -193,14 +193,23 @@ class EstimationJob(JobPodBacula):
                                     self._io.send_info(SKIP_PVCDATA_SECOND_BACKUP_INFO.format(pvc))
                                     continue
                                 elif pvc_backed.get(pvc) == 'error':
+                                    if self._plugin.pvc_is_terminating(nsname, pvcdata):
+                                        logging.debug("Skip pvc. Cause Terminating status")
+                                        self._io.send_warning("Skip pvc of second try `{}` because it is in Terminating status.".format(pvc))
+                                        continue
                                     self._io.send_warning(SECOND_TRY_PVCDATA_INFO.format(pvc))
                                 self._io.send_info(PROCESSING_PVCDATA_START_INFO.format(pvc=pvc))
+                                if self._plugin.pvc_is_terminating(nsname, pvcdata):
+                                    logging.debug("Skip pvc. Cause Terminating status")
+                                    self._io.send_warning("Skip pvc `{}` because it is in Terminating status.".format(pvc))
+                                    continue
                             status = self.process_pvcdata(nsname, pvcdata)
                             if status is None:
                                 # None means unable to prepare listening service during backup
                                 break
                             if not estimate and status:
                                 self._io.send_info(PROCESSING_PVCDATA_STOP_INFO.format(pvc=pvc))
+                        logging.debug("Finish pvcdatalist")
 
     def _estimate_file(self, data):
         logging.debug('{}'.format(data))
@@ -223,6 +232,10 @@ class EstimationJob(JobPodBacula):
         # iterate on requested pvc
         logging.debug("process_pod_pvcdata in Estimate mode")
         for pvc in pvcnames.split(','):
+            if self._plugin.pvc_is_terminating(namespace, pvc):
+                logging.debug("Skip pvc. Cause Terminating status")
+                self._io.send_warning("Skip pvc `{}` because it is in Terminating status.".format(pvc))
+                continue
             # get pvcdata for this volume
             pvcdata = self._plugin.get_pvcdata_namespaced(namespace, pvc)
             if isinstance(pvcdata, dict) and 'exception' in pvcdata:
