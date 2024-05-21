@@ -1,0 +1,1100 @@
+#!/bin/bash
+#
+# Copyright (C) 2000-2015 Kern Sibbald
+# License: BSD 2-Clause; see file LICENSE-FOSS
+#
+
+#
+# Attempt to backup and restore Kubernetes objects including namespaces and
+# persistent volumes configuration using Kubernetes plugin
+#
+#  The test assumes you have a working K8S cluster available with enought
+#  resources to handle test and a available "plugintest" namespace.
+#
+
+#
+# I used minikube server with csi addon
+# minikube -p test-local stop && minikube -p test-local start && minikube -p test-local addons enable volumesnapshots && minikube -p test-local addons enable csi-hostpath-driver
+#
+
+# $ kubectl apply -f kubernetes-plugintest.yaml
+# namespace/plugintest created
+# secret/plugintest-secrets created
+# configmap/plugintest-configmap created
+# service/plugintest-subdomain created
+# service/plugintest-nginx-service created
+# persistentvolumeclaim/plugintest-persistent-volume-claim created
+# persistentvolumeclaim/plugintest3-persistent-volume-claim created
+# pod/plugintest1 created
+# pod/plugintest2 created
+# pod/plugintest3 created
+# replicaset.apps/plugintest-frontend created
+# deployment.apps/plugintest-nginx-deployment created
+# statefulset.apps/plugintest-nginx-web created
+
+# $ kubectl apply -f kubernetes-plugintest-csi-driver.yaml 
+# storageclass.storage.k8s.io/csi-hostpath-sc configured
+# persistentvolumeclaim/plugintest-persistent-volume-claim-csi created
+# persistentvolumeclaim/plugintest-persistent-volume-claim-csi-2 created
+# pod/plugintest-annotations-test created
+
+# $ kubectl -n plugintest get pods -o wide
+# NAME                                          READY   STATUS    RESTARTS   AGE   IP            NODE         NOMINATED NODE   READINESS GATES
+# plugintest-annotations-test                   0/1     Pending   0          27s   <none>        <none>       <none>           <none>
+# plugintest-frontend-2qrh6                     1/1     Running   0          40s   10.244.18.4   test-local   <none>           <none>
+# plugintest-frontend-9jpqf                     1/1     Running   0          40s   10.244.18.2   test-local   <none>           <none>
+# plugintest-frontend-bwdz4                     1/1     Running   0          40s   10.244.18.1   test-local   <none>           <none>
+# plugintest-nginx-deployment-568dfdd98-2h68n   1/1     Running   0          40s   10.244.18.7   test-local   <none>           <none>
+# plugintest-nginx-deployment-568dfdd98-ltb8v   1/1     Running   0          40s   10.244.18.6   test-local   <none>           <none>
+# plugintest-nginx-deployment-568dfdd98-lxqt9   1/1     Running   0          40s   10.244.18.5   test-local   <none>           <none>
+# plugintest-nginx-web-0                        0/1     Pending   0          40s   <none>        <none>       <none>           <none>
+# plugintest1                                   0/1     Pending   0          40s   <none>        <none>       <none>           <none>
+# plugintest2                                   1/1     Running   0          40s   10.244.18.3   test-local   <none>           <none>
+# plugintest3                                   0/1     Pending   0          40s   <none>        <none>       <none>           <none>
+
+
+# $ kubectl -n plugintest get svc -o wide
+# NAME                       TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE   SELECTOR
+# plugintest-nginx-service   ClusterIP   None           <none>        80/TCP     63s   app=plugintest-nginx-web
+# plugintest-subdomain       ClusterIP   10.97.43.130   <none>        1234/TCP   63s   name=plugintest
+
+# $ kubectl -n plugintest get pvc -o wide
+# NAME                                         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS      AGE     VOLUMEMODE
+# plugintest-persistent-volume-claim           Bound    pvc-3381c472-5b3e-4b74-a999-24f3f7031a61   1Gi        RWO            standard          4m20s   Filesystem
+# plugintest-persistent-volume-claim-csi       Bound    pvc-9aecf542-5e7a-47c7-b9db-57a3b092bcf1   1Gi        RWO            csi-hostpath-sc   4m7s    Filesystem
+# plugintest-persistent-volume-claim-csi-2     Bound    pvc-9c38ea52-e9fd-48c2-a45b-2cba5908ae8c   1Gi        RWO            csi-hostpath-sc   4m7s    Filesystem
+# plugintest-www-data-plugintest-nginx-web-0   Bound    pvc-5c6ac739-fe67-476b-9711-282d8a376aa6   1Gi        RWO            standard          4m20s   Filesystem
+# plugintest-www-data-plugintest-nginx-web-1   Bound    pvc-0cd78b05-b0c8-433d-8533-b270c8cc685b   1Gi        RWO            standard          101s    Filesystem
+# plugintest-www-data-plugintest-nginx-web-2   Bound    pvc-ebdeac73-ff33-498c-8cd6-1d6c96b2c346   1Gi        RWO            standard          93s     Filesystem
+# plugintest3-persistent-volume-claim          Bound    pvc-7b906501-5bc6-469c-9e9f-87ee5db4fc07   1Gi        RWO            standard          4m20s   Filesystem
+
+# $ kubectl -n plugintest get rs -o wide
+# NAME                                    DESIRED   CURRENT   READY   AGE     CONTAINERS                 IMAGES                                 SELECTOR
+# plugintest-frontend                     3         3         3       4m41s   plugintest-frontend-test   gcr.io/google_samples/gb-frontend:v3   tier=frontend
+# plugintest-nginx-deployment-568dfdd98   3         3         3       4m41s   plugintest-nginx           nginx:latest                           app=plugintest-deployment,pod-template-hash=568dfdd98
+
+
+# $ kubectl -n plugintest get sts -o wide
+# NAME                   READY   AGE     CONTAINERS             IMAGES
+# plugintest-nginx-web   3/3     4m55s   plugintest-nginx-web   k8s.gcr.io/nginx-slim:0.8
+
+# $ kubectl -n plugintest get storageclass -o wide
+# NAME                 PROVISIONER                RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+# csi-hostpath-sc      hostpath.csi.k8s.io        Delete          Immediate           false                  94d
+# standard (default)   k8s.io/minikube-hostpath   Delete          Immediate           false                  94d
+
+# $ kubectl -n plugintest get volumesnapshotclasses -o wide
+# NAME                     DRIVER                DELETIONPOLICY   AGE
+# csi-hostpath-snapclass   hostpath.csi.k8s.io   Delete           94d
+
+
+TestName="kubernetes-plugin-test"
+JobName="PluginKubernetesTest"
+FileSetName="TestPluginKubernetesSet"
+TESTING_NAMESPACE="plugintest"
+
+. scripts/functions
+. scripts/regress-utils.sh
+
+echo "NEW KUBERNETES"
+
+#
+# Check a value of parameter if greater and less than input values. 
+#
+# in:
+# $1 - type of log. Values allowed: b,r,e,l
+# $2 - the parameter to check. For example: 'FD Bytes Written', 'SD Bytes Written', 'jobbytes'
+# $3 - number to use to operation greater than. Can use *KB, *MB format. Example: 5, 50KB, 100MB 
+# $4 - number to use to operation less than. Can use *KB, *MB format. Example: 5, 50KB, 100MB 
+# $5 - a test number to examine which means we will check log${ltest}.out logfile
+check_regress_size_backup() {
+   type_log=$1
+   param=$2
+   gt_value=$3
+   lt_value=$4
+   n_test=$5
+
+   bytes_written_value=$(get_value_of_parameter_in_log $type_log "${param}" "${n_test}")
+   
+   check_regress_number_in_log $type_log "gt" "${param}" "${gt_value}" "${n_test}"
+   F=$?
+   printf "Result expected bytes backed up ;%s; \n" "${F}"
+   printf "%s%s\n" " -> Nº bytes of this backup (${gt_value} < ${bytes_written_value}): " $(regress_test_result ${F})
+   
+   check_regress_number_in_log $type_log "lt" "${param}" "${lt_value}" "${n_test}"
+   F=$?
+   printf "Result expected bytes backed up ;%s; \n" "${F}"
+   printf "%s%s\n" " -> Nº bytes of this backup (${bytes_written_value} < ${lt_value}): " $(regress_test_result ${F})
+}
+
+#
+# Setup pod annotations in kubernetes
+#
+# in:
+# $1: pod_name
+# $2: mode to annotate
+# $3: volumes to annotate
+set_up_k8s_annotations() {
+   pod=$1
+   mode_value=$2
+   vols_value=$3
+   BACKUP_MODE_ANN=bacula/backup.mode
+   BACKUP_VOL_ANN=bacula/backup.volumes
+   
+   # --- SetUp
+   ${KUBECTL} annotate pod $pod ${BACKUP_MODE_ANN}=${mode_value} --overwrite > /dev/null
+   ${KUBECTL} annotate pod $pod ${BACKUP_VOL_ANN}=${vols_value} --overwrite > /dev/null
+}
+
+end_set_up_k8s_annotations() {
+   pod=$1
+   BACKUP_MODE_ANN=bacula/backup.mode
+   BACKUP_VOL_ANN=bacula/backup.volumes
+
+   # Remove annotation in pod.
+   ${KUBECTL} annotate pod ${POD_WITH_ANNOTATIONS} ${BACKUP_MODE_ANN}- > /dev/null
+   ${KUBECTL} annotate pod ${POD_WITH_ANNOTATIONS} ${BACKUP_VOL_ANN}- > /dev/null
+}
+
+export debug=1
+scripts/cleanup
+scripts/copy-kubernetes-plugin-confs
+printf "Preparing ... "
+
+# export requires variables
+setup_plugin_param "kubernetes:"
+if [ "x$KUBECONFIG" != "x" ]
+then
+   export KUBECONFIG
+   LPLUG="${LPLUG} config='$KUBECONFIG'"
+fi
+
+mkdir -p ${tmp}
+
+# check the requirements
+KNODES=`${KUBECTL} get nodes | grep Ready | wc -l`
+if [ $KNODES -eq 0 ]
+then
+   echo "A working Kubernetes cluster required!"
+   exit 1
+fi
+
+# check if plugintest namespace exist
+KPLUGTEST=`${KUBECTL} get ns | grep "^${TESTING_NAMESPACE} " | wc -l`
+if [ $KPLUGTEST -ne 0 -a "x$1" != "xforce" ]
+then
+   echo "Namespace \"${TESTING_NAMESPACE}\" exist on cluster and no force option specified!"
+   exit 1
+fi
+
+# prepare data
+printf "apply data ... "
+if [ $KPLUGTEST -ne 0 ]
+then
+   ${KUBECTL} delete ns ${TESTING_NAMESPACE} 2>&1 > ${tmp}/kube.log
+fi
+${KUBECTL} apply -f scripts/kubernetes-plugintest.yaml 2>&1 >> ${tmp}/kube.log
+
+if [ $KUBE_PROXY_BACKUP_TEST -ne 0 ]
+then
+   ${KUBECTL} apply -f scripts/kubernetes-plugintest-csi-driver.yaml 2>&1 >> ${tmp}/kube.log
+fi
+
+i=0
+SPIN=('-' '\\' '|' '/')
+printf "waiting to ready ...  "
+while true
+do
+   kstat=`${KUBECTL} -n ${TESTING_NAMESPACE} get pods -o go-template='{{range .items}}{{.status.phase}}{{"\n"}}{{end}}' | grep -v Running | wc -l`
+   if [ $kstat -eq 0 ]
+   then
+      break
+   fi;
+   w=1
+   printf "\b${SPIN[(($i % 4))]}"
+   if [ $i -eq 600 ]
+   then
+      echo "Timeout waiting for test data to populate. Cannot continue!"
+      exit 1
+   fi
+   ((i++))
+   sleep 1
+done
+printf "\b"
+
+printf "Refill data in pvcs...\n"
+POD_NAME="plugintest1"
+POD_PATH="/data"
+# Command to create a file of 150M inside pvc
+DD_CMD="dd if=/dev/urandom of=${POD_PATH}/file15MB bs=1M count=15"
+# Exec command inside pod.
+${KUBECTL} exec -it $POD_NAME -n ${TESTING_NAMESPACE} -- /bin/ash -c "$DD_CMD"
+
+sleep 3
+
+printf "File of 15MB created in pod ${POD_NAME}\n"
+
+for N in `seq 0 2`
+do
+   POD_NAME="plugintest-nginx-web-${N}"
+   POD_PATH="/usr/share/nginx/html"
+   FILE_SIZE=$((10 * ${N}))
+   # Command to create a file of 1N0M inside pvc
+   DD_CMD="dd if=/dev/urandom of=${POD_PATH}/file${FILE_SIZE}MB bs=1M count=${FILE_SIZE}"
+   ${KUBECTL} exec -it $POD_NAME -n ${TESTING_NAMESPACE} -- /bin/bash -c "$DD_CMD"
+   sleep 3
+   printf "File of ${FILE_SIZE}MB created in pod ${POD_NAME}\n"
+done
+
+POD_NAME="plugintest3"
+DD_CMD="dd if=/dev/urandom of=/data/file30MB bs=1M count=30"
+
+# Exec command inside pod.
+${KUBECTL} exec -it $POD_NAME -n ${TESTING_NAMESPACE} -- /bin/ash -c "$DD_CMD"
+
+sleep 3
+
+printf "File of 30MB created in pod ${POD_NAME}\n"
+
+if [ $KUBE_PROXY_BACKUP_TEST -ne 0 ]
+then
+   POD_NAME="plugintest-annotations-test"
+   POD_PATH="/data"
+   # Command to create a file of 10M inside pvc
+   DD_CMD="dd if=/dev/urandom of=${POD_PATH}/file10MB bs=1M count=10"
+   # Exec command inside pod.
+   ${KUBECTL} exec -it $POD_NAME -n ${TESTING_NAMESPACE} -- /bin/ash -c "$DD_CMD"
+
+   sleep 3
+   POD_PATH="/data-csi"
+   # Command to create a file of 20M inside pvc
+   DD_CMD="dd if=/dev/urandom of=${POD_PATH}/file20MB bs=1M count=20"
+   # Exec command inside pod.
+   ${KUBECTL} exec -it $POD_NAME -n ${TESTING_NAMESPACE} -- /bin/ash -c "$DD_CMD"
+
+   sleep 3
+   POD_PATH="/data-csi-2"
+   # Command to create a file of 30M inside pvc
+   DD_CMD="dd if=/dev/urandom of=${POD_PATH}/file30MB bs=1M count=30"
+   # Exec command inside pod.
+   ${KUBECTL} exec -it $POD_NAME -n ${TESTING_NAMESPACE} -- /bin/ash -c "$DD_CMD"
+
+   sleep 3
+fi
+
+
+printf "End refill data in pvcs...\n"
+
+# wait abit to objects to populate.
+sleep 30
+
+# get variables
+printf "variables ... "
+${KUBECTL} get ns -o name > ${tmp}/allns.log
+${KUBECTL} get pv -o name > ${tmp}/allpv.log
+PV1=`${KUBECTL} -n ${TESTING_NAMESPACE} get pvc/plugintest-persistent-volume-claim -o go-template='{{.spec.volumeName}}'`
+if [ $KUBE_PROXY_BACKUP_TEST -ne 0 ]
+then
+   PV_CSI1=`${KUBECTL} -n ${TESTING_NAMESPACE} get pvc/plugintest-persistent-volume-claim-csi -o go-template='{{.spec.volumeName}}'`
+fi
+BACKUP_ONLY_PVC="plugintest-persistent-volume-claim"
+BACKUP_PROXY_ARGS=""
+
+if [ $KUBE_PROXY_BACKUP_TEST -ne 0 ]
+then
+   if [ $KUBE_GEN_CERT -ne 0 ]
+   then
+      setup_self_signed_cert $KUBE_FD_CERT_DIR $KUBE_FD_CERT_NAME
+      if [ "x$KUBE_FD_CERT_FILE" = "x" ]
+      then
+         KUBE_FD_CERT_FILE=${KUBE_FD_CERT_DIR}${KUBE_FD_CERT_NAME}.pem
+         KUBE_FD_KEY_FILE=${KUBE_FD_CERT_DIR}${KUBE_FD_CERT_NAME}.key
+      fi
+   fi
+   BACKUP_PROXY_CERTS="fdkeyfile=$KUBE_FD_KEY_FILE fdcertfile=$KUBE_FD_CERT_FILE"
+   BACKUP_PROXY_WITHOUT_PVC="baculaimage=${KUBE_BACULA_IMAGE} pluginhost=${KUBE_PROXY_POD_PLUGIN_HOST} $BACKUP_PROXY_CERTS"
+   BACKUP_PROXY_ARGS="$BACKUP_PROXY_WITHOUT_PVC pvcdata"
+fi
+
+
+# prepare kubernetes backend
+export PLUGIN_WORKING=${cwd}/working
+
+echo "PV1: $PV1" > ${tmp}/objinfo.log
+
+out_sed="${tmp}/sed_tmp"
+echo "s%@LPLUG@%${LPLUG}%" > ${out_sed}
+echo "s%@PV1@%${PV1}%" >> ${out_sed}
+if [ $KUBE_PROXY_BACKUP_TEST -ne 0 ]
+then
+   echo "s%@PV_CSI1@%${PV_CSI1}%" >> ${out_sed}
+fi
+echo "s%@BACKUP_PROXY_ARGS@%${BACKUP_PROXY_ARGS}%" >> ${out_sed}
+echo "s%@BACKUP_PROXY_WITHOUT_PVC@%${BACKUP_PROXY_WITHOUT_PVC}%" >> ${out_sed}
+echo "s%@BACKUP_ONLY_PVC@%${BACKUP_ONLY_PVC}%" >> ${out_sed}
+
+sed -i -f ${out_sed} ${conf}/bacula-dir.conf
+
+echo "done"
+
+start_test
+
+JOBID=1
+
+cat <<END_OF_DATA >${cwd}/tmp/bconcmds
+@output /dev/null
+messages
+@$out ${cwd}/tmp/log.out
+label storage=File1 pool=Default volume=TestVolume001
+@#setdebug dir level=500 trace=1
+quit
+END_OF_DATA
+
+run_bacula
+
+# special case for all objects
+do_regress_estimate_test
+F=0
+RET=`grep "/@kubernetes/" ${cwd}/tmp/elog.out | grep "yaml" | wc -l`
+# 11+4+4+2+3
+RES=24
+echo "RET: $RET RES: $RES" >> ${tmp}/elog.out
+if [ $RET -le $RES ]
+then
+   F=1
+   ((estat++))
+fi
+printf "%s\n" "--------"
+printf "Results estimate test ${TEST}:\n"
+printf "%s%s\n" " -> Estimated all objects: " $(regress_test_result ${F})
+printf "%s\n" "--------"
+
+# then estimate with data
+TEST=1
+do_regress_estimate_test ${TEST}
+F=0
+RET=`grep "/@kubernetes/namespaces/" ${tmp}/elog${TEST}.out | grep "yaml" | wc -l`
+RES=25
+PVRET=`grep "/@kubernetes/persistentvolumes/" ${tmp}/elog${TEST}.out | grep "yaml" | wc -l`
+echo "RET: $RET RES: $RES" PVRET: $PVRET >> ${cwd}/tmp/elog${TEST}.out
+if [ $RET -lt $RES -o $PVRET -eq 0 ]
+then
+   F=1
+   ((estat++))
+fi
+printf "%s\n" "--------"
+printf "Results estimate test ${TEST}:\n"
+printf "%s%s\n" " -> Estimated with data: " $(regress_test_result ${F})
+printf "%s\n" "--------"
+
+((TEST++))
+do_regress_estimate_test ${TEST}
+F=0
+RET=`grep "/@kubernetes/" ${tmp}/elog${TEST}.out | grep "yaml" | wc -l`
+RES=2
+echo "RET: $RET RES: $RES" >> ${cwd}/tmp/elog${TEST}.out
+if [ $RET -lt $RES ]
+then
+   F=1
+   ((estat++))
+fi
+printf "%s\n" "--------"
+printf "Results estimate test ${TEST}:\n"
+printf "%s%s\n" " -> Estimated objects: " $(regress_test_result ${F})
+printf "%s\n" "--------"
+
+((TEST++))
+do_regress_estimate_test ${TEST}
+F=0
+RET=`grep "/@kubernetes/" ${tmp}/elog${TEST}.out | grep "yaml" | wc -l`
+RES=26
+echo "RET: $RET RES: $RES" >> ${cwd}/tmp/elog${TEST}.out
+if [ $RET -lt $RES ]
+then
+   F=1
+   ((estat++))
+fi
+printf "%s\n" "--------"
+printf "Results estimate test ${TEST}:\n"
+printf "%s%s\n" " -> Estimated objects: " $(regress_test_result ${F})
+printf "%s\n" "--------"
+
+
+# listing tests goes to estimate tests
+TEST=1
+do_regress_listing_test ${TEST} "/"
+F=0
+RET=`grep "^drwxr-xr-x" ${cwd}/tmp/llog${TEST}.out | wc -l`
+echo "RET: $RET" >> ${cwd}/tmp/llog${TEST}.out
+if [ $RET -ne 3 ]
+then
+   F=1
+   estat=$((estat+1))
+fi
+printf "%s\n" "--------"
+printf "Results listing test ${TEST}:\n"
+printf "%s%s\n" " -> All: " $(regress_test_result ${F})
+printf "%s\n" "--------"
+
+allns=`cat ${tmp}/allns.log | wc -l`
+((TEST++))
+do_regress_listing_test ${TEST} "namespaces"
+F=0
+RET=`grep "^drwxr-xr-x" ${cwd}/tmp/llog${TEST}.out | wc -l`
+echo "RET: $RET ALLNS: ${allns}" >> ${cwd}/tmp/llog${TEST}.out
+if [ $RET -ne ${allns} ]
+then
+   F=1
+   estat=$((estat+1))
+fi
+printf "%s\n" "--------"
+printf "Results listing test ${TEST}:\n"
+printf "%s%s\n" " -> Namespaces: " $(regress_test_result ${F})
+printf "%s\n" "--------"
+
+allpv=`cat ${tmp}/allpv.log | wc -l`
+((TEST++))
+do_regress_listing_test ${TEST} "persistentvolumes"
+F=0
+RET=`grep "^-rw-r-----" ${cwd}/tmp/llog${TEST}.out | wc -l`
+echo "RET: $RET ALLPV: ${allpv}" >> ${cwd}/tmp/llog${TEST}.out
+if [ $RET -ne ${allpv} ]
+then
+   F=1
+   estat=$((estat+1))
+fi
+printf "%s\n" "--------"
+printf "Results listing test ${TEST}:\n"
+printf "%s%s\n" " -> Persistent volumes: " $(regress_test_result ${F})
+printf "%s\n" "--------"
+
+#
+# now do backups
+#
+bstat=0
+# first backup with data
+for TEST in `seq 1 3`
+do
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   printf "%s\n" "--------"
+done
+
+# Check backup pvcdata in pod annotations without pvcdata parameter in fileset
+TEST=4
+expected_string_in_log="plugintest3-persistent-volume-claim.tar"
+
+do_regress_backup_test ${TEST}
+check_regress_backup_statusT ${TEST}
+F=$?
+printf "%s\n" "--------"
+printf "Results backup test ${TEST}:\n"
+printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+
+check_regress_string_in_log "b" "${expected_string_in_log}" ${TEST}
+F=$?
+printf "%s%s\n" " -> Backup pvc not specified in fileset but yes in pod annotations: " $(regress_test_result ${F})
+printf "%s\n" "--------"
+
+# second, backup with proxy backup if it's activated
+if [ $KUBE_PROXY_BACKUP_TEST -ne 0 ]
+then
+   expected_string_in_log="is compatible with volume snapshot backup"
+   TEST=30
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   check_regress_string_in_log "b" "${expected_string_in_log}" ${TEST}
+   F=$?
+   printf "%s%s\n" " -> Use volume snapshot tecnology: " $(regress_test_result ${F})
+   expected_string_in_log="because it did previously with a pod"
+   check_regress_string_in_log "b" "${expected_string_in_log}" ${TEST}
+   F=$?
+   printf "%s%s\n" " -> Skip volume backup when it was done in pod annotations: " $(regress_test_result ${F})
+   printf "%s\n" "--------"
+
+   # Test if you define one pvc to backup, only backup this pvc.
+   TEST=31
+   
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   
+   expected_string_in_log="Finish backup volume claim: plugintest-persistent-volume-claim"
+   check_regress_string_in_log "b" "${expected_string_in_log}" ${TEST}
+   F=$?
+   printf "Result expected FinishBackup ;%s; \n" "${F}"
+   printf "%s%s\n" " -> Backup only one defined pvcdata(plugintest-persistent-volume-claim): " $(regress_test_result ${F})
+   not_expected_string_in_log="Start backup volume claim: plugintest-www-data-plugintest-nginx-web-0"
+   check_regress_string_not_in_log "b" "${not_expected_string_in_log}" ${TEST}
+   F=$?
+   printf "%s%s\n" " -> Backup only one defined pvcdata: " $(regress_test_result ${F})
+   printf "%s\n" "--------"
+
+   #
+   # Test with csi-driver to check combinations in pod annotations 
+   #
+
+   # Remove other pods annotations
+   POD_WITH_ANNOTATIONS=plugintest3
+   BACKUP_MODE_ANN=bacula/backup.mode
+   BACKUP_VOL_ANN=bacula/backup.volumes
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ${KUBECTL} annotate pod ${POD_WITH_ANNOTATIONS} ${BACKUP_MODE_ANN}- > /dev/null
+   # ${KUBECTL} annotate pod ${POD_WITH_ANNOTATIONS} ${BACKUP_VOL_ANN}- > /dev/null
+
+   POD_WITH_ANNOTATIONS=plugintest-annotations-test
+   BYTES_WRITTEN_PARAM="SD Bytes Written"
+   # 40. Check annotation:
+   # mode: standard
+   # one vol: plugintest-persistent-volume-claim-csi
+   TEST=40
+   BACKUP_MODE_ANN_VALUE=standard
+   BACKUP_VOLS_ANN_VALUE=plugintest-persistent-volume-claim-csi
+   # --- SetUp
+   set_up_k8s_annotations "${POD_WITH_ANNOTATIONS}" "${BACKUP_MODE_ANN_VALUE}" "${BACKUP_VOLS_ANN_VALUE}"
+   # ---
+
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   
+   GT_VALUE=20MB
+   LT_VALUE=30MB
+   check_regress_size_backup "b" "${BYTES_WRITTEN_PARAM}" ${GT_VALUE} ${LT_VALUE} ${TEST}
+
+   # --- EndSetup
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ---
+   printf "%s\n" "--------"
+
+   # 41. Check annotation:
+   # mode: standard
+   # two vols: plugintest-persistent-volume-claim-csi,plugintest-persistent-volume-claim-csi-2
+   TEST=41
+   BACKUP_MODE_ANN_VALUE=standard
+   BACKUP_VOLS_ANN_VALUE=plugintest-persistent-volume-claim-csi,plugintest-persistent-volume-claim-csi-2
+   # --- SetUp
+   set_up_k8s_annotations "${POD_WITH_ANNOTATIONS}" "${BACKUP_MODE_ANN_VALUE}" "${BACKUP_VOLS_ANN_VALUE}"
+   # ---
+
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   
+   GT_VALUE=50MB
+   LT_VALUE=60MB
+   check_regress_size_backup "b" "${BYTES_WRITTEN_PARAM}" ${GT_VALUE} ${LT_VALUE} ${TEST}
+
+   # --- EndSetup
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ---
+   printf "%s\n" "--------"
+   
+   # 50. Check annotation:
+   # mode: snapshot
+   # one vol (no compatible): plugintest-persistent-volume-claim
+   TEST=50
+   BACKUP_MODE_ANN_VALUE=snapshot
+   BACKUP_VOLS_ANN_VALUE=plugintest-persistent-volume-claim
+   # --- SetUp
+   set_up_k8s_annotations "${POD_WITH_ANNOTATIONS}" "${BACKUP_MODE_ANN_VALUE}" "${BACKUP_VOLS_ANN_VALUE}"
+   # ---
+
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+
+   expected_string_in_log="is not compatible with snapshot"
+   check_regress_string_in_log "b" "${expected_string_in_log}" ${TEST}
+   F=$?
+   printf "%s%s\n" " -> PVC is not compatible with snapshot mode: " $(regress_test_result ${F})
+
+   GT_VALUE=25MB
+   LT_VALUE=30MB
+   check_regress_size_backup "b" "${BYTES_WRITTEN_PARAM}" ${GT_VALUE} ${LT_VALUE} ${TEST}
+
+   # --- EndSetup
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ---
+   printf "%s\n" "--------"
+
+   # 51. Check annotation:
+   # mode: snapshot
+   # one vol(comp): plugintest-persistent-volume-claim-csi
+   TEST=51
+   BACKUP_MODE_ANN_VALUE=standard
+   BACKUP_VOLS_ANN_VALUE=plugintest-persistent-volume-claim-csi
+   # --- SetUp
+   set_up_k8s_annotations "${POD_WITH_ANNOTATIONS}" "${BACKUP_MODE_ANN_VALUE}" "${BACKUP_VOLS_ANN_VALUE}"
+   # ---
+
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   
+      
+   GT_VALUE=20MB
+   LT_VALUE=30MB
+   check_regress_size_backup "b" "${BYTES_WRITTEN_PARAM}" ${GT_VALUE} ${LT_VALUE} ${TEST}
+   
+   # --- EndSetup
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ---
+   printf "%s\n" "--------"
+
+   # 52. Check annotation:
+   # mode: snapshot
+   # two vols(comp): plugintest-persistent-volume-claim-csi,plugintest-persistent-volume-claim-csi-2
+   TEST=52
+   BACKUP_MODE_ANN_VALUE=standard
+   BACKUP_VOLS_ANN_VALUE=plugintest-persistent-volume-claim-csi,plugintest-persistent-volume-claim-csi-2
+   # --- SetUp
+   set_up_k8s_annotations "${POD_WITH_ANNOTATIONS}" "${BACKUP_MODE_ANN_VALUE}" "${BACKUP_VOLS_ANN_VALUE}"
+   # ---
+
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   
+      
+   GT_VALUE=50MB
+   LT_VALUE=60MB
+   check_regress_size_backup "b" "${BYTES_WRITTEN_PARAM}" ${GT_VALUE} ${LT_VALUE} ${TEST}
+
+   # --- EndSetup
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ---
+   printf "%s\n" "--------"
+
+   # 53. Check annotation:
+   # mode: snapshot
+   # one vol comp and another not: plugintest-persistent-volume-claim-csi,plugintest-persistent-volume-claim
+   TEST=53
+   BACKUP_MODE_ANN_VALUE=snapshot
+   BACKUP_VOLS_ANN_VALUE=plugintest-persistent-volume-claim-csi,plugintest-persistent-volume-claim
+   # --- SetUp
+   set_up_k8s_annotations "${POD_WITH_ANNOTATIONS}" "${BACKUP_MODE_ANN_VALUE}" "${BACKUP_VOLS_ANN_VALUE}"
+   # ---
+
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   
+   expected_string_in_log="is not compatible with snapshot"
+   check_regress_string_in_log "b" "${expected_string_in_log}" ${TEST}
+   F=$?
+   printf "%s%s\n" " -> PVC is not compatible with snapshot mode: " $(regress_test_result ${F})
+   
+   GT_VALUE=45MB
+   LT_VALUE=60MB
+   check_regress_size_backup "b" "${BYTES_WRITTEN_PARAM}" ${GT_VALUE} ${LT_VALUE} ${TEST}
+
+   # --- EndSetup
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ---
+   printf "%s\n" "--------"
+
+   # 54. Check annotation:
+   # mode: snapshot
+   # one vol not comp and another yes: plugintest-persistent-volume-claim,plugintest-persistent-volume-claim-csi
+   TEST=54
+   BACKUP_MODE_ANN_VALUE=snapshot
+   BACKUP_VOLS_ANN_VALUE=plugintest-persistent-volume-claim,plugintest-persistent-volume-claim-csi
+   # --- SetUp
+   set_up_k8s_annotations "${POD_WITH_ANNOTATIONS}" "${BACKUP_MODE_ANN_VALUE}" "${BACKUP_VOLS_ANN_VALUE}"
+   # ---
+
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   
+   expected_string_in_log="is not compatible with snapshot"
+   check_regress_string_in_log "b" "${expected_string_in_log}" ${TEST}
+   F=$?
+   printf "%s%s\n" " -> PVC is not compatible with snapshot mode: " $(regress_test_result ${F})
+
+   GT_VALUE=45MB
+   LT_VALUE=60MB
+   check_regress_size_backup "b" "${BYTES_WRITTEN_PARAM}" ${GT_VALUE} ${LT_VALUE} ${TEST}
+
+   # --- EndSetup
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ---
+   printf "%s\n" "--------"
+
+   # 60. Check annotation:
+   # mode: clone
+   # one vol: plugintest-persistent-volume-claim-csi
+   TEST=60
+   BACKUP_MODE_ANN_VALUE=clone
+   BACKUP_VOLS_ANN_VALUE=plugintest-persistent-volume-claim-csi
+   # --- SetUp
+   set_up_k8s_annotations "${POD_WITH_ANNOTATIONS}" "${BACKUP_MODE_ANN_VALUE}" "${BACKUP_VOLS_ANN_VALUE}"
+   # ---
+
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+
+   GT_VALUE=20MB
+   LT_VALUE=30MB
+   check_regress_size_backup "b" "${BYTES_WRITTEN_PARAM}" ${GT_VALUE} ${LT_VALUE} ${TEST}
+
+   # --- EndSetup
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ---
+   printf "%s\n" "--------"
+
+   # # 61. Check annotation:
+   # # mode: clone
+   # # one vol (no comp): plugintest-persistent-volume-claim
+   # TEST=61
+   # BACKUP_MODE_ANN_VALUE=clone
+   # BACKUP_VOLS_ANN_VALUE=plugintest-persistent-volume-claim
+   # # --- SetUp
+   # ${KUBECTL} annotate pod ${POD_WITH_ANNOTATIONS} ${BACKUP_MODE_ANN}=${BACKUP_MODE_ANN_VALUE} --overwrite > /dev/null
+   # ${KUBECTL} annotate pod ${POD_WITH_ANNOTATIONS} ${BACKUP_VOL_ANN}=${BACKUP_VOLS_ANN_VALUE} --overwrite > /dev/null
+   # # ---
+
+   # do_regress_backup_test ${TEST}
+   # check_regress_backup_statusT ${TEST}
+   # F=$?
+   # printf "%s\n" "--------"
+   # printf "Results backup test ${TEST}:\n"
+   # printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+
+   # BYTES_WRITTEN_VALUE=$(get_value_of_parameter_in_log "b" "${BYTES_WRITTEN_PARAM}" "${TEST}")
+   # GT_VALUE=20MB
+   # check_regress_number_in_log "b" "gt" "${BYTES_WRITTEN_PARAM}" "${GT_VALUE}" "${TEST}"
+   # F=$?
+   # printf "Result expected bytes backed up ;%s; \n" "${F}"
+   # printf "%s%s\n" " -> Nº bytes of this backup (${BACKUP_MODE_ANN_VALUE} mode) one vol annotated inside pod (${GT_VALUE} < ${BYTES_WRITTEN_VALUE}): " $(regress_test_result ${F})
+   # LT_VALUE=30MB
+   # check_regress_number_in_log "b" "lt" "${BYTES_WRITTEN_PARAM}" "${LT_VALUE}" "${TEST}"
+   # F=$?
+   # printf "Result expected bytes backed up ;%s; \n" "${F}"
+   # printf "%s%s\n" " -> Nº bytes of this backup (${BACKUP_MODE_ANN_VALUE} mode) one vol annotated inside pod (${BYTES_WRITTEN_VALUE} < ${LT_VALUE}): " $(regress_test_result ${F})
+
+   # printf "%s\n" "--------"
+
+   # 62. Check annotation:
+   # mode: clone
+   # two vols: plugintest-persistent-volume-claim-csi,plugintest-persistent-volume-claim-csi-2
+   TEST=62
+   BACKUP_MODE_ANN_VALUE=clone
+   BACKUP_VOLS_ANN_VALUE=plugintest-persistent-volume-claim-csi,plugintest-persistent-volume-claim-csi-2
+   # --- SetUp
+   set_up_k8s_annotations "${POD_WITH_ANNOTATIONS}" "${BACKUP_MODE_ANN_VALUE}" "${BACKUP_VOLS_ANN_VALUE}"
+   # ---
+
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   
+   GT_VALUE=50MB
+   LT_VALUE=60MB
+   check_regress_size_backup "b" "${BYTES_WRITTEN_PARAM}" "${GT_VALUE}" "${LT_VALUE}" "${TEST}"
+
+   # --- EndSetup
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ---
+   printf "%s\n" "--------"
+
+   # --- After all
+   ${KUBECTL} annotate pod ${POD_WITH_ANNOTATIONS} ${BACKUP_MODE_ANN}- > /dev/null
+   ${KUBECTL} annotate pod ${POD_WITH_ANNOTATIONS} ${BACKUP_VOL_ANN}- > /dev/null
+   # --- After All annotations
+
+   # 70. Check pvcdata in fileset:
+   # pvcdata
+   # one vol: plugintest-persistent-volume-claim
+   TEST=70
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   
+   GT_VALUE=25MB
+   LT_VALUE=30MB
+   check_regress_size_backup "b" "${BYTES_WRITTEN_PARAM}" "${GT_VALUE}" "${LT_VALUE}" "${TEST}"
+
+   # --- EndSetup
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ---
+   printf "%s\n" "--------"
+
+   # 71. Check pvcdata in fileset:
+   # pvcdata
+   # two vols: plugintest-persistent-volume-claim,plugintest3-persistent-volume-claim
+   TEST=71
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   
+   GT_VALUE=55MB
+   LT_VALUE=60MB
+   check_regress_size_backup "b" "${BYTES_WRITTEN_PARAM}" "${GT_VALUE}" "${LT_VALUE}" "${TEST}"
+
+   # --- EndSetup
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ---
+   printf "%s\n" "--------"
+
+   # 72. Check pvcdata in fileset:
+   # pvcdata
+   # all vols
+   TEST=72
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   
+   GT_VALUE=140MB
+   LT_VALUE=150MB
+   check_regress_size_backup "b" "${BYTES_WRITTEN_PARAM}" "${GT_VALUE}" "${LT_VALUE}" "${TEST}"
+
+   # --- EndSetup
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ---
+   printf "%s\n" "--------"
+
+   # 73. Check pvcdata in fileset one annotation standard:
+   # pvcdata
+   # all vols
+   TEST=73
+   BACKUP_MODE_ANN_VALUE=standard
+   BACKUP_VOLS_ANN_VALUE=plugintest-persistent-volume-claim-csi
+   # --- SetUp
+   set_up_k8s_annotations "${POD_WITH_ANNOTATIONS}" "${BACKUP_MODE_ANN_VALUE}" "${BACKUP_VOLS_ANN_VALUE}"
+   # ---
+
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   
+   GT_VALUE=140MB
+   LT_VALUE=150MB
+   check_regress_size_backup "b" "${BYTES_WRITTEN_PARAM}" "${GT_VALUE}" "${LT_VALUE}" "${TEST}"
+
+   # --- EndSetup
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ---
+
+   printf "%s\n" "--------"
+
+   # 74. Check pvcdata in fileset one annotation standard:
+   # pvcdata
+   # all vols
+   TEST=74
+   BACKUP_MODE_ANN_VALUE=clone
+   BACKUP_VOLS_ANN_VALUE=plugintest-persistent-volume-claim-csi
+   # --- SetUp
+   set_up_k8s_annotations "${POD_WITH_ANNOTATIONS}" "${BACKUP_MODE_ANN_VALUE}" "${BACKUP_VOLS_ANN_VALUE}"
+   # ---
+
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   
+   GT_VALUE=140MB
+   LT_VALUE=150MB
+   check_regress_size_backup "b" "${BYTES_WRITTEN_PARAM}" "${GT_VALUE}" "${LT_VALUE}" "${TEST}"
+
+   # --- EndSetup
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ---
+   printf "%s\n" "--------"
+
+   # 75. Check pvcdata in fileset one annotation standard:
+   # pvcdata
+   # all vols
+   TEST=75
+   BACKUP_MODE_ANN_VALUE=snapshot
+   BACKUP_VOLS_ANN_VALUE=plugintest-persistent-volume-claim-csi
+   # --- SetUp
+   set_up_k8s_annotations "${POD_WITH_ANNOTATIONS}" "${BACKUP_MODE_ANN_VALUE}" "${BACKUP_VOLS_ANN_VALUE}"
+   # ---
+
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   
+   GT_VALUE=140MB
+   LT_VALUE=150MB
+   check_regress_size_backup "b" "${BYTES_WRITTEN_PARAM}" "${GT_VALUE}" "${LT_VALUE}" "${TEST}"
+
+   # --- EndSetup
+   end_set_up_k8s_annotations ${POD_WITH_ANNOTATIONS}
+   # ---
+   printf "%s\n" "--------"
+fi
+
+# now, backup with warnings
+for TEST in `seq 11 13`
+do
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusW ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Result backup test ${TEST}:"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   printf "%s\n" "--------"
+done
+
+# now, backup failed to test
+for TEST in `seq 21 22`
+do
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusE ${TEST}
+   F=$?
+   printf "%s\n" "--------"
+   printf "Result failed backup test ${TEST}:"
+   printf "%s%s\n" " -> StatusE: " $(regress_test_result ${F})
+   printf "%s\n" "--------"
+done
+
+#do_regress_backup_test 1 "incremental"
+#check_regress_backup_statusT 1
+#F=$?
+#regress_test_result ${F}
+
+# now remove some objects
+dstat=0
+
+TEST=1
+${KUBECTL} -n plugintest delete cm/plugintest-configmap 2>&1 > ${tmp}/rlog${TEST}.out
+do_regress_restore_test ${TEST} 1 "" "file=/@kubernetes/namespaces/plugintest/configmaps/plugintest-configmap.yaml"
+check_regress_restore_statusT ${TEST}
+F=$?
+# check if object restored on kubernetes
+${KUBECTL} -n plugintest get cm/plugintest-configmap 2>&1 >> ${tmp}/rlog${TEST}.out
+RET=`${KUBECTL} -n plugintest get cm/plugintest-configmap -o go-template='{{.metadata.name}}{{"\n"}}' 2>/dev/null | wc -l`
+echo "RET: $RET" >> ${tmp}/rlog${TEST}.out
+if [ $RET -ne 1 ]
+then
+   F=1
+   dstat=$((dstat+1))
+fi
+printf "%s\n" "--------"
+printf "Result restore test ${TEST}:"
+printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+printf "%s\n" "--------"
+
+((TEST++))
+${KUBECTL} -n plugintest delete secret/plugintest-secrets 2>&1 > ${tmp}/rlog${TEST}.out
+do_regress_restore_test ${TEST} 1 "" "file=/@kubernetes/namespaces/plugintest/secrets/plugintest-secrets.yaml"
+check_regress_restore_statusT ${TEST}
+F=$?
+# check if object restored on kubernetes
+${KUBECTL} -n plugintest get secret/plugintest-secrets 2>&1 >> ${tmp}/rlog${TEST}.out
+RET=`${KUBECTL} -n plugintest get secret/plugintest-secrets -o go-template='{{.metadata.name}}{{"\n"}}' 2>/dev/null | wc -l`
+echo "RET: $RET" >> ${tmp}/rlog${TEST}.out
+if [ $RET -ne 1 ]
+then
+   F=1
+   dstat=$((dstat+1))
+fi
+printf "%s\n" "--------"
+printf "Result restore test ${TEST}:"
+printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+printf "%s\n" "--------"
+
+((TEST++))
+${KUBECTL} delete ns/plugintest 2>&1 > ${tmp}/rlog${TEST}.out
+do_regress_restore_test ${TEST} 1 "" "select all"
+check_regress_restore_statusT ${TEST}
+F=$?
+# check if object restored on kubernetes, we have to wait until ready
+W=0
+if [ $F -eq 0 ]
+then
+   i=0
+   while true
+   do
+      kstat=`${KUBECTL} -n plugintest get pods -o go-template='{{range .items}}{{.status.phase}}{{"\n"}}{{end}}' | grep -v Running | wc -l`
+      if [ $kstat -eq 0 ]
+      then
+         break
+      fi;
+      if [ $i -eq 600 ]
+      then
+         echo "Timeout waiting for restore data to populate!"
+         W=1
+      fi
+      ((i++))
+      sleep 1
+   done
+fi
+if [ $W -eq 0 ]
+then
+   ${KUBECTL} -n plugintest get secret/plugintest-secrets 2>&1 >> ${tmp}/rlog${TEST}.out
+   RET=`${KUBECTL} -n plugintest get secret/plugintest-secrets -o go-template='{{.metadata.name}}{{"\n"}}' 2>/dev/null | wc -l`
+   echo "RET: $RET" >> ${tmp}/rlog${TEST}.out
+   if [ $RET -ne 1 ]
+   then
+      F=1
+      dstat=$((dstat+1))
+   fi
+   printf "%s\n" "--------"
+   printf "Result restore test ${TEST}:"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   printf "%s\n" "--------"
+fi
+
+
+stop_bacula
+end_test

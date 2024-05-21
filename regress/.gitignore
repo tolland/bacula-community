@@ -11,6 +11,8 @@ Testing
 bin
 build
 scripts/*.conf
+scripts/*/*.conf
+scripts/*.so
 test.out
 tmp
 weird-files

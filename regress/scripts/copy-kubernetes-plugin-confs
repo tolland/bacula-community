@@ -1,5 +1,10 @@
 #!/bin/sh
-cp -f ${rscripts}/kubernetes-plugin-test-bacula-dir.conf ${conf}/bacula-dir.conf
+
+if [ -z ${1} ]; then
+    cp -f ${rscripts}/kubernetes-plugin-test-bacula-dir.conf ${conf}/bacula-dir.conf
+else
+    cp -f ${rscripts}/kubernetes/kubernetes-plugin-test-${1}-bacula-dir.conf ${conf}/bacula-dir.conf
+fi
 cp -f ${rscripts}/test-bacula-sd.conf ${conf}/bacula-sd.conf
 cp -f ${rscripts}/test-bacula-fd.conf ${conf}/bacula-fd.conf
 cp -f ${rscripts}/test-console.conf ${conf}/bconsole.conf

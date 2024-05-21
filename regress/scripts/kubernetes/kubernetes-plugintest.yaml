@@ -1,0 +1,249 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: plugintest
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: plugintest-secrets
+  namespace: plugintest
+  labels:
+    app: plugintest
+data:
+  # username: bacula
+  # password: plugintest
+  # secretkey: 5bAoV2CpzBvhBQZaYUX1qYawC00qhrx8cEW0fK1zYkTxVdbxfvWMyi0h5QbweJkq
+  username: YmFjdWxhCg==
+  password: cGx1Z2ludGVzdAo=
+  secretkey: NWJBb1YyQ3B6QnZoQlFaYVlVWDFxWWF3QzAwcWhyeDhjRVcwZksxellrVHhWZGJ4ZnZXTXlpMGg1UWJ3ZUprcQo=
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: plugintest-configmap
+  namespace: plugintest
+  labels:
+    app: plugintest
+data:
+  database: bacula
+  database_host: 127.0.0.1
+  database_port: '5432'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plugintest-subdomain
+  namespace: plugintest
+  labels:
+    app: plugintest
+spec:
+  selector:
+    name: plugintest
+  # clusterIP: None
+  ports:
+  - name: foo # Actually, no port is needed.
+    port: 1234
+    targetPort: 1234
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plugintest-nginx-service
+  namespace: plugintest
+  labels:
+    app: plugintest-nginx-service
+    tier: backend
+spec:
+  ports:
+  - port: 80
+    name: web
+  clusterIP: None
+  selector:
+    app: plugintest-nginx-web
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plugintest-persistent-volume-claim
+  namespace: plugintest
+  labels:
+    app: plugintest
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: local-path
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plugintest3-persistent-volume-claim
+  namespace: plugintest
+  labels:
+    app: plugintest
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: local-path
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: plugintest1
+  namespace: plugintest
+  labels:
+    app: plugintest
+    environment: production
+    # tier: frontend
+spec:
+  hostname: plugintest-1
+  subdomain: plugintest-subdomain
+  containers:
+  - image: busybox:1.28
+    command:
+      - sleep
+      - "3600"
+    name: plugintest
+    volumeMounts:
+      - name: plugintest-persistent-storage
+        mountPath: /data
+  volumes:
+    - name: plugintest-persistent-storage
+      persistentVolumeClaim:
+        claimName: plugintest-persistent-volume-claim
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: plugintest2
+  namespace: plugintest
+  labels:
+    app: plugintest
+spec:
+  hostname: plugintest-2
+  subdomain: plugintest-subdomain
+  containers:
+  - image: busybox:1.28
+    command:
+      - sleep
+      - "3600"
+    name: plugintest
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: plugintest3
+  namespace: plugintest
+  labels:
+    app: plugintest
+    environment: production
+    # tier: frontend
+  annotations:
+    bacula/backup.mode: standard
+    bacula/backup.volumes: plugintest3-persistent-volume-claim
+spec:
+  hostname: plugintest-3
+  subdomain: plugintest-subdomain
+  containers:
+  - image: busybox:1.28
+    command:
+      - sleep
+      - "3600"
+    name: plugintest
+    volumeMounts:
+      - name: plugintest3-persistent-storage
+        mountPath: /data
+  volumes:
+    - name: plugintest3-persistent-storage
+      persistentVolumeClaim:
+        claimName: plugintest3-persistent-volume-claim
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: plugintest-frontend
+  namespace: plugintest
+  labels:
+    app: plugintest-replica
+    tier: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        tier: frontend
+    spec:
+      containers:
+      - name: plugintest-frontend-test
+        image: dependencytrack/frontend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plugintest-nginx-deployment
+  namespace: plugintest
+  labels:
+    app: plugintest-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: plugintest-deployment
+  template:
+    metadata:
+      labels:
+        app: plugintest-deployment
+    spec:
+      containers:
+      - name: plugintest-nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: plugintest-nginx-web
+  namespace: plugintest
+spec:
+  selector:
+    matchLabels:
+      app: plugintest-nginx-web
+  serviceName: "nginx"
+  replicas: 3
+  template:
+    metadata:
+      namespace: plugintest
+      labels:
+        app: plugintest-nginx-web
+        tier: backend
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: plugintest-nginx-web
+        image: k8s.gcr.io/nginx-slim:0.8
+        ports:
+        - containerPort: 80
+          name: web
+        volumeMounts:
+        - name: plugintest-www-data
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+  - metadata:
+      name: plugintest-www-data
+      namespace: plugintest
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: local-path
