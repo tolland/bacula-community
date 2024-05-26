@@ -89,6 +89,10 @@ class ScheduleStatus extends BaculumAPIServer {
 	private function formatSchedules(array $output) {
 		$items = $item = array();
 		for ($i = 0; $i < count($output); $i++) {
+			if (preg_match('/^(limit|error|errmsg)=/', $output[$i]) === 1) {
+				// skip key/value items that are not schedule status
+				continue;
+			}
 			if (preg_match('/^(?P<key>\w+)=(?P<val>[\s\S]*)$/', $output[$i], $match) === 1) {
 				$item[$match['key']] = $match['val'];
 			} elseif (empty($output[$i]) && count($item) > 0) {
