@@ -39,6 +39,7 @@ class StatusStorage extends ComponentStatusModule {
 	const OUTPUT_TYPE_TERMINATED = 'terminated';
 	const OUTPUT_TYPE_DEVICES = 'devices';
 	const OUTPUT_TYPE_DEDUPENGINE = 'dedupengine';
+	const OUTPUT_TYPE_CLOUD = 'cloud';
 
 	/**
 	 * Get parsed storage status.
@@ -56,7 +57,13 @@ class StatusStorage extends ComponentStatusModule {
 			Bconsole::PTYPE_API_CMD
 		);
 		if ($result->exitcode === 0) {
-			$ret['output'] = $this->parseStatus($result->output, $type);
+			if ($type === self::OUTPUT_TYPE_CLOUD) {
+				// cloud status
+				$ret['output'] = $this->parseCloudStatus($result->output);
+			} else {
+				// other statuses (running, devices, terminated...etc.)
+				$ret['output'] = $this->parseStatus($result->output, $type);
+			}
 		} else {
 			$ret['output'] = $result->output;
 		}
@@ -138,6 +145,66 @@ class StatusStorage extends ComponentStatusModule {
 	}
 
 	/**
+	 * Parse .api 2 cloud storage status output from bconsole.
+	 *
+	 * @param array $output bconsole cloud storage status output
+	 * @return array array with parsed storage status values
+	 */
+	private function parseCloudStatus(array $output): array
+	{
+		$result = ['uploads' => ['transfers' => []], 'downloads' => ['transfers' => []]];
+		$section = '';
+		$transfers = false;
+		$part = [];
+		$tpart = [];
+		$empty_lines = 0;
+		$line = '';
+		for ($i = 0; $i < count($output); $i++) {
+			if (preg_match('/^$/', $output[$i], $match) === 1) {
+				// empty line, count it and jump to next line
+				$empty_lines++;
+				continue;
+			}
+			if (preg_match('/^(?P<section>(uploads|downloads)):/', $output[$i], $match) === 1) {
+				// section detected
+				$section = $match['section'];
+				continue;
+			}
+			if (preg_match('/^(transfers):\s+\[/', $output[$i], $match) === 1) {
+				// transfers subsection start
+				$transfers = true;
+				continue;
+			}
+			$tend = (preg_match('/^\]$/', $output[$i], $match) === 1);
+			if ($empty_lines > 1 || $tend) {
+				// drop agregated section or transfer items
+				if (count($part) > 0) {
+					$result[$section] = array_merge($part, $result[$section]);
+					$part = [];
+				} elseif (count($tpart) > 0) {
+					$result[$section]['transfers'][] = $tpart;
+					$tpart = [];
+				}
+				$empty_lines = 0;
+				if ($tend) {
+					$transfers = false;
+				}
+			}
+			// read a regular key/value line
+			$line = $this->parseLine($output[$i]);
+			if (!is_array($line)) {
+				continue;
+			}
+			if ($transfers) {
+				$tpart[$line['key']] = $line['value'];
+			} else {
+				$part[$line['key']] = $line['value'];
+			}
+		}
+		return $result;
+	}
+
+	/**
 	 * Validate status output type.
 	 *
 	 * @param string $type output type (e.g. header, running, terminated ...etc.)
@@ -151,7 +218,8 @@ class StatusStorage extends ComponentStatusModule {
 				self::OUTPUT_TYPE_RUNNING,
 				self::OUTPUT_TYPE_TERMINATED,
 				self::OUTPUT_TYPE_DEVICES,
-				self::OUTPUT_TYPE_DEDUPENGINE
+				self::OUTPUT_TYPE_DEDUPENGINE,
+				self::OUTPUT_TYPE_CLOUD
 			)
 		);
 	}

@@ -3450,7 +3450,7 @@
 						"description": "Output type using together with output=json parameter.",
 						"schema": {
 							"type": "string",
-							"enum": ["header", "running", "devices", "terminated", "dedupengine"]
+							"enum": ["header", "running", "devices", "terminated", "dedupengine", "cloud"]
 						}
 					},
 					{
