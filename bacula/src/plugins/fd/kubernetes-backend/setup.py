@@ -24,7 +24,7 @@ if sys.version_info < (3, 0):
 
 setup(
     name='baculak8s',
-    version='2.2.0',
+    version='2.3.0',
     author='Radoslaw Korzeniewski, Francisco Manuel Garcia Botella',
     author_email='radekk@korzeniewski.net, francisco.garcia@baculasystems.com',
     packages=find_packages(exclude=('tests', 'tests.*', 'docker')),

@@ -52,6 +52,7 @@ class LogConfig(object):
     def handle_params(job_info, plugin_params):
         if "debug" in plugin_params and plugin_params["debug"]:
             LogConfig._create(job_info)
+            Log.debug_level = int(plugin_params["debug"])
         else:
             LogConfig._delete_pre_job_log()
 
@@ -79,6 +80,8 @@ class Log:
         Class with helper methods to send data to the Debug Log
     """
 
+    debug_level = 0
+
     @staticmethod
     def save_received_termination(packet_header):
         Log.save_received_packet(packet_header, "(TERMINATION PACKET)")
@@ -93,6 +96,10 @@ class Log:
 
     @staticmethod
     def save_received_packet(packet_header, packet_content):
+        if Log.debug_level <= 1:
+            return
+        if Log.debug_level == 2 and packet_header.decode()[0] == 'D':
+            return
         message = "Received Packet\n{}\n{}\n".format(packet_header.decode(), packet_content)
         logging.debug(message)
 
@@ -106,6 +113,10 @@ class Log:
 
     @staticmethod
     def save_sent_packet(packet_header, packet_content):
+        if Log.debug_level <= 1:
+            return
+        if Log.debug_level == 2 and packet_header[0] == 'D':
+            return
         message = "Sent Packet\n{}{}".format(packet_header, packet_content)
         logging.debug(message)
 

@@ -95,6 +95,7 @@ class JobPodBacula(Job, metaclass=ABCMeta):
         self.backupimage = params.get('baculaimage', BACULABACKUPIMAGE)
         self.imagepullpolicy = ImagePullPolicy.process_param(params.get('imagepullpolicy'))
         self.backup_clone_compatibility = True
+        self.debug = params.get('debug', 0)
 
     def handle_pod_logs(self, connstream):
         logmode = ''
@@ -143,7 +144,8 @@ class JobPodBacula(Job, metaclass=ABCMeta):
             if not data:
                 logging.debug('handle_pod_data_recv:EOT')
                 break
-            logging.debug('handle_pod_data_recv:D' + str(len(data)))
+            if self.debug == '3':
+                logging.debug('handle_pod_data_recv:D' + str(len(data)))
             self._io.send_data(data)
 
     def handle_pod_data_send(self, connstream):
@@ -153,7 +155,8 @@ class JobPodBacula(Job, metaclass=ABCMeta):
                 logging.debug('handle_pod_data_send:EOT')
                 break
             self.connsrv.streamsend(data)
-            logging.debug('handle_pod_data_send:D{}'.format(len(data)))
+            if self.debug == '3':
+                logging.debug('handle_pod_data_send:D{}'.format(len(data)))
 
     def prepare_pod_yaml(self, namespace, pvcdata, mode='backup'):
         logging.debug('pvcdata: {}'.format(pvcdata))
