@@ -123,8 +123,11 @@ char *bstrftime_nc(char *dt, int maxlen, utime_t utime)
    /* NOTE! since the compiler complains about %y, I use %y and cut the century */
    strftime(dt, maxlen, "%d-%b-%Y %H:%M", &tm);
    /* overlay the century */
-   p = dt+7;
-   q = dt+9;
+   /* search for the second -, because %b can be multi-byte utf8 and more than 3 bytes */
+   p = dt + 3; // starting at first byte of %b
+   while (*p != '-') p++;
+   p++;
+   q = p+2;
    while (*q) {
       *p++ = *q++;
    }
@@ -154,7 +157,10 @@ char *bstrftime_gmt_iso8601(char *dt, int maxlen, utime_t utime)
    return dt;
 }
 
-/* Convert standard time string yyyy-mm-dd hh:mm:ss to Unix time */
+/* Convert standard time string yyyy-mm-dd hh:mm:ss to Unix time
+ * Warning If you don't know the timezone and don't specify the right
+ * "saving time" you cannot always get the right value.  (Alain 2024)
+ * */
 utime_t str_to_utime(char *str)
 {
    struct tm tm;
