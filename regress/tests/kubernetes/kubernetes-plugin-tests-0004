@@ -1514,7 +1514,7 @@ rtest1 () {
       echo "RET: ${rets[i]}" >> ${tmp}/rlog${TEST}.out
       if [ ${rets[i]} -ne 1 ]; then
          eval ${fs[i]}=1
-         dstat=$((dstat+1))
+         rstat=$((rstat+1))
       fi
    done
 
@@ -1582,7 +1582,7 @@ rtest2 () {
       echo "RET: ${rets[i]}" >> ${tmp}/rlog${TEST}.out
       if [ ${rets[i]} -ne 1 ]; then
          eval ${fs[i]}=1
-         dstat=$((dstat+1))
+         rstat=$((rstat+1))
       fi
    done
 
@@ -1649,7 +1649,7 @@ rtest3 () {
       echo "RET: ${rets[i]}" >> ${tmp}/rlog${TEST}.out
       if [ ${rets[i]} -ne 1 ]; then
          eval ${fs[i]}=1
-         dstat=$((dstat+1))
+         rstat=$((rstat+1))
       fi
    done
 
@@ -1715,7 +1715,7 @@ rtest4 () {
       echo "RET: ${rets[i]}" >> ${tmp}/rlog${TEST}.out
       if [ ${rets[i]} -ne 1 ]; then
          eval ${fs[i]}=1
-         dstat=$((dstat+1))
+         rstat=$((rstat+1))
       fi
    done
 
@@ -1790,7 +1790,7 @@ rtest5 () {
       echo "RET: ${rets[i]}" >> ${tmp}/rlog${TEST}.out
       if [ ${rets[i]} -ne 1 ]; then
          eval ${fs[i]}=1
-         dstat=$((dstat+1))
+         rstat=$((dstat+1))
       fi
    done
 
@@ -1826,12 +1826,12 @@ btest11
 btest12
 btest13
 
-dstat=0
+rstat=0
 rtest1
 rtest2
 rtest3
 rtest4
 rtest5
 
-# stop_bacula
+stop_bacula
 end_test

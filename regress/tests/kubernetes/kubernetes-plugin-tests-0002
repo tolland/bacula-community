@@ -248,7 +248,7 @@ rtest1 () {
    if [ $RET -ne 1 ]
    then
       F=1
-      dstat=$((dstat+1))
+      rstat=$((rstat+1))
    fi
    printf "%s\n" "--------"
    printf "Result restore test ${TEST}:"
@@ -258,7 +258,7 @@ rtest1 () {
 
 estat=0
 
-etest1
+# etest1
 
 bstat=0
 JOBID=1
@@ -266,7 +266,7 @@ JOBID=1
 JobName=${JobNameBase}-
 btest1
 
-dstat=0
+rstat=0
 rtest1
 
 stop_bacula

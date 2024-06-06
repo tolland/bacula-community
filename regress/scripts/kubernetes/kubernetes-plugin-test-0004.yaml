@@ -156,6 +156,7 @@ spec:
   containers:
     - name: test-container-0004-2
       image: nginx
+      imagePullPolicy: IfNotPresent
       ports:
         - containerPort: 80
           name: "http-server"
@@ -176,6 +177,7 @@ spec:
   containers:
     - name: test-container-0004-2
       image: nginx
+      imagePullPolicy: IfNotPresent
       ports:
         - containerPort: 80
           name: "http-server"
@@ -196,6 +198,7 @@ spec:
   containers:
     - name: test-container-0004-3
       image: nginx
+      imagePullPolicy: IfNotPresent
       ports:
         - containerPort: 80
           name: "http-server"
@@ -216,6 +219,7 @@ spec:
   containers:
     - name: test-container-0004-4
       image: nginx
+      imagePullPolicy: IfNotPresent
       ports:
         - containerPort: 80
           name: "http-server"
@@ -236,6 +240,7 @@ spec:
   containers:
     - name: test-container-0004-5
       image: nginx
+      imagePullPolicy: IfNotPresent
       ports:
         - containerPort: 80
           name: "http-server"
@@ -256,6 +261,7 @@ spec:
   containers:
     - name: test-container-0004-6
       image: nginx
+      imagePullPolicy: IfNotPresent
       ports:
         - containerPort: 80
           name: "http-server"
@@ -279,6 +285,7 @@ spec:
   containers:
     - name: test-container-0004-7
       image: nginx
+      imagePullPolicy: IfNotPresent
       ports:
         - containerPort: 80
           name: "http-server"

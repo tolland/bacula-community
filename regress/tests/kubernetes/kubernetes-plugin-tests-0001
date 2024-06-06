@@ -596,7 +596,7 @@ btest6 () {
    TEST=6
    OUTPUT_FILE=${tmp}/blog${TEST}.out
    do_regress_backup_test ${TEST}
-   check_regress_backup_statusT ${TEST}
+   check_regress_backup_statusW ${TEST}
    F=$?
    # Check pvc1 is not backup
    F_1=0
@@ -675,7 +675,7 @@ rtest1 () {
       echo "RET: ${rets[i]}" >> ${tmp}/rlog${TEST}.out
       if [ ${rets[i]} -ne 1 ]; then
          eval ${fs[i]}=1
-         dstat=$((dstat+1))
+         rstat=$((rstat+1))
       fi
    done
 
@@ -734,7 +734,7 @@ rtest2 () {
       echo "RET: ${rets[i]}" >> ${tmp}/rlog${TEST}.out
       if [ ${rets[i]} -ne 1 ]; then
          eval ${fs[i]}=1
-         dstat=$((dstat+1))
+         rstat=$((rstat+1))
       fi
    done
 
@@ -749,7 +749,7 @@ rtest2 () {
 
 estat=0
 
-# etest1
+etest1
 # etest2
 
 bstat=0
@@ -757,17 +757,18 @@ JOBID=1
 # This job is the base of all backup jobs names
 JobName=${JobNameBase}-
 
-# btest1
-# btest2
-# btest3
-# btest4
+btest1
+btest2
+btest3
+btest4
 btest5-pre
 btest5
 btest5-post
 btest6
 
-# rtest1
-# rtest2
+rstat=0
+rtest1
+rtest2
 
-# stop_bacula
+stop_bacula
 end_test

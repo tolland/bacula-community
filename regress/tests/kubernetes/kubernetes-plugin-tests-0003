@@ -300,7 +300,7 @@ rtest1 () {
       echo "RET: ${rets[i]}" >> ${tmp}/rlog${TEST}.out
       if [ ${rets[i]} -ne 1 ]; then
          eval ${fs[i]}=1
-         dstat=$((dstat+1))
+         rstat=$((rstat+1))
       fi
    done
 
@@ -322,7 +322,8 @@ JobName=${JobNameBase}-
 
 btest1
 
+rstat=0
 rtest1
 
-# stop_bacula
+stop_bacula
 end_test

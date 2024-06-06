@@ -97,6 +97,7 @@ spec:
   containers:
     - name: test-nginx-container
       image: nginx
+      imagePullPolicy: IfNotPresent
       ports:
         - containerPort: 8080
           name: "http-server"
