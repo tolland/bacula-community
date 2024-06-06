@@ -31,7 +31,7 @@ setup_plugin_param()
 LPLUG=$1
 if [ "x$debug" != "x" ]
 then
-   LPLUG="$LPLUG debug=1"
+   LPLUG="$LPLUG debug=$debug"
 fi
 export LPLUG
 }
@@ -72,12 +72,12 @@ setup_self_signed_cert()
 #
 regress_test_result()
 {
-if [ $1 -ne 0 ]
-then
-   echo "failed"
-else
-   echo "ok"
-fi
+   if [ $1 -ne 0 ]
+   then
+      echo "failed"
+   else
+      echo "ok"
+   fi
 }
 
 #

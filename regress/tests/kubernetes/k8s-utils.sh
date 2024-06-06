@@ -57,3 +57,30 @@ end_set_up_k8s_annotations() {
    ${KUBECTL} annotate pod ${POD_WITH_ANNOTATIONS} ${BACKUP_MODE_ANN}- > /dev/null
    ${KUBECTL} annotate pod ${POD_WITH_ANNOTATIONS} ${BACKUP_VOL_ANN}- > /dev/null
 }
+
+wait_until_pod_run() {
+   NAMESPACE=$1
+   POD=$2
+   i=0
+   SPIN=('-' '\\' '|' '/')
+   printf "\n ... Waiting to pod is running ... \n"
+   sleep 3
+   while true
+   do
+      kstat=`${KUBECTL} -n ${NAMESPACE} get pods ${POD} | grep "Running" | wc -l`
+      if [ $kstat -eq 1 ]
+      then
+         break
+      fi;
+      w=1
+      printf "\b${SPIN[(($i % 4))]}"
+      if [ $i -eq 60 ]
+      then
+         echo "Timeout waiting for pod is running. Cannot continue!"
+         exit 1
+      fi
+      ((i++))
+      sleep 1
+   done
+   sleep 3
+}

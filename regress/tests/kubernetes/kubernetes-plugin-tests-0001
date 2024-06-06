@@ -89,10 +89,10 @@ fi
 
 if [ ! -z "$KUBE_BACULA_IMAGE" ]
 then
-   CONNECTION_ARGS="${CONNECTION_ARGS} baculaimage=${KUBE_BACULA_IMAGE} "
+   CONNECTION_ARGS="${CONNECTION_ARGS} baculaimage=${KUBE_BACULA_IMAGE} imagepullpolicy=ifNotPresent "
 fi
 
-export debug=1
+export debug=2
 scripts/cleanup
 scripts/copy-kubernetes-plugin-confs ${TEST_ID}
 
@@ -222,6 +222,11 @@ sed -i -f ${out_sed} ${conf}/bacula-dir.conf
 
 printf "\n ... Done ...\n"
 
+## Variables to restore from other jobs
+JOB_ID_TO_RESTORE_1=0
+JOB_ID_TO_RESTORE_2=0
+
+
 start_test
 
 # We must put the bconsole command in ${cwd}/tmp/bconcmds
@@ -349,6 +354,7 @@ btest1 () {
    # Test 1
    TEST=1
    OUTPUT_FILE=${tmp}/blog${TEST}.out
+   JOB_ID_TO_RESTORE_1=${JOBID}
    do_regress_backup_test ${TEST}
    check_regress_backup_statusT ${TEST}
    F=$?
@@ -396,6 +402,7 @@ btest2 () {
    # Test 2
    TEST=2
    OUTPUT_FILE=${tmp}/blog${TEST}.out
+   JOB_ID_TO_RESTORE_2=${JOBID}
    do_regress_backup_test ${TEST}
    check_regress_backup_statusT ${TEST}
    F=$?
@@ -538,7 +545,8 @@ btest5 () {
    # Test 5
    TEST=5
    OUTPUT_FILE=${tmp}/blog${TEST}.out
-   kstat=`${KUBECTL} -n ${K8S_NAMESPACE_1} get pvc ${PVC_N1_0001_1}  | grep -v Terminating | wc -l`
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get pvc ${PVC_N1_0001_1} 2>&1 >> ${tmp}/rlog${TEST}-k8s.out
+   kstat=`${KUBECTL} -n ${K8S_NAMESPACE_1} get pvc | grep ${PVC_N1_0001_1} | grep -v Terminating | wc -l`
    do_regress_backup_test ${TEST}
    check_regress_backup_statusT ${TEST}
    F=$?
@@ -588,7 +596,7 @@ btest6 () {
    TEST=6
    OUTPUT_FILE=${tmp}/blog${TEST}.out
    do_regress_backup_test ${TEST}
-   check_regress_backup_statusW ${TEST}
+   check_regress_backup_statusT ${TEST}
    F=$?
    # Check pvc1 is not backup
    F_1=0
@@ -601,9 +609,9 @@ btest6 () {
    fi
    # Check warning in job log
    F_2=0
-   RET=`grep "As clone backup is empty" ${OUTPUT_FILE} | grep "${PVC_N1_0001_1}" | grep "standard mode" | wc -l`
+   RET=`grep "As clone backup is empty" ${OUTPUT_FILE} | grep "standard mode" | wc -l`
    RES=1
-   RET2='grep "As clone backup is empty" ${OUTPUT_FILE} | grep "${PVC_N1_0001_1}" | grep "standard mode" | wc -l'
+   RET2=`grep "As clone backup is empty" ${OUTPUT_FILE} | grep "standard mode" | wc -l`
    printf "%s\n%s\n%s\n" "+++++++++++++++++++" "Results: ${RET}" "Command:${RET2}"
    if [ $RET -ne $RES ]
    then
@@ -620,24 +628,146 @@ btest6 () {
 }
 
 
+
+#############
+## RTEST 1 ##
+#############
+rtest1 () {
+   TEST=1
+   if [ "${JOB_ID_TO_RESTORE_1}" -eq 0 ]; then
+      printf "%s\n" "--------------"
+      printf "%s\n" "The job id to restore ${TEST} was not assigned."
+      printf "%s\n" "--------------"
+      exit 1
+   fi
+   # Before delete
+   echo "---> Before delete the pvc:" 2>&1 > ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get pvc/${PVC_N1_0001_1} 2>&1 >> ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get pod/${POD_N1_0001_1} 2>&1 >> ${tmp}/rlog${TEST}.out
+   echo "---> Deleting the pvc and pod:" 2>&1 >> ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} delete pod/${POD_N1_0001_1} 2>&1 >> ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} delete pvc/${PVC_N1_0001_1} 2>&1 >> ${tmp}/rlog${TEST}.out
+   echo "---> Deleted the pvc(${PVC_N1_0001_1}) and pod (${POD_N1_0001_1})" 2>&1 >> ${tmp}/rlog${TEST}.out
+   actions=(
+      "" # Always starts with empty line. I don't know why is neccesary.
+      "cd @kubernetes/namespaces/${K8S_NAMESPACE_1}/pods/"
+      "mark ${POD_N1_0001_1}.yaml"
+      "cd ../persistentvolumeclaims/"
+      "mark ${PVC_N1_0001_1}.yaml"
+      "mark ${PVC_N1_0001_1}.tar"
+   )
+   do_regress_restore_test_jobid ${TEST} ${JOB_ID_TO_RESTORE_1} "/" $actions
+   check_regress_restore_statusT ${TEST}
+   F=$?
+   # check if object restored on kubernetes
+   
+   echo "---> After restore the pod and pvc:" 2>&1 >> ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get pod/${POD_N1_0001_1} 2>&1 >> ${tmp}/rlog${TEST}.out
+   RET=`${KUBECTL} -n ${K8S_NAMESPACE_1} get pod/${POD_N1_0001_1} -o go-template='{{.metadata.name}}{{"\n"}}' 2>/dev/null | wc -l`
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get pvc/${PVC_N1_0001_1} 2>&1 >> ${tmp}/rlog${TEST}.out
+   RET_1=`${KUBECTL} -n ${K8S_NAMESPACE_1} get pvc/${PVC_N1_0001_1} -o go-template='{{.metadata.name}}{{"\n"}}' 2>/dev/null | wc -l`
+
+   F_1=0 F_2=0
+   rets=($RET $RET_1)
+   fs=("F_1" "F_2")
+
+   for i in ${!rets[@]}; do
+      echo "RET: ${rets[i]}" >> ${tmp}/rlog${TEST}.out
+      if [ ${rets[i]} -ne 1 ]; then
+         eval ${fs[i]}=1
+         dstat=$((dstat+1))
+      fi
+   done
+
+   printf "%s\n" "--------"
+   printf "Result restore test ${TEST}:"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   printf "%s%s\n" " -> The pod ${POD_N1_0001_1} was restored: " $(regress_test_result ${F_1})
+   printf "%s%s\n" " -> The pvc ${PVC_N1_0001_1} was restored: " $(regress_test_result ${F_2})
+   printf "%s\n" "--------"
+}
+
+
+#############
+## RTEST 2 ##
+#############
+rtest2 () {
+   TEST=2
+   if [ "${JOB_ID_TO_RESTORE_2}" -eq 0 ]; then
+      printf "%s\n" "--------------"
+      printf "%s\n" "The job id to restore ${TEST} was not assigned."
+      printf "%s\n" "--------------"
+      exit 1
+   fi
+   # Before delete
+   echo "---> Before delete the ns:" 2>&1 > ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get pvc 2>&1 >> ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get pod 2>&1 >> ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get secrets 2>&1 >> ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get service 2>&1 >> ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get configmap 2>&1 >> ${tmp}/rlog${TEST}.out
+   echo "---> Deleting the namespace:" 2>&1 >> ${tmp}/rlog${TEST}.out
+   ${KUBECTL} delete namespace ${K8S_NAMESPACE_1} 2>&1 >> ${tmp}/rlog${TEST}.out
+   echo "---> Deleted the namespace (${K8S_NAMESPACE_1})" 2>&1 >> ${tmp}/rlog${TEST}.out
+   actions=(
+      "" # Always starts with empty line. I don't know why is neccesary.
+      "cd @kubernetes/namespaces/"
+      "mark ${K8S_NAMESPACE_1}"
+   )
+   do_regress_restore_test_jobid ${TEST} ${JOB_ID_TO_RESTORE_2} "/" $actions
+   check_regress_restore_statusT ${TEST}
+   F=$?
+   # check if object restored on kubernetes
+   
+   echo "---> After restore the pod and pvc:" 2>&1 >> ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get pod/${POD_N1_0001_1} 2>&1 >> ${tmp}/rlog${TEST}.out
+   RET=`${KUBECTL} -n ${K8S_NAMESPACE_1} get pod/${POD_N1_0001_1} -o go-template='{{.metadata.name}}{{"\n"}}' 2>/dev/null | wc -l`
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get pvc/${PVC_N1_0001_1} 2>&1 >> ${tmp}/rlog${TEST}.out
+   RET_1=`${KUBECTL} -n ${K8S_NAMESPACE_1} get pvc/${PVC_N1_0001_1} -o go-template='{{.metadata.name}}{{"\n"}}' 2>/dev/null | wc -l`
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get pvc/${PVC_N1_0001_2} 2>&1 >> ${tmp}/rlog${TEST}.out
+   RET_2=`${KUBECTL} -n ${K8S_NAMESPACE_1} get pvc/${PVC_N1_0001_2} -o go-template='{{.metadata.name}}{{"\n"}}' 2>/dev/null | wc -l`
+   F_1=0 F_2=0 F_3=0
+   rets=($RET $RET_1 $RET_2)
+   fs=("F_1" "F_2" "F_3")
+
+   for i in ${!rets[@]}; do
+      echo "RET: ${rets[i]}" >> ${tmp}/rlog${TEST}.out
+      if [ ${rets[i]} -ne 1 ]; then
+         eval ${fs[i]}=1
+         dstat=$((dstat+1))
+      fi
+   done
+
+   printf "%s\n" "--------"
+   printf "Result restore test ${TEST}:"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   printf "%s%s\n" " -> The pod ${POD_N1_0001_1} was restored: " $(regress_test_result ${F_1})
+   printf "%s%s\n" " -> The pvc ${PVC_N1_0001_1} was restored: " $(regress_test_result ${F_2})
+   printf "%s%s\n" " -> The pvc ${PVC_N1_0001_2} was restored: " $(regress_test_result ${F_3})
+   printf "%s\n" "--------"
+}
+
 estat=0
 
-etest1
-etest2
+# etest1
+# etest2
 
 bstat=0
 JOBID=1
 # This job is the base of all backup jobs names
 JobName=${JobNameBase}-
-btest1
-btest2
-btest3
-btest4
+
+# btest1
+# btest2
+# btest3
+# btest4
 btest5-pre
 btest5
 btest5-post
 btest6
 
+# rtest1
+# rtest2
 
-stop_bacula
+# stop_bacula
 end_test

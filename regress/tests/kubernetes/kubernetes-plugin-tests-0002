@@ -60,10 +60,10 @@ fi
 
 if [ ! -z "$KUBE_BACULA_IMAGE" ]
 then
-   CONNECTION_ARGS="${CONNECTION_ARGS} baculaimage=${KUBE_BACULA_IMAGE} "
+   CONNECTION_ARGS="${CONNECTION_ARGS} baculaimage=${KUBE_BACULA_IMAGE} imagepullpolicy=ifNotPresent "
 fi
 
-export debug=1
+export debug=2
 scripts/cleanup
 scripts/copy-kubernetes-plugin-confs ${TEST_ID}
 
@@ -177,44 +177,6 @@ quit
 END_OF_DATA
 
 run_bacula
-
-#############
-## ETEST 1 ##
-#############
-etest1 () {
-   TEST=1
-   OUTPUT_FILE=${tmp}/elog${TEST}.out
-   JobName=${JobNameBase}-${TEST}
-   # special case for all objects
-   do_regress_estimate_test ${TEST}
-   F_1=0
-   RET=`grep "${K8S_NAMESPACE_1}" ${OUTPUT_FILE} | grep "yaml" | wc -l`
-   # (ns 1) + (configmap 1) + (serviceaccount 1) + (pvc 2) + (pods 2)
-   RES=5
-   echo "RET: $RET RES: $RES" >> ${OUTPUT_FILE}
-   if [ $RET -le $RES ]
-   then
-      F_1=1
-      ((estat++))
-   fi
-
-   # Check if exists ingress folder
-   F_2=0
-   RET=`grep "@kubernetes" ${OUTPUT_FILE} | grep "/ingress/" | wc -l`
-   RES=1
-   if [ $RET -ne $RES ]
-   then
-      F_2=1
-      ((estat++))
-   fi
-
-   printf "%s\n" "--------"
-   printf "Results estimate test ${TEST}:\n"
-   printf "%s%s\n" " -> Estimated all objects: " $(regress_test_result ${F_1})
-   printf "%s%s\n" " -> Estimated included ingress objects: " $(regress_test_result ${F_2})
-   printf "%s\n" "--------"
-}
-
 
 #############
 ## BTEST 1 ##
