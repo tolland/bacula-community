@@ -71,4 +71,6 @@ reset:
 distclean: clean
 	rm -rf bin build weird-files weird-files weird-files2 tmp working
 	rm -f scripts/*.conf
-		      
+
+async:
+	rsync -av -i ../bacula/src/ build/src/
