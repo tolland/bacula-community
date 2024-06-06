@@ -123,8 +123,8 @@ class EstimationJob(JobPodBacula):
                 if not estimate:
                     self._io.send_info(PROCESSING_NAMESPACE_INFO.format(namespace=ns['name']))
                 self.process_file(ns)
-                nsdata = self._plugin.list_namespaced_objects(nsname, estimate=estimate)
-                logging.debug('NSDATA:{}'.format([ns.keys() for ns in nsdata]))         # limit debug output
+                nsdata = self._plugin.list_namespaced_objects_before_pvcdata(nsname, estimate=estimate)
+                logging.debug('Before PVCData NSDATA:{}'.format([ns.keys() for ns in nsdata]))         # limit debug output
                 for sub in nsdata:
                     # sub is a list of different resource types
                     if isinstance(sub, dict) and sub.get('exception'):
@@ -218,6 +218,16 @@ class EstimationJob(JobPodBacula):
                             if not estimate and status:
                                 self._io.send_info(PROCESSING_PVCDATA_STOP_INFO.format(pvc=pvc))
                         logging.debug("Finish pvcdatalist")
+
+                nsdata = self._plugin.list_namespaced_objects_after_pvcdata(nsname, estimate=estimate)
+                logging.debug('After PVCDATA NSDATA:{}'.format([ns.keys() for ns in nsdata]))         # limit debug output
+                for sub in nsdata:
+                    # sub is a list of different resource types
+                    if isinstance(sub, dict) and sub.get('exception'):
+                        self._handle_error(RES_LIST_ERROR.format(parse_json_descr(sub)))
+                    else:
+                        for res in sub:
+                            self.process_file(sub.get(res))
 
     def _estimate_file(self, data):
         logging.debug('{}'.format(data))

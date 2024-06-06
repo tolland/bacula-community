@@ -170,10 +170,11 @@ class RestoreJob(JobPodBacula):
         for _ in range(DEFAULTTIMEOUT):
             time.sleep(1)
             isready = self._plugin.pvc_isready(namespace, pvcname)
+            iswaiting = self._plugin.is_pvc_waiting_first_consumer(namespace,pvcname)
             if isinstance(isready, dict) and 'error' in isready:
                 # cannot check pvc status
                 self._handle_error(PVC_STATUS_ERR.format(pvcname, parse_json_descr(isready)))
-            elif isready:
+            elif isready or iswaiting:
                 pvcisready = True
                 break
             # well, we have to wait for pvc to be ready, so restart procedure

@@ -433,6 +433,30 @@ class KubernetesPlugin(Plugin):
 
     def list_namespaced_objects(self, namespace, estimate=False):
         # We should maintain the following resources backup order
+        # logging.debug("list_namespaced_objects_label:[{}]".format(self.config['labels']))
+        # self.k8s[K8SObjType.K8SOBJ_PVCDATA] = {}
+        # data = [
+        #     self.get_config_maps(namespace, estimate),
+        #     self.get_service_accounts(namespace, estimate),
+        #     self.get_secrets(namespace, estimate),
+        #     # self.get_endpoints(namespace, estimate),
+        #     self.get_pvcs(namespace, estimate),
+        #     self.get_limit_ranges(namespace, estimate),
+        #     self.get_resource_quota(namespace, estimate),
+        #     self.get_services(namespace, estimate),
+        #     self.get_pods(namespace, estimate),
+        #     self.get_daemon_sets(namespace, estimate),
+        #     self.get_replica_sets(namespace, estimate),
+        #     self.get_stateful_sets(namespace, estimate),
+        #     self.get_deployments(namespace, estimate),
+        #     self.get_replication_controller(namespace, estimate),
+        #     self.get_ingresses(namespace,estimate),
+        # ]
+        # return data
+        raise NotImplementedError("Not implemented list_namespaced_objects")
+    
+    def list_namespaced_objects_before_pvcdata(self, namespace, estimate=False):
+        # We should maintain the following resources backup order
         logging.debug("list_namespaced_objects_label:[{}]".format(self.config['labels']))
         self.k8s[K8SObjType.K8SOBJ_PVCDATA] = {}
         data = [
@@ -444,6 +468,29 @@ class KubernetesPlugin(Plugin):
             self.get_limit_ranges(namespace, estimate),
             self.get_resource_quota(namespace, estimate),
             self.get_services(namespace, estimate),
+            # self.get_pods(namespace, estimate),
+            # self.get_daemon_sets(namespace, estimate),
+            # self.get_replica_sets(namespace, estimate),
+            # self.get_stateful_sets(namespace, estimate),
+            # self.get_deployments(namespace, estimate),
+            # self.get_replication_controller(namespace, estimate),
+            # self.get_ingresses(namespace,estimate),
+        ]
+        return data
+    
+    def list_namespaced_objects_after_pvcdata(self, namespace, estimate=False):
+        # We should maintain the following resources backup order
+        logging.debug("list_namespaced_objects_label:[{}]".format(self.config['labels']))
+        self.k8s[K8SObjType.K8SOBJ_PVCDATA] = {}
+        data = [
+            # self.get_config_maps(namespace, estimate),
+            # self.get_service_accounts(namespace, estimate),
+            # self.get_secrets(namespace, estimate),
+            # # self.get_endpoints(namespace, estimate),
+            # self.get_pvcs(namespace, estimate),
+            # self.get_limit_ranges(namespace, estimate),
+            # self.get_resource_quota(namespace, estimate),
+            # self.get_services(namespace, estimate),
             self.get_pods(namespace, estimate),
             self.get_daemon_sets(namespace, estimate),
             self.get_replica_sets(namespace, estimate),
@@ -874,6 +921,18 @@ class KubernetesPlugin(Plugin):
 
     def pvc_status(self, namespace, pvcname):
         return self.__execute(lambda: self.corev1api.read_namespaced_persistent_volume_claim_status(name=pvcname, namespace=namespace))
+    
+    def is_pvc_waiting_first_consumer(self, namespace, pvcname):
+        field_selector = 'involvedObject.kind='+'PersistentVolumeClaim'+',involvedObject.name='+pvcname
+        response = self.__execute(lambda: self.corev1api.list_namespaced_event(namespace, field_selector=field_selector))
+        logging.debug('Response in pvc_waiting_fisrt_consumer:')
+        logging.debug(response)
+        if response is None or (not isinstance(response, dict) and not hasattr(response, "items")):
+            return False
+        for event in response.items:
+            if event.reason == 'WaitForFirstConsumer':
+                return True
+        return False
 
     def _vsnapshot_status(self, namespace, snapshot_name):
         return self.__execute(lambda: self.crd_api.get_namespaced_custom_object_status(**prepare_snapshot_action(namespace, snapshot_name)))
