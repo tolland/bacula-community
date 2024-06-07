@@ -150,7 +150,7 @@ class StatusStorage extends ComponentStatusModule {
 	 * @param array $output bconsole cloud storage status output
 	 * @return array array with parsed storage status values
 	 */
-	private function parseCloudStatus(array $output): array
+	private function parseCloudStatus(array $output)
 	{
 		$result = ['uploads' => ['transfers' => []], 'downloads' => ['transfers' => []]];
 		$section = '';
