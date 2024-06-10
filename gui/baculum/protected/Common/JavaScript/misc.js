@@ -229,9 +229,11 @@ var OAuth2Scopes = [
 	'basic',
 	'objects',
 	'events',
+	'sources',
 	'fileevents',
 	'plugins',
-	'system'
+	'system',
+	'cloud'
 ];
 var set_scopes = function(field_id) {
 	document.getElementById(field_id).value = OAuth2Scopes.join(' ');
