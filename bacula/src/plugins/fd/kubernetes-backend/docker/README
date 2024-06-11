@@ -1,14 +1,22 @@
 # Target
 
+## Ubuntu/Debian
+
 This docker image is to compile k8s plugin independent of ubuntu/debian platform. I had problems with libc library, so to isolate this problem, we create this docker image.
 
 If you want change this version, modify the image tag and dockerfile FROM.
+
+For example: `FROM debian:bullseye` to `FROM ubuntu:jammy`
 
 **Note:** The difference between Ubuntu and Debian in this compilation is that `rm` binary is allocated in other place:
  - Ubuntu: `/usr/bin/rm`
  - Debian: `/bin/rm`
 
 So, the Makefile will be modified to avoid errors.
+
+## RHEL (Rocky 9)
+
+This docker image is to compile k8s plugin independent of RHEL platforms.
 
 # Create the Docker image
 
@@ -18,7 +26,15 @@ cp -a ../requirements.txt .
 ```
 
 ```bash
+docker build -t k8s_compilation:bullseye .
+```
+
+```bash
 docker build -t k8s_compilation:jammy .
+```
+
+```bash
+docker build -t k8s_compilation:rocky9 -f Dockerfile-rpm .
 ```
 
 # Pre-Run docker container
@@ -60,10 +76,18 @@ async:
 ```
 
 # Run docker container
-In root project (bacula-bee folder), execute:
+In root project (bacula-bee folder), execute (Depend on platform):
+
+```bash
+docker run --rm -it -v $(pwd):/mnt k8s_compilation:bullseye /bin/bash
+```
 
 ```bash
 docker run --rm -it -v $(pwd):/mnt k8s_compilation:jammy /bin/bash
+```
+
+```bash
+docker run --rm -it -v $(pwd):/mnt k8s_compilation:rocky9 /bin/bash
 ```
 
 # Compile k8s plugin
@@ -71,7 +95,11 @@ docker run --rm -it -v $(pwd):/mnt k8s_compilation:jammy /bin/bash
 Execute:
 ```bash
 make async
+
+./k8s_compile
 ```
+
+This `./k8s_compile` binary will do:
 
 ```bash
 make -C build/src/plugins/fd install-kubernetes
@@ -85,10 +113,6 @@ make -C build/src/plugins/fd/kubernetes-backend clean
 make -C build/src/plugins/fd/kubernetes-backend install-kubernetes
 ```
 
-Or in one command:
-```bash
-make async; make -C build/src/plugins/fd install-kubernetes; make -C build/src/plugins/fd/kubernetes-backend clean; make -C build/src/plugins/fd/kubernetes-backend install-kubernetes
-```
 
 # Get the k8s_backend binary
 

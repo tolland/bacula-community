@@ -6,7 +6,7 @@
 # Author: Radoslaw Korzeniewski
 #
 
-pyyaml == 6.0
-kubernetes <= 26.1.0
-urllib3 == 1.26.16
-requests == 2.27.1
+pyyaml == 6.0.1
+kubernetes == 30.1.0
+urllib3 == 2.2.1
+requests == 2.32.3
