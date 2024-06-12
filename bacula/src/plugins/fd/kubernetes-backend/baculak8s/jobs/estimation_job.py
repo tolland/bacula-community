@@ -197,11 +197,19 @@ class EstimationJob(JobPodBacula):
                                         logging.debug("Skip pvc. Cause Terminating status")
                                         self._io.send_warning("Skip pvc of second try `{}` because it is in Terminating status.".format(pvc))
                                         continue
+                                    if self._plugin.pvc_is_pending(nsname, pvcdata):
+                                        logging.debug("Skip pvc. Cause Pending status")
+                                        self._io.send_warning("Skip pvc `{}` because it is in Pending status.".format(pvc))
+                                        continue
                                     self._io.send_warning(SECOND_TRY_PVCDATA_INFO.format(pvc))
                                 self._io.send_info(PROCESSING_PVCDATA_START_INFO.format(pvc=pvc))
                                 if self._plugin.pvc_is_terminating(nsname, pvcdata):
                                     logging.debug("Skip pvc. Cause Terminating status")
                                     self._io.send_warning("Skip pvc `{}` because it is in Terminating status.".format(pvc))
+                                    continue
+                                if self._plugin.pvc_is_pending(nsname, pvcdata):
+                                    logging.debug("Skip pvc. Cause Pending status")
+                                    self._io.send_warning("Skip pvc `{}` because it is in Pending status.".format(pvc))
                                     continue
                             status = self.process_pvcdata(nsname, pvcdata)
                             if status is None:
@@ -235,6 +243,10 @@ class EstimationJob(JobPodBacula):
             if self._plugin.pvc_is_terminating(namespace, pvc):
                 logging.debug("Skip pvc. Cause Terminating status")
                 self._io.send_warning("Skip pvc `{}` because it is in Terminating status.".format(pvc))
+                continue
+            if self._plugin.pvc_is_pending(namespace, pvc):
+                logging.debug("Skip pvc. Cause Pending status")
+                self._io.send_warning("Skip pvc `{}` because it is in Pending status.".format(pvc))
                 continue
             # get pvcdata for this volume
             pvcdata = self._plugin.get_pvcdata_namespaced(namespace, pvc)

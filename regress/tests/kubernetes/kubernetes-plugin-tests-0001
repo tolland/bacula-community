@@ -63,9 +63,12 @@ K8S_NAMESPACE_2="testing-ns-0001-2"
 PVC_N1_0001_1="test-pvc-0001-1"
 PVC_N1_0001_2="test-pvc-0001-2"
 PVC_N2_0001_3="test-pvc-0001-3"
+PVC_N1_0001_4="test-pvc-0001-4"
+PVC_N1_0001_5="test-pvc-0001-5"
 POD_N1_0001_1="test-pod-0001-1"
 POD_N1_0001_2="test-pod-0001-2"
 POD_N2_0001_3="test-pod-0001-3"
+POD_N1_0001_4="test-pod-0001-4"
 PVC_PATH_IN_POD="/pvc"
 
 . scripts/functions
@@ -157,10 +160,10 @@ reset_k8s_env() {
    printf "\n ... Waiting to ready ... \n"
    while true
    do
-      # TODO: Check also the pods in namespace_2 are running
-      kstat=`${KUBECTL} -n ${K8S_NAMESPACE_1} get pods -o go-template='{{range .items}}{{.status.phase}}{{"\n"}}{{end}}' | grep -v Running | wc -l`
-      if [ $kstat -eq 0 ]
-      then
+      kstat_n1=`${KUBECTL} -n ${K8S_NAMESPACE_1} get pods -o go-template='{{range .items}}{{.status.phase}}{{"\n"}}{{end}}' | grep -v Running | wc -l`
+      kstat_n2=`${KUBECTL} -n ${K8S_NAMESPACE_2} get pods -o go-template='{{range .items}}{{.status.phase}}{{"\n"}}{{end}}' | grep -v Running | wc -l`
+
+      if [ $kstat_n1 -eq 0 ] && [ $kstat_n2 -eq 0 ]; then
          break
       fi;
       w=1
@@ -198,6 +201,7 @@ sleep 10
 printf "\n ... Get Environment Variables ...\n"
 ${KUBECTL} get ns -o name > ${tmp}/allns.log
 ${KUBECTL} get pv -o name > ${tmp}/allpv.log
+${KUBECTL} get storageclass -o name > ${tmp}/allsc.log
 
 
 # Prepare bacula dir configuration
@@ -211,6 +215,8 @@ echo "s%@K8S_NAMESPACE_2@%${K8S_NAMESPACE_2}%" >> ${out_sed}
 echo "s%@PVC_N1_0001_1@%${PVC_N1_0001_1}%" >> ${out_sed}
 echo "s%@PVC_N1_0001_2@%${PVC_N1_0001_2}%" >> ${out_sed}
 echo "s%@PVC_N2_0001_3@%${PVC_N2_0001_3}%" >> ${out_sed}
+echo "s%@PVC_N1_0001_4@%${PVC_N1_0001_4}%" >> ${out_sed}
+echo "s%@PVC_N1_0001_5@%${PVC_N1_0001_5}%" >> ${out_sed}
 
 echo "s%@CONNECTION_ARGS@%${CONNECTION_ARGS}%" >> ${out_sed}
 echo "s%@BACKUP_PROXY_WITHOUT_PVC@%${BACKUP_PROXY_WITHOUT_PVC}%" >> ${out_sed}
@@ -611,8 +617,7 @@ btest6 () {
    F_2=0
    RET=`grep "As clone backup is empty" ${OUTPUT_FILE} | grep "standard mode" | wc -l`
    RES=1
-   RET2=`grep "As clone backup is empty" ${OUTPUT_FILE} | grep "standard mode" | wc -l`
-   printf "%s\n%s\n%s\n" "+++++++++++++++++++" "Results: ${RET}" "Command:${RET2}"
+   # printf "%s\n%s\n%s\n" "+++++++++++++++++++" "Expected Result: ${RET}" "Command:${RET}"
    if [ $RET -ne $RES ]
    then
       F_2=1
@@ -627,6 +632,85 @@ btest6 () {
    printf "%s\n" "--------"
 }
 
+
+#############
+## BTEST 7 ##
+#############
+btest7 () {
+   # Test 7
+   TEST=7
+   OUTPUT_FILE=${tmp}/blog${TEST}.out
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   # Check pvc1 is not backup
+   F_1=0
+   RET=`grep "@kubernetes" ${OUTPUT_FILE} | grep "${PVC_N1_0001_4}.tar" | wc -l`
+   RES=1
+   printf "\n%s\n" "RES: ${RES} RET: ${RET}"
+   if [ $RET -ne $RES ]
+   then
+      F_1=1
+      ((bstat++))
+   fi
+   # Check warning in job log
+   F_2=0
+   RET=`grep "As clone backup is empty" ${OUTPUT_FILE} | grep "standard mode" | wc -l`
+   RES=0
+   # printf "%s\n%s\n%s\n" "+++++++++++++++++++" "Expected Result: ${RES}" "Command:${RET}"
+   if [ $RET -ne $RES ]
+   then
+      F_2=1
+      ((bstat++))
+   fi
+
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   printf "%s%s\n" " -> The pvc data of '${PVC_N1_0001_4}' of namespace '${K8S_NAMESPACE_1}' is backup: " $(regress_test_result ${F_1}) 
+   printf "%s%s\n" " -> The pvc data mode is 'Standard', so even if pvcdata size is 0, it mustn't repeat the backup: " $(regress_test_result ${F_1}) 
+   printf "%s\n" "--------"
+}
+
+
+#############
+## BTEST 8 ##
+#############
+btest8 () {
+   # Test 8
+   TEST=8
+   OUTPUT_FILE=${tmp}/blog${TEST}.out
+   do_regress_backup_test ${TEST}
+   check_regress_backup_statusT ${TEST}
+   F=$?
+   # Check pvc1 is not backup
+   F_1=0
+   RET=`grep "@kubernetes" ${OUTPUT_FILE} | grep "${PVC_N1_0001_5}.tar" | wc -l`
+   RES=0
+   printf "\n%s\n" "RES: ${RES} RET: ${RET}"
+   if [ $RET -ne $RES ]
+   then
+      F_1=1
+      ((bstat++))
+   fi
+   # Check warning in job log
+   F_2=0
+   RET=`grep "Skip pvc" ${OUTPUT_FILE} | grep "in Pending status" | wc -l`
+   RES=1
+   # printf "%s\n%s\n%s\n" "+++++++++++++++++++" "Expected Result: ${RES}" "Command:${RET}"
+   if [ $RET -ne $RES ]
+   then
+      F_2=1
+      ((bstat++))
+   fi
+
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   printf "%s%s\n" " -> The pvc data of '${PVC_N1_0001_5}' of namespace '${K8S_NAMESPACE_1}' is not backup: " $(regress_test_result ${F_1})
+   printf "%s%s\n" " -> The pvc data of '${PVC_N1_0001_5}' was skipped because it is in pending status: " $(regress_test_result ${F_2})
+   printf "%s\n" "--------"
+}
 
 
 #############
@@ -750,7 +834,7 @@ rtest2 () {
 estat=0
 
 etest1
-# etest2
+etest2
 
 bstat=0
 JOBID=1
@@ -765,10 +849,12 @@ btest5-pre
 btest5
 btest5-post
 btest6
+btest7
+btest8
 
 rstat=0
 rtest1
 rtest2
 
-stop_bacula
+# stop_bacula
 end_test

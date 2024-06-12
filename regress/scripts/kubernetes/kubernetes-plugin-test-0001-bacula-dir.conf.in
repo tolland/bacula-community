@@ -218,3 +218,29 @@ Job {
   JobDefs = Default
   FileSet = Test-K8S-Set-0001-6
 }
+
+### 07 Test standard backup with 0 bytes. We need avoid do backup twice.
+FileSet {
+  Name = "Test-K8S-Set-0001-7"
+  Include { Options { signature=SHA1 }
+    Plugin = "@LPLUG@ backup_mode=standard pvcdata=@PVC_N1_0001_4@ namespace=@K8S_NAMESPACE_1@"
+  }
+}
+Job {
+  Name = "Test-K8S-0001-7"
+  JobDefs = Default
+  FileSet = Test-K8S-Set-0001-7
+}
+
+### 08 Test avoid pvcs with `Pending` status
+FileSet {
+  Name = "Test-K8S-Set-0001-8"
+  Include { Options { signature=SHA1 }
+    Plugin = "@LPLUG@ backup_mode=standard pvcdata=@PVC_N1_0001_5@ namespace=@K8S_NAMESPACE_1@"
+  }
+}
+Job {
+  Name = "Test-K8S-0001-8"
+  JobDefs = Default
+  FileSet = Test-K8S-Set-0001-8
+}

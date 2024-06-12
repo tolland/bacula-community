@@ -32,6 +32,7 @@ from baculak8s.plugins.k8sbackend.baculabackup import (BACULABACKUPIMAGE,
                                                        ImagePullPolicy,
                                                        prepare_backup_pod_yaml)
 from baculak8s.plugins.k8sbackend.pvcclone import prepare_backup_clone_yaml
+from baculak8s.plugins.k8sbackend.baculaannotations import BaculaBackupMode
 from baculak8s.util.respbody import parse_json_descr
 from baculak8s.util.sslserver import DEFAULTTIMEOUT, ConnectionServer
 from baculak8s.util.token import generate_token
@@ -96,6 +97,7 @@ class JobPodBacula(Job, metaclass=ABCMeta):
         self.imagepullpolicy = ImagePullPolicy.process_param(params.get('imagepullpolicy'))
         self.backup_clone_compatibility = True
         self.debug = params.get('debug', 0)
+        self.current_backup_mode = BaculaBackupMode.Standard
 
     def handle_pod_logs(self, connstream):
         logmode = ''
@@ -133,7 +135,8 @@ class JobPodBacula(Job, metaclass=ABCMeta):
                     continue
         logging.debug('Bytes/files in backup: {}/{}'.format(bytes_count, file_count))
         logging.debug('Type of job:' + str(self._params.get('type')))
-        if self._params.get('type') == 'b' and bytes_count == 0 and file_count < 3:
+        # If the backupMode is standard, we ignore if the backup contains 0 bytes.
+        if self._params.get('type') == 'b' and self.current_backup_mode != BaculaBackupMode.Standard and bytes_count == 0 and file_count < 3:
             self._io.send_non_fatal_error(WARNING_CLONED_PVC_WAS_NOT_WORKED)
             self.backup_clone_compatibility = False
 

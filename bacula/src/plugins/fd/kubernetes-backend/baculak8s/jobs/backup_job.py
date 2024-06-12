@@ -146,6 +146,7 @@ class BackupJob(EstimationJob):
                 logging.debug('Snapshot is activated')
                 vsnapshot, pvcdata = self.handle_create_vsnapshot_backup(namespace, pvcdata.get('name'))
                 self._io.send_info(PVC_BACKUP_MODE_APPLIED_INFO.format(pvcdata.get('name'), BaculaBackupMode.Snapshot))
+                self.current_backup_mode = BaculaBackupMode.Snapshot
 
             if (vsnapshot is None and self.fs_backup_mode != BaculaBackupMode.Standard) or self.fs_backup_mode == BaculaBackupMode.Clone:
                 if self.fs_backup_mode != BaculaBackupMode.Clone:
@@ -157,9 +158,11 @@ class BackupJob(EstimationJob):
                 cloned_pvc.get('fi').set_name(pvcdata.get('fi').name)
                 pvcdata = cloned_pvc
                 is_cloned = True
+                self.current_backup_mode = BaculaBackupMode.Clone
 
             if self.fs_backup_mode == BaculaBackupMode.Standard:
                 self._io.send_info(PVC_BACKUP_MODE_APPLIED_INFO.format(pvcdata.get('name'), BaculaBackupMode.Standard))
+                self.current_backup_mode = BaculaBackupMode.Standard
         logging.debug('Process_pvcdata (Backup_job): {} --- {}'.format(vsnapshot, pvcdata))
 
         if self.prepare_bacula_pod(pvcdata, namespace=namespace, mode='backup'):
@@ -255,6 +258,10 @@ class BackupJob(EstimationJob):
             if self._plugin.pvc_is_terminating(namespace, original_pvc):
                 logging.debug("Skip pvc. Cause Terminating status")
                 self._io.send_warning("Skip pvc `{}` because it is in Terminating status.".format(pvcname))
+                continue
+            if self._plugin.pvc_is_pending(namespace, original_pvc):
+                logging.debug("Skip pvc. Cause Pending status")
+                self._io.send_warning("Skip pvc `{}` because it is in Pending status.".format(pvcname))
                 continue
 
             if backupmode == BaculaBackupMode.Snapshot:

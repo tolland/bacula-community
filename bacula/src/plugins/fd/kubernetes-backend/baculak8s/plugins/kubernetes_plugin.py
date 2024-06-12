@@ -921,6 +921,26 @@ class KubernetesPlugin(Plugin):
             logging.exception(ex)
         logging.error('Had a error when try to get deletion_timestamp of pvc status')
         return True
+    
+    # Check if the pvc is pending status.
+    # This can be checked if the property 'status'>'phase' is Pending
+    def pvc_is_pending(self, namespace, pvc):
+        if not isinstance(pvc, dict):
+            raise Exception('Error when try to get pvc status. PVC must be a `dict`')
+        logging.debug('PVC is pending status?. Namespace:{}.\nPVC Name:{}'.format(namespace,pvc.get('name')))
+
+        pvc_status = self._check_persistentvolume_claim_status(namespace, pvc.get('name'))
+        # logging.debug('Pvc status:{}'.format(pvc_status))
+        try:
+            current_status = pvc_status.status.phase
+            if current_status == 'Pending':
+                return True
+            return False
+        except Exception as ex:
+            logging.debug('Exception ocurrs:{}'.format(ex))
+            logging.exception(ex)
+        logging.error('Had a error when try to get pvc status')
+        return True
 
     def remove_backup_pod(self, namespace, podname=BACULABACKUPPODNAME):
         logging.debug('remove_backup_pod')

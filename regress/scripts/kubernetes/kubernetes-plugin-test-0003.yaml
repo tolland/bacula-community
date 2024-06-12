@@ -5,6 +5,14 @@ kind: Namespace
 metadata:
   name: testing-ns-0003-1
 ---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-path
+provisioner: rancher.io/local-path
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:

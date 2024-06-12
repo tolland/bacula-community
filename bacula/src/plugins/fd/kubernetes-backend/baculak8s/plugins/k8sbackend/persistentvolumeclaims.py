@@ -59,8 +59,10 @@ def persistentvolumeclaims_list_namespaced(corev1api, namespace, estimate=False,
     for pvc in pvcs.items:
         pvcdata = persistentvolumeclaims_read_namespaced(corev1api, namespace, pvc.metadata.name)
         spec = encoder_dump(pvcdata)
-        # logging.debug("PVCDATA-OBJ:{}".format(pvcdata))
-        pvcsize = k8s_size_to_int(pvcdata.status.capacity['storage'])
+        logging.debug("PVCDATA-OBJ:{}".format(pvcdata))
+        pvcsize = 0
+        if (pvcdata.status.capacity is not None):
+            pvcsize = k8s_size_to_int(pvcdata.status.capacity['storage'])
         pvcstotalsize += pvcsize
         # logging.debug("PVCDATA-SIZE:{} {}".format(pvcdata.status.capacity['storage'], pvcsize))
         # logging.debug("PVCDATA-ENC:{}".format(spec))
