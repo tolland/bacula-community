@@ -863,13 +863,16 @@ static int reserve_device(RCTX &rctx)
    if (rctx.notify_dir) {
       POOL_MEM dev_name;
       BSOCK *dir = rctx.jcr->dir_bsock;
-      int protect = 0;
+      int protect = 0, encrypt = 0;
       if (rctx.device->set_vol_immutable || rctx.device->set_vol_read_only) {
          protect = 1;
       }
+      if (rctx.device->volume_encryption) {
+	 encrypt = 1;
+      }
       pm_strcpy(dev_name, rctx.device->hdr.name);
       bash_spaces(dev_name);
-      ok = dir->fsend(OK_device, dev_name.c_str(), protect, 0);  /* Return real device name */
+      ok = dir->fsend(OK_device, dev_name.c_str(), protect, encrypt);  /* Return real device name */
       Dmsg1(dbglvl, ">dird: %s", dir->msg);
       if (!ok) {
          dcr->unreserve_device(false);

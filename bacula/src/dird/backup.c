@@ -895,7 +895,9 @@ int wait_for_job_termination(JCR *jcr, int timeout)
       jcr->CommBytes = CommBytes;
       jcr->CommCompressedBytes = CommCompressedBytes;
       jcr->Snapshot = VSS;
-      jcr->Encrypt = Encrypt;
+      if (Encrypt) {
+	 jcr->Encrypt |= JOB_ENCRYPTED_BY_FD;
+      }
 
    } else if (!jcr->is_canceled()) {
       Jmsg(jcr, M_FATAL, 0, _("[DE0031] No Job status returned from FD\n"));
@@ -1242,7 +1244,7 @@ void backup_cleanup(JCR *jcr, int TermCode)
         comm_compress,
         base_info.c_str(),
         jcr->Snapshot?_("yes"):_("no"),
-        jcr->Encrypt?_("yes"):_("no"),
+        get_encrypt_str(jcr->Encrypt),
         jcr->accurate?_("yes"):_("no"),
         jcr->VolumeName,
         jcr->VolSessionId,

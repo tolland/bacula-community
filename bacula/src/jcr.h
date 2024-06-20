@@ -104,6 +104,12 @@ enum {
    JOB_TASK_AFTER_SCRIPT
 };
 
+/* JCR->Encrypt bit field, can be encrypted by FD and/or SD */
+enum {
+   JOB_ENCRYPTED_BY_FD = 1,
+   JOB_ENCRYPTED_BY_SD = 2
+};
+
 struct job_task {
    const uint32_t op_code;
    const char *op_message;
@@ -435,6 +441,7 @@ public:
    int64_t spool_size;                /* Spool size for this job */
    uint64_t client_version;           /* Client version as a number */
    utime_t snapshot_retention;        /* Snapshot retention (from Client/Job resource) */
+   int32_t Encrypt;                   /* Encryption used by FD */
    volatile bool sd_msg_thread_done;  /* Set when Storage message thread done */
    bool wasVirtualFull;               /* set if job was VirtualFull */
    bool IgnoreDuplicateJobChecking;   /* set in migration jobs */
@@ -447,7 +454,6 @@ public:
    bool cloned;                       /* set if cloned */
    bool unlink_bsr;                   /* Unlink bsr file created */
    bool Snapshot;                     /* Snapshot used by FD (VSS on Windows) */
-   bool Encrypt;                      /* Encryption used by FD */
    bool stats_enabled;                /* Keep all job records in a table for long term statistics */
    bool no_maxtime;                   /* Don't check Max*Time for this JCR */
    bool keep_sd_auth_key;             /* Clear or not the SD auth key after connection*/

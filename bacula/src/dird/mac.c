@@ -424,6 +424,12 @@ bool do_mac(JCR *jcr)
       return true;
    }
 
+   if (jcr->previous_jr.Encrypted & JOB_ENCRYPTED_BY_FD) {
+      /* Update both the control job and the new job for the encryption status of the data */
+      jcr->Encrypt  |= JOB_ENCRYPTED_BY_FD; // will be printed in the job report
+      wjcr->Encrypt |= JOB_ENCRYPTED_BY_FD; // will update the catalog field
+   }
+
    /* Print Job Start message */
    Jmsg(jcr, M_INFO, 0, _("Start %s JobId %s, Job=%s\n"),
         jcr->get_OperationName(), edit_uint64(jcr->JobId, ed1), jcr->Job);
@@ -1031,6 +1037,7 @@ void mac_cleanup(JCR *jcr, int TermCode, int writeTermCode)
 "  SD Files Written:       %s\n"
 "  SD Bytes Written:       %s (%sB)\n"
 "  Rate:                   %.1f KB/s\n"
+"  Encryption:             %s\n"
 "  Volume name(s):         %s\n"
 "  Volume Session Id:      %d\n"
 "  Volume Session Time:    %d\n"
@@ -1067,6 +1074,7 @@ void mac_cleanup(JCR *jcr, int TermCode, int writeTermCode)
         edit_uint64_with_commas(jcr->SDJobBytes, ec2),
         edit_uint64_with_suffix(jcr->SDJobBytes, ec3),
         jcr->jr.Rate,
+	get_encrypt_str(jcr->Encrypt),
         wjcr ? wjcr->VolumeName : "",
         jcr->VolSessionId,
         jcr->VolSessionTime,

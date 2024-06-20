@@ -326,8 +326,10 @@ bool start_storage_daemon_job(JCR *jcr, alist *rstore, alist *wstore, bool wait,
       if (ok) {
          Jmsg(jcr, M_INFO, 0, _("Using Device \"%s\" to read.\n"), device_name.c_str());
          pm_strcpy(jcr->read_dev, device_name.c_str());
-         jcr->SD_set_worm = protect;
-         jcr->jr.Encrypted = encrypt;
+         jcr->SD_set_worm = (protect == 1);
+	 if (encrypt) {
+	    jcr->Encrypt |= JOB_ENCRYPTED_BY_SD;
+	 }
       }
    }
 
@@ -368,8 +370,10 @@ bool start_storage_daemon_job(JCR *jcr, alist *rstore, alist *wstore, bool wait,
       if (ok) {
          Jmsg(jcr, M_INFO, 0, _("Using Device \"%s\" to write.\n"), device_name.c_str());
          pm_strcpy(jcr->write_dev, device_name.c_str());
-         jcr->SD_set_worm = protect;
-         jcr->jr.Encrypted = encrypt;
+         jcr->SD_set_worm = (protect == 1);
+	 if (encrypt) {
+	    jcr->Encrypt |= JOB_ENCRYPTED_BY_SD;
+	 }
       }
    }
    if (!ok) {

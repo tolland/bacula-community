@@ -2115,3 +2115,25 @@ void jmsg_large_jobid_list(JCR *jcr, const char *msg, const char *jobids)
       sel.free_expanded();
    }
 }
+
+/* Decode the jcr->Encrypt field */
+const char *get_encrypt_str(int val)
+{
+   const char *ret;
+   switch (val) {
+   case 1:
+      ret = _("yes");
+      break;
+   case 2:
+      ret = _("volume");
+      break;
+   case 3:
+      ret = _("yes|volume");
+      break;
+   default:
+      ret = _("no");
+      break;
+   }
+   return ret;
+}
+
