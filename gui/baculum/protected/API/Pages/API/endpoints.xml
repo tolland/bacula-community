@@ -29,6 +29,8 @@
 	<url ServiceParameter="JobsForClient" pattern="api/v2/clients/{id}/jobs/" parameters.id="\d+" />
 	<url ServiceParameter="ClientLs" pattern="api/v2/clients/{id}/ls/" parameters.id="\d+" />
 	<url ServiceParameter="ClientBandwidthLimit" pattern="api/v2/clients/{id}/bandwidth/" parameters.id="\d+" />
+	<url ServiceParameter="DisableClient" pattern="api/v2/clients/{id}/disable/" parameters.id="\d+"/>
+	<url ServiceParameter="EnableClient" pattern="api/v2/clients/{id}/enable/" parameters.id="\d+"/>
 	<!-- storages (storage daemons) endpoints -->
 	<url ServiceParameter="Storages" pattern="api/v2/storages/" />
 	<url ServiceParameter="Storage" pattern="api/v2/storages/{id}/" parameters.id="\d+" />
@@ -39,6 +41,8 @@
 	<url ServiceParameter="StorageMount" pattern="api/v2/storages/{id}/mount/" parameters.id="\d+" />
 	<url ServiceParameter="StorageUmount" pattern="api/v2/storages/{id}/umount/" parameters.id="\d+" />
 	<url ServiceParameter="StorageRelease" pattern="api/v2/storages/{id}/release/" parameters.id="\d+" />
+	<url ServiceParameter="DisableStorage" pattern="api/v2/storages/{id}/disable/" parameters.id="\d+"/>
+	<url ServiceParameter="EnableStorage" pattern="api/v2/storages/{id}/enable/" parameters.id="\d+"/>
 	<url ServiceParameter="StorageJobsCancel" pattern="api/v2/storages/{id}/jobs/cancel/" parameters.id="\d+" />
 	<url ServiceParameter="StorageCloudTruncate" pattern="api/v2/storages/{id}/cloud/truncate/" parameters.id="\d+" />
 	<url ServiceParameter="StorageCloudPrune" pattern="api/v2/storages/{id}/cloud/prune/" parameters.id="\d+" />
@@ -89,6 +93,8 @@
 	<url ServiceParameter="JobCancel" pattern="api/v2/jobs/{id}/cancel/" parameters.id="\d+"/>
 	<url ServiceParameter="JobTotals" pattern="api/v2/jobs/totals/" />
 	<url ServiceParameter="JobListFiles" pattern="api/v2/jobs/{id}/files/" parameters.id="\d+" />
+	<url ServiceParameter="DisableJob" pattern="api/v2/jobs/{id}/disable/" parameters.id="\d+" />
+	<url ServiceParameter="EnableJob" pattern="api/v2/jobs/{id}/enable/" parameters.id="\d+" />
 	<url ServiceParameter="JobFiles" pattern="api/v2/jobs/files/" />
 	<url ServiceParameter="RestoreRun" pattern="api/v2/jobs/restore/" />
 	<url ServiceParameter="LlistPluginRestoreConf" pattern="api/v2/jobs/restore/plugin/config" />
@@ -134,6 +140,8 @@
 	<!-- schedule endpoints -->
 	<url ServiceParameter="Schedules" pattern="api/v2/schedules/resnames/" />
 	<url ServiceParameter="ScheduleStatus" pattern="api/v2/schedules/status/" />
+	<url ServiceParameter="DisableSchedule" pattern="api/v2/schedules/{name}/disable/" parameters.name="[a-zA-Z0-9:.\-_ ]+" />
+	<url ServiceParameter="EnableSchedule" pattern="api/v2/schedules/{name}/enable/" parameters.name="[a-zA-Z0-9:.\-_ ]+" />
 	<!-- jobdefs endpoints -->
 	<url ServiceParameter="JobDefsResNames" pattern="api/v2/jobdefs/resnames/" />
 	<!-- Bacula config module endpoints -->

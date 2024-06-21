@@ -103,7 +103,9 @@ class Bconsole extends APIModule {
 		'.search',
 		'@putfile',
 		'cloud',
-		'time'
+		'time',
+		'disable',
+		'enable'
 	);
 
 	private $config;

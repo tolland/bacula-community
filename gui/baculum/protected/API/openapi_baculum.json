@@ -895,6 +895,72 @@
 				]
 			}
 		},
+		"/api/v2/clients/{clientid}/enable": {
+			"put": {
+				"tags": ["clients"],
+				"summary": "Enable client.",
+				"description": "Enable client",
+				"responses": {
+					"200": {
+						"description": "Enable client",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"output": {
+											"type": "array",
+											"items": {
+												"type": "string",
+												"description": "Enable client output"
+											}
+										},
+										"error": {
+											"type": "integer",
+											"description": "Error code",
+											"enum": [0, 1, 2, 3, 4, 5, 6, 7, 10, 11, 1000]
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v2/clients/{clientid}/disable": {
+			"put": {
+				"tags": ["clients"],
+				"summary": "Disable client.",
+				"description": "Disable client",
+				"responses": {
+					"200": {
+						"description": "Disable client",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"output": {
+											"type": "array",
+											"items": {
+												"type": "string",
+												"description": "Disable client output"
+											}
+										},
+										"error": {
+											"type": "integer",
+											"description": "Error code",
+											"enum": [0, 1, 2, 3, 4, 5, 6, 7, 10, 11, 1000]
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/api/v2/clients/resnames": {
 			"get": {
 				"tags": ["clients"],
@@ -1576,6 +1642,72 @@
 						}
 					}
 				]
+			}
+		},
+		"/api/v2/jobs/{jobid}/enable": {
+			"put": {
+				"tags": ["jobs"],
+				"summary": "Enable job.",
+				"description": "Enable job",
+				"responses": {
+					"200": {
+						"description": "Enable job",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"output": {
+											"type": "array",
+											"items": {
+												"type": "string",
+												"description": "Enable job output"
+											}
+										},
+										"error": {
+											"type": "integer",
+											"description": "Error code",
+											"enum": [0, 1, 2, 3, 4, 5, 6, 7, 50, 11, 1000]
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v2/jobs/{jobid}/disable": {
+			"put": {
+				"tags": ["jobs"],
+				"summary": "Disable job.",
+				"description": "Disable job",
+				"responses": {
+					"200": {
+						"description": "Disable job",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"output": {
+											"type": "array",
+											"items": {
+												"type": "string",
+												"description": "Disable job output"
+											}
+										},
+										"error": {
+											"type": "integer",
+											"description": "Error code",
+											"enum": [0, 1, 2, 3, 4, 5, 6, 7, 50, 11, 1000]
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/v2/jobs/{jobid}/files": {
@@ -3584,6 +3716,94 @@
 				"parameters": [
 					{
 					"$ref": "#/components/parameters/StorageId"
+					}
+				]
+			}
+		},
+		"/api/v2/storages/{storageid}/enable": {
+			"put": {
+				"tags": ["storages"],
+				"summary": "Enable storage.",
+				"description": "Enable storage",
+				"responses": {
+					"200": {
+						"description": "Enable storage",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"output": {
+											"type": "array",
+											"items": {
+												"type": "string",
+												"description": "Enable storage output"
+											}
+										},
+										"error": {
+											"type": "integer",
+											"description": "Error code",
+											"enum": [0, 1, 2, 3, 4, 5, 6, 7, 20, 11, 1000]
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "drive",
+						"in": "query",
+						"description": "Storage drive (default 0)",
+						"required":  false,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/api/v2/storages/{storageid}/disable": {
+			"put": {
+				"tags": ["storages"],
+				"summary": "Disable storage.",
+				"description": "Disable storage",
+				"responses": {
+					"200": {
+						"description": "Disable storage",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"output": {
+											"type": "array",
+											"items": {
+												"type": "string",
+												"description": "Disable storage output"
+											}
+										},
+										"error": {
+											"type": "integer",
+											"description": "Error code",
+											"enum": [0, 1, 2, 3, 4, 5, 6, 7, 20, 11, 1000]
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "drive",
+						"in": "query",
+						"description": "Storage drive (default 0)",
+						"required":  false,
+						"schema": {
+							"type": "integer"
+						}
 					}
 				]
 			}
@@ -5909,6 +6129,72 @@
 						}
 					}
 				]
+			}
+		},
+		"/api/v2/schedules/{schedule_name}/enable": {
+			"put": {
+				"tags": ["schedules"],
+				"summary": "Enable schedule.",
+				"description": "Enable schedule",
+				"responses": {
+					"200": {
+						"description": "Enable schedule",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"output": {
+											"type": "array",
+											"items": {
+												"type": "string",
+												"description": "Enable schedule output"
+											}
+										},
+										"error": {
+											"type": "integer",
+											"description": "Error code",
+											"enum": [0, 1, 2, 3, 4, 5, 6, 7, 520, 11, 1000]
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v2/schedules/{schedule_name}/disable": {
+			"put": {
+				"tags": ["schedules"],
+				"summary": "Disable schedule.",
+				"description": "Disable schedule",
+				"responses": {
+					"200": {
+						"description": "Disable schedule",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"output": {
+											"type": "array",
+											"items": {
+												"type": "string",
+												"description": "Disable schedule output"
+											}
+										},
+										"error": {
+											"type": "integer",
+											"description": "Error code",
+											"enum": [0, 1, 2, 3, 4, 5, 6, 7, 520, 11, 1000]
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/v2/bvfs/update": {
