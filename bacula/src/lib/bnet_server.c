@@ -98,7 +98,7 @@ void bnet_thread_server(dlist *addrs, int max_clients,
       /*
        * Open a TCP socket
        */
-      for (tlog= 60; (fd_ptr->fd=socket(addr->get_family(), SOCK_STREAM, 0)) < 0; tlog -= 10) {
+      for (tlog= 60; (fd_ptr->fd=socket(addr->get_family(), SOCK_STREAM | SOCK_CLOEXEC, 0)) < 0; tlog -= 10) {
          if (tlog <= 0) {
             berrno be;
             char curbuf[256];
