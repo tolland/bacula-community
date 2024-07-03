@@ -27,13 +27,6 @@
 #include "bacula.h"
 #include "jcr.h"
 
-#ifdef HAVE_GETRLIMIT
-#include <sys/resource.h>
-#else
-/* If not available, use a wrapper that will not use it */
-#define getrlimit(a,b) -1
-#endif
-
 int execvp_errors[] = {
         EACCES,
         ENOEXEC,
@@ -217,20 +210,6 @@ BPIPE *open_bpipe(char *prog, int wait, const char *mode, char *envp[])
       return NULL;
    }
 
-   /* Many systems doesn't have the correct system call
-    * to determine the FD list to close.
-    */
-#if !defined(HAVE_FCNTL_F_CLOSEM) && !defined(HAVE_CLOSEFROM)
-   struct rlimit rl;
-   int64_t rlimitResult=0;
-
-   if (getrlimit(RLIMIT_NOFILE, &rl) == -1) {
-      rlimitResult = sysconf(_SC_OPEN_MAX);
-   } else {
-      rlimitResult = rl.rlim_max;
-   }
-#endif
-
    /* Start worker process */
    switch (bpipe->worker_pid = fork()) {
    case -1:                           /* error */
@@ -256,6 +235,7 @@ BPIPE *open_bpipe(char *prog, int wait, const char *mode, char *envp[])
       if (mode_map & MODE_WRITE) {
          close(writep[1]);
          dup2(writep[0], 0);          /* Dup our write to his stdin */
+	 close(writep[0]);
       }
       if (mode_map & MODE_READ) {
          close(readp[0]);             /* Close unused child fds */
@@ -275,17 +255,16 @@ BPIPE *open_bpipe(char *prog, int wait, const char *mode, char *envp[])
             /* by default STDERR and STDOUT are merged */
             dup2(readp[1], 2);
          }
+	 if (mode_map & MODE_READ) {
+	    close(readp[1]);
+	 }
+	 if (mode_map & MODE_STDERR) {
+	    close(errp[1]);
+	 }
       }
 
-#if HAVE_FCNTL_F_CLOSEM
-      fcntl(3, F_CLOSEM);
-#elif HAVE_CLOSEFROM
-      closefrom(3);
-#else
-      for (i=rlimitResult; i >= 3; i--) {
-         close(i);
-      }
-#endif
+      /* Close everything after STDERR. Should be pretty fast when the OS implements CLOEXEC */
+      bclose_from(3);
 
       /* Setup the environment if requested, we do not use execvpe()
        * because it's not wildly available
