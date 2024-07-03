@@ -604,7 +604,7 @@ int create_lock_file(char *fname, const char *progname, const char *filetype, PO
    if (stat(fname, &statp) == 0) {
       /* File exists, see what we have */
       *pidbuf = 0;
-      if ((pidfd = open(fname, O_RDONLY|O_BINARY, 0)) < 0 ||
+      if ((pidfd = open(fname, O_RDONLY|O_BINARY|O_CLOEXEC, 0)) < 0 ||
            read(pidfd, &pidbuf, sizeof(pidbuf)) < 0 ||
            sscanf(pidbuf, "%d", &oldpid) != 1) {
          berrno be;
@@ -634,7 +634,7 @@ int create_lock_file(char *fname, const char *progname, const char *filetype, PO
       ret = 2;
    }
    /* Create new pid file */
-   if ((pidfd = open(fname, O_CREAT|O_TRUNC|O_WRONLY|O_BINARY, 0640)) >= 0) {
+   if ((pidfd = open(fname, O_CREAT|O_TRUNC|O_WRONLY|O_BINARY|O_CLOEXEC, 0640)) >= 0) {
       len = sprintf(pidbuf, "%d\n", (int)getpid());
       write(pidfd, pidbuf, len);
       close(pidfd);
@@ -655,7 +655,7 @@ int create_lock_file(char *fname, const char *progname, const char *filetype, PO
    char pidbuf[20];
 
    /* Open the pidfile for writing */
-   if ((*fd = open(fname, O_CREAT|O_RDWR, 0640)) >= 0) {
+   if ((*fd = open(fname, O_CREAT|O_RDWR|O_CLOEXEC, 0640)) >= 0) {
       if (fcntl_lock(*fd, F_WRLCK) == -1) {
          berrno be;
          /* already locked by someone else, try to read the pid */
@@ -714,7 +714,7 @@ int update_pid_file(char *dir, const char *progname, int port)
    int pidfd;
    
    Mmsg(fname, "%s/%s.%d.pid", dir, progname, port);
-   if ((pidfd = open(fname, O_WRONLY|O_APPEND, 0640)) >= 0) {
+   if ((pidfd = open(fname, O_WRONLY|O_APPEND|O_CLOEXEC, 0640)) >= 0) {
       btime_t now = time(NULL);
       set_own_time(pidfd, fname, now, now);
       // Update mtime
@@ -777,7 +777,7 @@ void read_state_file(char *dir, const char *progname, int port)
    Mmsg(&fname, "%s/%s.%d.state", dir, progname, port);
    /* If file exists, see what we have */
 // Dmsg1(10, "O_BINARY=%d\n", O_BINARY);
-   if ((sfd = open(fname, O_RDONLY|O_BINARY)) < 0) {
+   if ((sfd = open(fname, O_RDONLY|O_BINARY|O_CLOEXEC)) < 0) {
       berrno be;
       Dmsg4(010, "Could not open state file: %s sfd=%d size=%d ERR=%s\n",
             fname, sfd, (int)sizeof(hdr), be.bstrerror());
@@ -829,7 +829,7 @@ void write_state_file(char *dir, const char *progname, int port)
    Mmsg(&fname, "%s/%s.%d.state", dir, progname, port);
    /* Create new state file */
    unlink(fname);
-   if ((sfd = open(fname, O_CREAT|O_WRONLY|O_BINARY, 0640)) < 0) {
+   if ((sfd = open(fname, O_CREAT|O_WRONLY|O_BINARY|O_CLOEXEC, 0640)) < 0) {
       berrno be;
       Dmsg2(000, "Could not create state file. %s ERR=%s\n", fname, be.bstrerror());
       Emsg2(M_ERROR, 0, _("Could not create state file. %s ERR=%s\n"), fname, be.bstrerror());
@@ -1410,12 +1410,12 @@ int copyfile(const char *src, const char *dst)
    ssize_t len, lenw;
    char    buf[4096];
    berrno  be;
-   fd_src = open(src, O_RDONLY);
+   fd_src = open(src, O_RDONLY|O_CLOEXEC);
    if (fd_src < 0) {
       Dmsg2(10, "Unable to open %s ERR=%s\n", src, be.bstrerror(errno));
       goto bail_out;
    }
-   fd_dst = open(dst, O_WRONLY | O_CREAT | O_EXCL, 0600);
+   fd_dst = open(dst, O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC, 0600);
    if (fd_dst < 0) {
       Dmsg2(10, "Unable to open %s ERR=%s\n", dst, be.bstrerror(errno));
       goto bail_out;
