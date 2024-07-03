@@ -32,6 +32,15 @@
 #include <regex.h>
 #endif
 
+#include <dirent.h>
+
+#ifdef HAVE_GETRLIMIT
+#include <sys/resource.h>
+#else
+/* If not available, use a wrapper that will not use it */
+#define getrlimit(a,b) -1
+#endif
+
 #ifdef HAVE_WIN32
 #include "sysinfoapi.h"
 #else
@@ -2123,6 +2132,123 @@ char *bstrcasestr(const char *haystack, const char *needle)
   return NULL;
 }
 
+
+#if defined(__APPLE__) || defined(HAVE_FREEBSD_OS)
+#define PROC_SELF_FD "/dev/fd"
+#else
+#define	PROC_SELF_FD "/proc/self/fd"
+#endif
+
+/* Used to test each procedure separately */
+static bool use_bclose_closem = true;
+static bool use_bclose_closefrom = true;
+static bool use_bclose_proc_self = true;
+
+static int bclose_closem(int start_fd)
+{
+   if (use_bclose_closem) {
+#if HAVE_FCNTL_F_CLOSEM
+      return fcntl(start_fd, F_CLOSEM);
+#endif
+   }
+   return -1;
+}
+
+static int bclose_closefrom(int start_fd)
+{
+   if (use_bclose_closefrom) {
+#if HAVE_CLOSEFROM
+      closefrom(start_fd);
+      return 0;
+#endif
+   }
+   return -1;
+}
+
+/* Check the FDs that are currently open */
+static int check_open_fd()
+{
+   int max_fd = 0;
+   struct dirent *entry;
+   DIR *dir = opendir(PROC_SELF_FD);
+   if (!dir) {
+      return -1;
+   }
+   Enter(0);
+   while ((entry = readdir(dir)) != NULL)
+   {
+      if (entry->d_name[0] == '.') {
+	 continue;
+      }
+
+      int fd = str_to_uint64(entry->d_name); // opendir() will be counted
+      if (fd < 3) {
+	 continue;
+      }
+#ifdef DEVELOPER
+      if ((fcntl(fd, F_GETFD) & ~O_CLOEXEC) == 0) {
+	 char buf[1024], buf2[1024];
+	 Dmsg1(10, "---> before fork %d has no CLOEXEC\n", fd);
+	 bsnprintf(buf, sizeof(buf), "%s/%d", PROC_SELF_FD, fd);
+	 int l = readlink(buf, buf2, sizeof(buf2));
+	 if (l > 0) {
+	    buf2[l] = 0;
+	    Dmsg2(10, "%d -> %s\n", fd, buf2);
+	 }
+	 ASSERT2(0, "Found a file descriptor without O_CLOEXEC");
+      }
+#endif
+      max_fd = MAX(max_fd, fd);
+   }
+   closedir(dir);
+   return max_fd;
+}
+
+static int bclose_proc_self(int start_fd)
+{
+   if (use_bclose_proc_self) {
+      int max_fd = check_open_fd();
+      if (max_fd < 0) {
+	 return -1;
+      }
+      while (max_fd >= start_fd) {
+	 close(max_fd);
+	 max_fd--;
+      }
+      return 0;
+   }
+   return -1;
+}
+
+/* Should not be needed anymore with the proper O_CLOEXEC, return the method used */
+int bclose_from(int start_fd)
+{
+   if (bclose_closem(start_fd) == 0) {
+      return 1;
+   }
+   if (bclose_closefrom(start_fd) == 0) {
+      return 2;
+   }
+   if (bclose_proc_self(start_fd) == 0) {
+      return 3;
+   }
+   /* Many systems doesn't have the correct system call
+    * to determine the FD list to close.
+    */
+   struct rlimit rl;
+   int64_t rlimitResult=0;
+
+   if (getrlimit(RLIMIT_NOFILE, &rl) == -1) {
+      rlimitResult = sysconf(_SC_OPEN_MAX);
+   } else {
+      rlimitResult = rl.rlim_max;
+   }
+   for (int i=rlimitResult; i >= start_fd; i--) {
+      close(i);
+   }
+   return 4;
+}
+
 #ifdef TEST_PROGRAM
 
 #include "unittests.h"
@@ -2262,6 +2388,105 @@ void *th2(void *a)
    }
    namedpipe_free(&p);
    return NULL;
+}
+
+static void close_test()
+{
+   int pid;
+   int fd = open("/dev/null", O_RDONLY);
+   struct stat sp;
+   char buf[50];
+   bsnprintf(buf, sizeof(buf), "%s/%d", PROC_SELF_FD, fd);
+   /* All functions are enabled */
+
+#ifdef HAVE_FCNTL_F_CLOSEM
+   switch ((pid = fork())) {
+   case -1:
+      /* oups */
+      return;
+   case 0: // child
+      if (bclose_from(3) != 1) {
+	 exit (2);
+      }
+      if (stat(buf, &sp) < 0) {
+	 exit (0);
+      } else {
+	 exit (1);
+      }
+      break;
+   default:
+      int stat_loc;
+      is(waitpid(pid, &stat_loc, 0), pid, "Got fork() status for closem");
+      is(stat_loc, 0, "Exit status is ok");
+      break;
+   }
+#endif
+   /* Not implemented everywhere */
+   use_bclose_closem = false;
+
+   /* Test with closefrom() if available */
+#ifdef HAVE_CLOSEFROM
+   switch ((pid = fork())) {
+   case -1:
+      /* oups */
+      return;
+   case 0: // child
+      if (bclose_from(3) != 2) {
+	 exit (2);
+      }
+      if (stat(buf, &sp) < 0) {
+	 exit (0);
+      } else {
+	 exit (1);
+      }
+      break;
+   default:
+      int stat_loc;
+      is(waitpid(pid, &stat_loc, 0), pid, "Got fork() status for closefrom");
+      is(stat_loc, 0, "Exit status should be OK");
+      break;
+   }
+#endif
+   use_bclose_closefrom = false;
+
+   /* Check if the procedure will detect that fd is not using O_CLOEXEC */
+   switch ((pid = fork())) {
+   case -1:
+      /* oups */
+      return;
+   case 0: // child
+      bclose_from(3);
+      exit (0);
+      break;
+   default:
+      int stat_loc;
+      is(waitpid(pid, &stat_loc, 0), pid, "Got fork() status for /proc/self/fd");
+      isnt(stat_loc, 0, "Exit status should not be OK in DEVELOPER mode");
+      break;
+   }
+   use_bclose_proc_self = false;
+
+   /* Last solution that tries everything... */
+   switch ((pid = fork())) {
+   case -1:
+      /* oups */
+      return;
+   case 0: // child
+      if (bclose_from(3) != 4) {
+	 exit (2);
+      }
+      if (stat(buf, &sp) < 0) {
+	 exit (0);
+      } else {
+	 exit (1);
+      }
+      break;
+   default:
+      int stat_loc;
+      is(waitpid(pid, &stat_loc, 0), pid, "Got fork() status");
+      is(stat_loc, 0, "Exit status should be OK");
+      break;
+   }
 }
 
 int main(int argc, char **argv)
@@ -2418,6 +2643,11 @@ int main(int argc, char **argv)
       is(bstrcasestr(p1, "this"), p1, "Test with lower string at the start");
       ok(bstrcasestr(p1, "xxxxxxxxxxxxxxxxxxxxxxxxx") == NULL, "Test with non existing string");
       is(bstrcasestr(p1, " iS"), " is a test", "Test with a middle string");
+   }
+
+   // test the different close methods
+   {
+      close_test();
    }
    return report();
 }

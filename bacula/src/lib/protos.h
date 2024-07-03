@@ -71,7 +71,7 @@ int display_global_item(HPKT &hpkt); //
 void display_collector_types(HPKT &hpkt);
 
 /* bsys.c */
-
+int bclose_from(int start_fd);
 void get_path_and_fname(const char *file, char **path, char **fname);
 int set_own_time(int fd, const char *path, btime_t atime, btime_t mtime);
 int bstat(int fd, const char *path, struct stat *sp);
