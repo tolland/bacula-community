@@ -83,7 +83,7 @@ clean:
 	$(call clean_exe,$(BINDIR)/windows-env-test.exe)
 	$(ECHO_CMD)rm -rf $(OBJDIRS)
 
-tests: $(BINDIR)/bpipe-test.exe $(BINDIR)/windows-env-test.exe $(BINDIR)/bsock_meeting_test.exe $(BINDIR)/thread.exe 
+tests: $(BINDIR)/bpipe-test.exe $(BINDIR)/windows-env-test.exe $(BINDIR)/bsock_meeting_test.exe $(BINDIR)/thread.exe $(BINDIR)/handle-list.exe
 
 
 #
@@ -140,6 +140,9 @@ $(BINDIR)/bpipe-test.exe: $(OBJDIR)/bpipe-test.o $(OBJDIR)/unittests.o $(LIBS_BA
 
 $(BINDIR)/windows-env-test.exe: $(OBJDIR)/windows-env-test.o $(OBJDIR)/unittests.o $(LIBS_BACULA)
 	$(call link_conapp,$(TEST_LIBS))
+
+$(BINDIR)/handle-list.exe: $(OBJDIR)/handle-list.o
+	$(CXX) -Wall -g -o $(BINDIR)/handle-list.exe $(OBJDIR)/handle-list.o
 
 $(BINDIR)/cdp-client.exe: $(OBJDIR)/cdp-client.o $(OBJDIR)/backupservice.o $(OBJDIR)/folderwatcher.o $(OBJDIR)/journal.o $(LIBS_BACULA)
 	$(call link_conapp,$(LIBS_PTHREADS))
