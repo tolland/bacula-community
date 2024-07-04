@@ -524,6 +524,12 @@ int bopen(BFILE *bfd, const char *fname, uint64_t flags, mode_t mode)
 
    DWORD dwaccess, dwflags, dwshare;
 
+   /* Do not pass this descriptor to a sub process */
+   SECURITY_ATTRIBUTES sec;
+   sec.nLength = sizeof(sec);
+   sec.lpSecurityDescriptor = NULL;
+   sec.bInheritHandle = false;
+
    if (bfd->fattrs & FILE_ATTRIBUTE_ENCRYPTED) {
       return encrypt_bopen(bfd, fname, flags, mode);
    }
@@ -578,7 +584,7 @@ int bopen(BFILE *bfd, const char *fname, uint64_t flags, mode_t mode)
       bfd->fh = p_CreateFileW((LPCWSTR)win32_fname_wchar,
              dwaccess,                /* Requested access */
              0,                       /* Shared mode */
-             NULL,                    /* SecurityAttributes */
+             &sec,                    /* SecurityAttributes */
              CREATE_ALWAYS,           /* CreationDisposition */
              dwflags,                 /* Flags and attributes */
              NULL);                   /* TemplateFile */
@@ -614,7 +620,7 @@ int bopen(BFILE *bfd, const char *fname, uint64_t flags, mode_t mode)
       bfd->fh = p_CreateFileW((LPCWSTR)win32_fname_wchar,
              dwaccess,                /* Requested access */
              dwshare,                 /* Shared mode */
-             NULL,                    /* SecurityAttributes */
+             &sec,                    /* SecurityAttributes */
              OPEN_EXISTING,           /* CreationDisposition */
              dwflags,                 /* Flags and attributes */
              NULL);                   /* TemplateFile */
@@ -638,7 +644,7 @@ int bopen(BFILE *bfd, const char *fname, uint64_t flags, mode_t mode)
       bfd->fh = p_CreateFileW((LPCWSTR)win32_fname_wchar,
              dwaccess,                /* Requested access */
              dwshare,                 /* Share modes */
-             NULL,                    /* SecurityAttributes */
+             &sec,                    /* SecurityAttributes */
              OPEN_EXISTING,           /* CreationDisposition */
              dwflags,                 /* Flags and attributes */
              NULL);                   /* TemplateFile */

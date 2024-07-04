@@ -106,6 +106,12 @@ intptr_t namedpipe_open(NamedPipe *self, const char *path, mode_t mode)
    self->connected = false;
    self->mode = mode;
 
+   /* Do not pass this descriptor to a sub process */
+   SECURITY_ATTRIBUTES sec;
+   sec.nLength = sizeof(sec);
+   sec.lpSecurityDescriptor = NULL;
+   sec.bInheritHandle = false;
+
    if (self->fd != INVALID_HANDLE_VALUE) { /* server mode */
 
       self->connected = ConnectNamedPipe(self->fd, NULL) ? 
@@ -120,7 +126,7 @@ intptr_t namedpipe_open(NamedPipe *self, const char *path, mode_t mode)
             path,               // pipe name 
             GENERIC_WRITE | GENERIC_READ,
             0,              // no sharing 
-            NULL,           // default security attributes
+            &sec,           // default security attributes
             OPEN_EXISTING,  // opens existing pipe 
             0,              // default attributes 
             NULL);          // no template file 

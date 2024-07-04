@@ -1740,6 +1740,10 @@ FILE *bfopen(const char *path, const char *mode)
       }
    }
 #endif
+#if defined(HAVE_WIN32)
+   SetHandleInformation((HANDLE)_get_osfhandle(fileno(fp)),
+                        HANDLE_FLAG_INHERIT, 0);
+#endif
    return fp;
 }
 

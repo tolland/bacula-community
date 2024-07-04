@@ -183,6 +183,12 @@ win_tape_device::d_open(const char *file, int flags, ...)
    int  idxFile;
    DWORD dwResult;
 
+   /* Do not pass this descriptor to a sub process */
+   SECURITY_ATTRIBUTES sec;
+   sec.nLength = sizeof(sec);
+   sec.lpSecurityDescriptor = NULL;
+   sec.bInheritHandle = false;
+
    for (idxFile = 0; idxFile < (int)NUMBER_HANDLE_ENTRIES; idxFile++) {
       if (TapeHandleTable[idxFile].OSHandle == INVALID_HANDLE_VALUE) {
          break;
@@ -201,7 +207,7 @@ win_tape_device::d_open(const char *file, int flags, ...)
        bstrncpy(&szDeviceName[0], file, sizeof(szDeviceName));
    }
 
-   hDevice = CreateFile(szDeviceName, FILE_ALL_ACCESS, 0, NULL, OPEN_EXISTING, 0, NULL);
+   hDevice = CreateFile(szDeviceName, FILE_ALL_ACCESS, 0, &sec, OPEN_EXISTING, 0, NULL);
 
    if (hDevice != INVALID_HANDLE_VALUE) {
       PTAPE_HANDLE_INFO    pHandleInfo = &TapeHandleTable[idxFile];

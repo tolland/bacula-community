@@ -111,6 +111,12 @@ file_node_t::pluginIoOpen(exchange_fd_context_t *context, struct io_pkt *io)
    char *tmp = new char[wcslen(filename) + 1];
    wcstombs(tmp, filename, wcslen(filename) + 1);
 
+   /* Do not pass this descriptor to a sub process */
+   SECURITY_ATTRIBUTES sec;
+   sec.nLength = sizeof(sec);
+   sec.lpSecurityDescriptor = NULL;
+   sec.bInheritHandle = false;
+
    _DebugMessage(0, "pluginIoOpen_FILE - filename = %s\n", tmp);
    io->status = 0;
    io->io_errno = 0;
@@ -134,7 +140,7 @@ file_node_t::pluginIoOpen(exchange_fd_context_t *context, struct io_pkt *io)
       {
          restore_at_file_level = true;
          _DebugMessage(100, "Calling CreateFileW for '%s'\n", tmp);
-         handle = CreateFileW(filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+         handle = CreateFileW(filename, GENERIC_WRITE, 0, &sec, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
          if (handle == INVALID_HANDLE_VALUE)
          {
             _JobMessage(M_FATAL, "CreateFile failed");

@@ -903,9 +903,15 @@ bailout:
 
 static int win_get_reparse_point(const wchar_t *path, DWORD *reparse_tag=NULL, POOLMEM **reparse=NULL)
 {
+   /* Do not pass this descriptor to a sub process */
+   SECURITY_ATTRIBUTES sec;
+   sec.nLength = sizeof(sec);
+   sec.lpSecurityDescriptor = NULL;
+   sec.bInheritHandle = false;
+
    HANDLE h = CreateFileW(path, FILE_READ_EA,
                 FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE,
-                NULL, OPEN_EXISTING,
+                &sec, OPEN_EXISTING,
                 FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT, NULL);
    if (h == INVALID_HANDLE_VALUE) {
       return -1;
@@ -976,6 +982,12 @@ statDir(const char *file, struct stat *sb, POOLMEM **readlnk=NULL)
 {
    WIN32_FIND_DATAW info_w;       // window's file info
    HANDLE h = INVALID_HANDLE_VALUE;
+
+   /* Do not pass this descriptor to a sub process */
+   SECURITY_ATTRIBUTES sec;
+   sec.nLength = sizeof(sec);
+   sec.lpSecurityDescriptor = NULL;
+   sec.bInheritHandle = false;
 
    /*
     * Oh, cool, another exception: Microsoft doesn't let us do
@@ -1049,7 +1061,7 @@ statDir(const char *file, struct stat *sb, POOLMEM **readlnk=NULL)
        * or to a directory.
        */
       h = CreateFileW((LPCWSTR)pwszBuf.c_str(), GENERIC_READ,
-             FILE_SHARE_READ, NULL, OPEN_EXISTING,
+             FILE_SHARE_READ, &sec, OPEN_EXISTING,
              FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT,
              NULL);
       if (h != INVALID_HANDLE_VALUE) {
@@ -3031,6 +3043,12 @@ utime(const char *fname, struct utimbuf *times)
     char tmpbuf[5000];
     POOL_MEM pwszBuf(PM_FNAME);
 
+    /* Do not pass this descriptor to a sub process */
+    SECURITY_ATTRIBUTES sec;
+    sec.nLength = sizeof(sec);
+    sec.lpSecurityDescriptor = NULL;
+    sec.bInheritHandle = false;
+
     cvt_utime_to_ftime(times->actime, acc);
     cvt_utime_to_ftime(times->modtime, mod);
 
@@ -3039,7 +3057,7 @@ utime(const char *fname, struct utimbuf *times)
     HANDLE h = p_CreateFileW((LPCWSTR)pwszBuf.c_str(),
                      FILE_WRITE_ATTRIBUTES,
                      FILE_SHARE_WRITE|FILE_SHARE_READ|FILE_SHARE_DELETE,
-                     NULL,
+                     &sec,
                      OPEN_EXISTING,
                      FILE_FLAG_BACKUP_SEMANTICS, // required for directories
                      NULL);
@@ -3072,6 +3090,12 @@ file_open(const char *file, int flags, int mode)
    HANDLE foo = INVALID_HANDLE_VALUE;
    const char *remap = file;
 
+   /* Do not pass this descriptor to a sub process */
+   SECURITY_ATTRIBUTES sec;
+   sec.nLength = sizeof(sec);
+   sec.lpSecurityDescriptor = NULL;
+   sec.bInheritHandle = false;
+
    if (flags & O_WRONLY) access = GENERIC_WRITE;
    else if (flags & O_RDWR) access = GENERIC_READ|GENERIC_WRITE;
    else access = GENERIC_READ;
@@ -3096,7 +3120,7 @@ file_open(const char *file, int flags, int mode)
 
    POOL_MEM pwszBuf(PM_FNAME);
    make_win32_path_UTF8_2_wchar(&pwszBuf.addr(), file);
-   foo = p_CreateFileW((LPCWSTR) pwszBuf.c_str(), access, shareMode, NULL, create, msflags, NULL);
+   foo = p_CreateFileW((LPCWSTR) pwszBuf.c_str(), access, shareMode, &sec, create, msflags, NULL);
 
    if (INVALID_HANDLE_VALUE == foo) {
       errno = b_errno_win32;
