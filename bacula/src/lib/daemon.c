@@ -75,27 +75,7 @@ daemon_start()
       next_fd = 3;                    /* don't close debug output */
    }
 
-#if defined(HAVE_FCNTL_F_CLOSEM)
-   fcntl(next_fd, F_CLOSEM);
-#elif defined(HAVE_CLOSEFROM)
-   closefrom(next_fd);
-#else
-   struct rlimit rl;
-   int64_t rlimitResult=0;
-
-   /* Many systems doesn't have the correct system call
-    * to determine the FD list to close.
-    */
-   if (getrlimit(RLIMIT_NOFILE, &rl) == -1) {
-      rlimitResult = sysconf(_SC_OPEN_MAX);
-   } else {
-      rlimitResult = rl.rlim_max;
-   }
-
-   for (i=rlimitResult; i >= next_fd; i--) {
-      close(i);
-   }
-#endif
+   bclose_from(next_fd);
 
    /* Move to root directory. For debug we stay
     * in current directory so dumps go there.
