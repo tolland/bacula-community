@@ -666,7 +666,7 @@ public:
        */
       Mmsg(path, "%s/snapshotdb/%s", arg->working, arg->name);
       if (stat(path, &sp) == 0) {
-         FILE *fp = fopen(path, "r");
+         FILE *fp = bfopen(path, "r");
          if (!fp) {
             printf("status=0 error=\"Unable to get information about snapshot\n");
             return 0;
@@ -701,7 +701,7 @@ public:
          return 0;
       }
 
-      FILE *fp = fopen(path, "w");
+      FILE *fp = bfopen(path, "w");
       if (!fp) {
          berrno be;
          printf("status=0 error=\"Unable to store information about snapshot in %s errno=%s\"\n", path, be.bstrerror());

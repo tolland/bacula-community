@@ -337,7 +337,7 @@ bool joblist::find_job(const char *name, POOLMEM **data)
    Mmsg(tmp, "%s/%s", working, base);
 
    P(joblist_mutex);
-   f = fopen(tmp, "r");
+   f = bfopen(tmp, "r");
    if (!f) {
       berrno be;
       Jmsg(ctx, M_ERROR, "Unable to open job database. ERR=%s\n",
@@ -432,7 +432,7 @@ bool joblist::find_root_job()
    Mmsg(tmp, "%s/%s", working, base);
 
    P(joblist_mutex);
-   f = fopen(tmp, "r");
+   f = bfopen(tmp, "r");
    if (!f) {
       berrno be;
       Jmsg(ctx, M_ERROR, "Unable to prune previous jobs. ERR=%s\n",
@@ -513,7 +513,7 @@ bool joblist::store_job(char *data)
 
    tmp = get_pool_memory(PM_FNAME);
    Mmsg(tmp, "%s/%s", working, base);
-   fp = fopen(tmp, "a+");
+   fp = bfopen(tmp, "a+");
    if (!fp) {
       berrno be;
       Jmsg(ctx, M_ERROR, "Unable to update the job history. ERR=%s\n",
@@ -600,7 +600,7 @@ void joblist::prune_jobs(char *build_cmd(void *arg, const char *data, const char
    *curkey = *curjobname = *prevjob = *rootjob = *buf = *data = 0;
 
    P(joblist_mutex);
-   fout = fopen(tmpout, "w");
+   fout = bfopen(tmpout, "w");
    if (!fout) {
       berrno be;
       Jmsg(ctx, M_ERROR, "Unable to prune previous jobs. "
@@ -609,7 +609,7 @@ void joblist::prune_jobs(char *build_cmd(void *arg, const char *data, const char
       goto bail_out;
    }
 
-   f = fopen(tmp, "r");
+   f = bfopen(tmp, "r");
    if (!f) {
       berrno be;
       Jmsg(ctx, M_ERROR, "Unable to prune previous jobs. ERR=%s\n",

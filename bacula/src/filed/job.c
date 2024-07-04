@@ -1505,7 +1505,7 @@ int add_file_to_fileset(JCR *jcr, const char *fname, bool is_file)
    case '<':
       Dmsg1(100, "Doing < of '%s' include on client.\n", p + 1);
       p++;                      /* skip over < */
-      if ((ffd = fopen(p, "rb")) == NULL) {
+      if ((ffd = bfopen(p, "rb")) == NULL) {
          berrno be;
          Jmsg(jcr, M_FATAL, 0,
               _("Cannot open FileSet input file: %s. ERR=%s\n"),

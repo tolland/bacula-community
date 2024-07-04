@@ -247,7 +247,7 @@ LEX *lex_open_file(LEX *lf, const char *filename, LEX_ERROR_HANDLER *scan_error)
          return NULL;
       }
       fd = bpipe->rfd;
-   } else if ((fd = fopen(fname, "rb")) == NULL) {
+   } else if ((fd = bfopen(fname, "rb")) == NULL) {
       free(fname);
       return NULL;
    }
