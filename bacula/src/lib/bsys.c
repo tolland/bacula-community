@@ -2172,6 +2172,7 @@ static int bclose_closefrom(int start_fd)
 /* Check the FDs that are currently open */
 static int check_open_fd()
 {
+#ifndef HAVE_WIN32
    int max_fd = 0;
    struct dirent *entry;
    DIR *dir = opendir(PROC_SELF_FD);
@@ -2206,6 +2207,8 @@ static int check_open_fd()
    }
    closedir(dir);
    return max_fd;
+#endif
+   return -1;
 }
 
 static int bclose_proc_self(int start_fd)
@@ -2239,6 +2242,7 @@ int bclose_from(int start_fd)
    /* Many systems doesn't have the correct system call
     * to determine the FD list to close.
     */
+#if !defined(HAVE_FCNTL_F_CLOSEM) && !defined(HAVE_CLOSEFROM) && !defined(HAVE_WIN32)
    struct rlimit rl;
    int64_t rlimitResult=0;
 
@@ -2251,6 +2255,8 @@ int bclose_from(int start_fd)
       close(i);
    }
    return 4;
+#endif
+   return 5;
 }
 
 #ifdef TEST_PROGRAM
