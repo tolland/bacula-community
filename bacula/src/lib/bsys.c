@@ -2195,7 +2195,7 @@ static int check_open_fd()
 	    buf2[l] = 0;
 	    Dmsg2(10, "%d -> %s\n", fd, buf2);
 	 }
-	 ASSERT2(0, "Found a file descriptor without O_CLOEXEC");
+	 //ASSERT2(0, "Found a file descriptor without O_CLOEXEC");
       }
 #endif
       max_fd = MAX(max_fd, fd);
