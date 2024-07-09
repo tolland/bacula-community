@@ -462,7 +462,13 @@ bRC METAPLUGIN::run_backend(bpContext *ctx)
       return bRC_Error;
    }
    DMSG(ctx, DINFO, "Executing: %s\n", backend_cmd.c_str());
-   bp = open_bpipe(backend_cmd.c_str(), 0, "rwe");
+   char ed1[64];
+   bsnprintf(ed1, sizeof(ed1), "BACULA_JOBID=%d", JobId);
+   char *envp[] = {
+      ed1,
+      NULL
+   };
+   bp = open_bpipe(backend_cmd.c_str(), 0, "rwe", envp);
    if (bp == NULL){
       berrno be;
       DMSG(ctx, DERROR, "Unable to run backend. Err=%s\n", be.bstrerror());
