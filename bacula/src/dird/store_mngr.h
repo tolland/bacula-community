@@ -245,17 +245,17 @@ class ListedOrderStore : public StorageManager {
    }
 };
 
-class LastBackupedToStore : public StorageManager {
+class LastBackedUpToStore : public StorageManager {
    private:
       void apply_policy(bool write_store);
    public:
       void apply_write_policy(JCR* jcr);
       void apply_read_policy(JCR* jcr);
 
-   LastBackupedToStore() : StorageManager("LastBackupedTo") {
+   LastBackedUpToStore() : StorageManager("LastBackedUpTo") {
    }
 
-   ~LastBackupedToStore() {
+   ~LastBackedUpToStore() {
    }
 };
 

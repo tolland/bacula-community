@@ -507,11 +507,11 @@ void LeastUsedStore::apply_read_policy(JCR*) {
    return apply_policy(false);
 }
 
-void LastBackupedToStore::apply_policy(bool) {
+void LastBackedUpToStore::apply_policy(bool) {
    /* Do nothing for now */
 }
 
-void LastBackupedToStore::apply_write_policy(JCR *jcr)
+void LastBackedUpToStore::apply_write_policy(JCR *jcr)
 {
    if (jcr)
    {
@@ -569,7 +569,7 @@ void LastBackupedToStore::apply_write_policy(JCR *jcr)
    }
 }
 
-void LastBackupedToStore::apply_read_policy(JCR *) {
+void LastBackedUpToStore::apply_read_policy(JCR *) {
    apply_policy(false);
 }
 
