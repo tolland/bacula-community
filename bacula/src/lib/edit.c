@@ -568,6 +568,9 @@ bool check_for_invalid_chars(const char *str, POOLMEM **err, bool *quote_needed)
          case '\'':
             pm_strcpy(err, "Found invalid \"\'\" character");
             return true;
+         case '`':
+            pm_strcpy(err, "Found invalid \"`\" character");
+            return true;
          case '$':
             pm_strcpy(err, "Found invalid \"$\" character");
             return true;
