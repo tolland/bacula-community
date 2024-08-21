@@ -158,7 +158,7 @@ stop_bacula
 
 nb=`grep 'was selected out of group of 2 available storages. StorageGroupPolicy "LeastUsed" used' $tmp/log4.out | wc -l`
 if [ $nb != 3 ]; then
-    print_debug "ERROR: Incorrect selection by Pool"
+    print_debug "ERROR: Incorrect selection by Pool in $tmp/log4.out"
     estat=1
 fi
 
@@ -168,7 +168,7 @@ awk '/Storage:/ { tab[$2]++ } END { for (t in tab) { if (tab[t] != 3) { print t 
 grep ERROR $tmp/1
 
 if [ $? -eq 0 ]; then
-    print_debug "ERROR: Found incorrect drive sequence"
+    print_debug "ERROR: Found incorrect drive sequence in $tmp/log2.out"
     estat=1
 fi
 
