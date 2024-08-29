@@ -68,6 +68,7 @@ public:
    bool check_lintape_eod();
    int use_worm() { return device->worm_command && device->control_name; };
    alist *alert_list;
+   bool sync_data(DCR *dcr) { return true; }; // not implemented by tape driver
 };
 
 #endif /* __TAPE_DEV_ */

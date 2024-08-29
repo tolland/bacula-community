@@ -35,6 +35,7 @@ public:
    bool truncate(DCR *dcr);
    const char *print_type();
    virtual int device_specific_init(JCR *jcr, DEVRES *device);
+   bool sync_data(DCR *dcr) { return true; }; // Not implemented in fifo device
 };
 
 #endif /* __FIFO_DEV_ */
