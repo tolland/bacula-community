@@ -11287,6 +11287,24 @@
 						}
 					},
 					{
+						"name": "subject",
+						"in": "query",
+						"required": false,
+						"description": "Email subject",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "bodypreview",
+						"in": "query",
+						"required": false,
+						"description": "Email body preview",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
 						"name": "minsize",
 						"in": "query",
 						"required": false,
@@ -11311,6 +11329,15 @@
 						"description": "Email conversation identifier",
 						"schema": {
 							"type": "string"
+						}
+					},
+					{
+						"name": "hasattachment",
+						"in": "query",
+						"required": false,
+						"description": "Email has attachments",
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
