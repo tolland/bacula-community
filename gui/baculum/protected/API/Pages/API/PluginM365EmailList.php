@@ -92,7 +92,7 @@ class PluginM365EmailList extends ConsoleOutputJSONPage {
 			$params['maxtime'] = $this->Request['maxtime'];
 		}
 		if ($this->Request->contains('folder') && $misc->isValidFilename($this->Request['folder'])) {
-			$params['folder'] = $this->Request['folder'];
+			$params['foldername'] = $this->Request['folder'];
 		}
 		if ($this->Request->contains('tags') && $misc->isValidName($this->Request['tags'])) {
 			$params['tags'] = $this->Request['tags'];
@@ -113,8 +113,18 @@ class PluginM365EmailList extends ConsoleOutputJSONPage {
 			$params['maxsize'] = $this->Request['maxsize'];
 		}
 		if ($this->Request->contains('conversationid') && $misc->isValidNameExt($this->Request['conversationid'])) {
-			$params['conversationid'] =  $this->Request['conversationid'];
+			$params['conversationid'] = $this->Request['conversationid'];
 		}
+		if ($this->Request->contains('subject')) {
+			$params['subject'] = $this->Request['subject'];
+		}
+		if ($this->Request->contains('bodypreview')) {
+			$params['bodypreview'] = $this->Request['bodypreview'];
+		}
+		if ($this->Request->contains('hasattachment') && $misc->isValidBooleanTrue($this->Request['hasattachment'])) {
+			$params['hasattachment'] = $this->Request['hasattachment'];
+		}
+		
 		$out = $this->getJSONOutput($params);
 
 		$output = [];
