@@ -42,7 +42,7 @@
  * the 64 bit version.
  */
 
-static const int dbglvl = 0;
+static const int dbglvl = 50;
 
 #define b_errno_win32 (1<<29)
 
