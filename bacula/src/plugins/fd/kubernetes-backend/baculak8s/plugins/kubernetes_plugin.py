@@ -322,6 +322,9 @@ class KubernetesPlugin(Plugin):
                                                              estimate=estimate))
         return self.k8s[K8SObjType.K8SOBJ_STORAGECLASS]
 
+    def get_persistentvolumeclaim_read_namespaced(self, namespace, name):
+        return self.__execute(lambda: persistentvolumeclaims_read_namespaced(self.corev1api, namespace, name))
+
     def get_pvcdata_namespaced(self, namespace, pvcname, pvcalias=None, estimate=False):
         logging.debug("pvcdata namespaced: {}/{} pvcalias={}".format(namespace, pvcname, pvcalias))
         return self.__execute(lambda: pvcdata_get_namespaced(self.corev1api, namespace, pvcname, pvcalias))

@@ -147,3 +147,17 @@ def annotated_namespaced_pods_data(corev1api, namespace, estimate=False, labels=
             podsdata.append(podobj)
 
     return podsdata
+
+def annotated_pvc_backup_mode(pvc, pod_backup_mode):
+    """Reads PVC annotations to search for backup mode annotation
+    Args:
+        pvc: kubernetes PVC object
+        pod_backup_mode: Selected backup mode in pod annotation
+
+    Returns:
+        BaculaBackupMode of pvc if it has, or pod backup mode
+    """
+    metadata = pvc.metadata
+    if metadata.annotations is None or 'bacula/backup.mode' not in metadata.annotations:
+        return pod_backup_mode
+    return BaculaBackupMode.process_param(metadata.annotations.get('bacula/backup.mode'))

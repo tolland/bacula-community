@@ -22,7 +22,7 @@ from baculak8s.entities.file_info import FileInfo
 from baculak8s.io.default_io import DefaultIO
 from baculak8s.io.packet_definitions import ESTIMATION_START_PACKET
 from baculak8s.jobs.job_pod_bacula import (PVCDATA_GET_ERROR, JobPodBacula)
-from baculak8s.plugins.k8sbackend.baculaannotations import BaculaAnnotationsClass
+from baculak8s.plugins.k8sbackend.baculaannotations import BaculaAnnotationsClass, BaculaBackupMode
 from baculak8s.util.respbody import parse_json_descr
 
 PATTERN_NOT_FOUND = "No matches found for pattern {}"
@@ -155,24 +155,25 @@ class EstimationJob(JobPodBacula):
                                                                            bavol=BaculaAnnotationsClass.BaculaPrefix +
                                                                            BaculaAnnotationsClass.BackupVolume))
                                 continue
-                            else:
-                                podname = pod.get('name')
-                                if not estimate:
-                                    self._io.send_info(PROCESSING_PODBACKUP_START_INFO.format(namespace=nsname,
-                                                                                              podname=podname))
-                                status = self.process_pod_pvcdata(nsname, pod, pvcnames)
-                                logging.debug("Status in processing_loop: {}".format(status))
-                                if status is None:
-                                    for pvc_name in pvcnames.split(','):
-                                        pvc_backed[pvc_name] = 'error' 
-                                    logging.error("Some unknown error at {namespace}/{podname}!".format(namespace=nsname, podname=podname))
-                                    self._handle_error(PROCESS_POD_PVCDATA_ERROR.format(namespace=nsname, podname=podname))
-                                    break
-                                if not estimate:
-                                    for pvc_name in pvcnames.split(','):
-                                        pvc_backed[pvc_name] = 'ok'
-                                    self._io.send_info(PROCESSING_PODBACKUP_FINISH_INFO.format(namespace=nsname,
-                                                                                               podname=podname))
+
+                            podname = pod.get('name')
+                            if not estimate:
+                                self._io.send_info(PROCESSING_PODBACKUP_START_INFO.format(namespace=nsname,
+                                                                                            podname=podname))
+
+                            status = self.process_pod_pvcdata(nsname, pod, pvcnames)
+                            logging.debug("Status in processing_loop: {}".format(status))
+                            if status is None:
+                                for pvc_name in pvcnames.split(','):
+                                    pvc_backed[pvc_name] = 'error'
+                                logging.error("Some unknown error at {namespace}/{podname}!".format(namespace=nsname, podname=podname))
+                                self._handle_error(PROCESS_POD_PVCDATA_ERROR.format(namespace=nsname, podname=podname))
+                                break
+                            if not estimate:
+                                for pvc_name in pvcnames.split(','):
+                                    pvc_backed[pvc_name] = 'ok'
+                                self._io.send_info(PROCESSING_PODBACKUP_FINISH_INFO.format(namespace=nsname,
+                                                                                            podname=podname))
                         if len(podsannotated) > 0 and not estimate:
                             self._io.send_info(PROCESSING_PODBACKUP_PHASE_FINISH_INFO)
                             logging.debug("PVCs backed through pod annotations: {}".format(pvc_backed))

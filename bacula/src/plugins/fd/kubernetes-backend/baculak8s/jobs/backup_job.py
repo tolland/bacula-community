@@ -24,7 +24,7 @@ from baculak8s.io.packet_definitions import FILE_DATA_START
 from baculak8s.jobs.estimation_job import PVCDATA_GET_ERROR, EstimationJob
 from baculak8s.jobs.job_pod_bacula import DEFAULTRECVBUFFERSIZE
 from baculak8s.plugins.k8sbackend.baculaannotations import (
-    BaculaAnnotationsClass, BaculaBackupMode)
+    BaculaAnnotationsClass, BaculaBackupMode, annotated_pvc_backup_mode)
 from baculak8s.plugins.k8sbackend.baculabackup import BACULABACKUPPODNAME
 from baculak8s.plugins.k8sbackend.podexec import ExecStatus, exec_commands
 from baculak8s.util.respbody import parse_json_descr
@@ -39,7 +39,7 @@ BA_MODE_ERROR = "Invalid annotations for Pod: {namespace}/{podname}. Backup Mode
 BA_EXEC_STDOUT = "{}:{}"
 BA_EXEC_STDERR = "{} Error:{}"
 BA_EXEC_ERROR = "Pod Container execution: {}"
-POD_BACKUP_SELECTED = "The selected backup mode in pod to the pvc `{}` is `{}`"
+POD_BACKUP_SELECTED = "The selected backup mode to do pvc backup of the pvc `{}` is `{}`"
 CHANGE_BACKUP_MODE_FOR_INCOMPATIBLITY_PVC = "The pvc `{}` is not compatible with snapshot backup, changing mode to clone. Only pvc with storage that they use CSI driver are compatible."
 PVC_BACKUP_MODE_APPLIED_INFO = "The pvc `{}` will be backup with {} mode."
 RETRY_BACKUP_WITH_STANDARD_MODE = "If the clone backup is empty. It will try again to do a backup using standard mode."
@@ -58,7 +58,7 @@ class BackupJob(EstimationJob):
         self.fs_backup_mode = BaculaBackupMode.process_param(params.get("backup_mode", BaculaBackupMode.Snapshot)) # Fileset backup mode defined.
         if _label is not None:
             self._io.send_info(BACKUP_PARAM_LABELS.format(_label))
-        self._io.send_info("The selected default backup mode to do pvc backup is `{}`.".format(self.fs_backup_mode))
+        self._io.send_info("The selected default backup mode to do pvc backup in all job is `{}`.".format(self.fs_backup_mode))
 
     def execution_loop(self):
         super().processing_loop(estimate=False)
@@ -229,12 +229,14 @@ class BackupJob(EstimationJob):
         logging.debug("process_pod_pvcdata:{}/{} {}".format(namespace, pod, pvcnames))
         status = None
         corev1api = self._plugin.corev1api
-        backupmode = BaculaBackupMode.process_param(pod.get(BaculaAnnotationsClass.BackupMode, BaculaBackupMode.Snapshot))
-        if backupmode is None:
+        pod_backup_mode = BaculaBackupMode.process_param(pod.get(BaculaAnnotationsClass.BackupMode, BaculaBackupMode.Snapshot))
+        if pod_backup_mode is None:
             self._handle_error(BA_MODE_ERROR.format(namespace=namespace,
                                                     podname=pod.get('name'),
                                                     mode=pod.get(BaculaAnnotationsClass.BackupMode)))
             return False
+
+        self._io.send_info("The selected default backup mode to do pvc backup of the pod `{}` is `{}`".format(pod.get('name'), pod_backup_mode))
 
         failonerror = BoolParam.handleParam(pod.get(BaculaAnnotationsClass.RunBeforeJobonError), True)      # the default is to fail job on error
         # here we execute remote command before Pod backup
@@ -252,7 +254,9 @@ class BackupJob(EstimationJob):
             original_pvc = self._plugin.get_pvcdata_namespaced(namespace, pvcname)
             vsnapshot = None
             logging.debug("handling vol before backup: {}".format(pvcname))
-            self._io.send_info(POD_BACKUP_SELECTED.format(pvcname, backupmode))
+            pvc_raw = self._plugin.get_persistentvolumeclaim_read_namespaced(namespace, pvcname)
+            pvc_backup_mode = annotated_pvc_backup_mode(pvc_raw, pod_backup_mode)
+            self._io.send_info(POD_BACKUP_SELECTED.format(pvcname, pvc_backup_mode))
 
             # Check if pvc has status: 'Terminating'. Because in this state, the backup raise error.
             if self._plugin.pvc_is_terminating(namespace, original_pvc):
@@ -264,7 +268,7 @@ class BackupJob(EstimationJob):
                 self._io.send_warning("Skip pvc `{}` because it is in Pending status.".format(pvcname))
                 continue
 
-            if backupmode == BaculaBackupMode.Snapshot:
+            if pvc_backup_mode == BaculaBackupMode.Snapshot:
                 logging.debug('Snapshot mode chosen')
                 vsnapshot, pvc_from_vsnap = self.handle_create_vsnapshot_backup(namespace, pvcname)
                 logging.debug("The vsnapshot created from pvc {} is: {}".format(pvcname, vsnapshot))
@@ -273,12 +277,12 @@ class BackupJob(EstimationJob):
                     logging.debug(CHANGE_BACKUP_MODE_FOR_INCOMPATIBLITY_PVC.format(pvcname))
                     # backupmode = BaculaBackupMode.Clone
                     self._io.send_info(CHANGE_BACKUP_MODE_FOR_INCOMPATIBLITY_PVC.format(pvcname))
-                    backupmode = BaculaBackupMode.Clone
+                    pvc_backup_mode = BaculaBackupMode.Clone
                 else:
                     pvc = pvc_from_vsnap
                     pvcname = pvc_from_vsnap.get("name")
 
-            if backupmode == BaculaBackupMode.Clone:
+            if pvc_backup_mode == BaculaBackupMode.Clone:
                 pvcname = self.create_pvcclone(namespace, pvcname)
                 cloned_pvc = self._plugin.get_pvcdata_namespaced(namespace, pvcname)
                 if pvcname is None:
@@ -296,7 +300,7 @@ class BackupJob(EstimationJob):
                 'pvcname': pvcname,
                 'pvc': pvc,
                 'vsnapshot': vsnapshot,
-                'backupmode': backupmode,
+                'backupmode': pvc_backup_mode,
                 'original_pvc': original_pvc
                 })
 
