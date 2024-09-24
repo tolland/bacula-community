@@ -58,7 +58,8 @@ class BackupJob(EstimationJob):
         self.fs_backup_mode = BaculaBackupMode.process_param(params.get("backup_mode", BaculaBackupMode.Snapshot)) # Fileset backup mode defined.
         if _label is not None:
             self._io.send_info(BACKUP_PARAM_LABELS.format(_label))
-        self._io.send_info("The selected default backup mode to do pvc backup in all job is `{}`.".format(self.fs_backup_mode))
+        if params.get('pvcdata', None) is not None:
+            self._io.send_info("The selected default backup mode to do pvc backup in all job is `{}`.".format(self.fs_backup_mode))
 
     def execution_loop(self):
         super().processing_loop(estimate=False)
