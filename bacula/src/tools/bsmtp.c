@@ -29,19 +29,20 @@
    LAST UPDATE
      Fri Aug 11 12:29:23 MET DST 1995
    COPYRIGHT
-     None specified.
 
-   Kern Sibbald, July 2001
+   Copyright 1993-1995 by Wietse Venema. All rights reserved. Some
+   individual files may be covered by other copyrights.
 
-     Note, the original W.Z. Venema smtp.c had no license and no
-     copyright.
-     See:
-        http://archives.neohapsis.com/archives/postfix/2000-05/1520.html
+   This material was originally written and compiled by Wietse Venema at
+   Eindhoven University of Technology, The Netherlands, in 1993, 1994, and
+   1995. Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that this entire copyright notice is
+   duplicated in all such copies.
 
-    In previous versions, I mistakenly believed that this code came from
-     Ralf S. Engelshall's smtpclient_main.c, but in fact 99% was
-     Wietse Venema's code, and the rest was mine.
- */
+   This software is provided "as is" and without any expressed or implied
+   warranties, including, without limitation, the implied warranties of
+   merchantibility and fitness for any particular purpose.
+*/
 
 #include "bacula.h"
 #include "jcr.h"
