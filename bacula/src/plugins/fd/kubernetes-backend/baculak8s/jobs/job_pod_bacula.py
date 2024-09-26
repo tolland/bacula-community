@@ -28,9 +28,9 @@ from abc import ABCMeta
 import yaml
 from baculak8s.jobs.job import Job
 from baculak8s.plugins.k8sbackend.baculabackup import (BACULABACKUPIMAGE,
-                                                       BACULABACKUPPODNAME,
                                                        ImagePullPolicy,
-                                                       prepare_backup_pod_yaml)
+                                                       prepare_backup_pod_yaml,
+                                                       get_backup_pod_name)
 from baculak8s.plugins.k8sbackend.pvcclone import prepare_backup_clone_yaml
 from baculak8s.plugins.k8sbackend.baculaannotations import BaculaBackupMode
 from baculak8s.util.respbody import parse_json_descr
@@ -241,13 +241,15 @@ class JobPodBacula(Job, metaclass=ABCMeta):
         return True
 
     def execute_pod(self, namespace, podyaml):
-        exist = self._plugin.check_pod(namespace=namespace, name=BACULABACKUPPODNAME)
-        if exist is not None:
-            logging.debug('execute_pod:exist!')
+        prev_bacula_pod_name = self._plugin.check_bacula_pod(namespace, self.jobname)
+        if prev_bacula_pod_name:
+            logging.debug('Exist previous bacula-backup pod! Name: {}'.format(prev_bacula_pod_name))
+            # TODO: Check if we remove or not the bacula-backup pod
+            self._io.send_info('Exist a previous bacula-backup pod. Name: {}'.format(prev_bacula_pod_name))
             response = False
             for a in range(self.timeout):
                 time.sleep(1)
-                response = self._plugin.check_gone_backup_pod(namespace)
+                response = self._plugin.check_gone_backup_pod(namespace, prev_bacula_pod_name)
                 if isinstance(response, dict) and 'error' in response:
                     self._handle_error(CANNOT_REMOVE_BACKUP_POD_ERR.format(parse_json_descr(response)))
                     return False
@@ -255,7 +257,7 @@ class JobPodBacula(Job, metaclass=ABCMeta):
                     if response:
                         break
             if not response:
-                self._handle_error(POD_EXIST_ERR.format(namespace=namespace, podname=BACULABACKUPPODNAME))
+                self._handle_error(POD_EXIST_ERR.format(namespace=namespace, podname=prev_bacula_pod_name))
                 return False
 
         poddata = yaml.safe_load(podyaml)
@@ -265,7 +267,7 @@ class JobPodBacula(Job, metaclass=ABCMeta):
         else:
             for seq in range(self.timeout):
                 time.sleep(1)
-                isready = self._plugin.backup_pod_isready(namespace, seq)
+                isready = self._plugin.backup_pod_isready(namespace, podname=get_backup_pod_name(self.jobname), seq=seq)
                 if isinstance(isready, dict) and 'error' in isready:
                     self._handle_error(CANNOT_CREATE_BACKUP_POD_ERR.format(parse_json_descr(isready)))
                     break
@@ -279,7 +281,7 @@ class JobPodBacula(Job, metaclass=ABCMeta):
     def delete_pod(self, namespace, force=False):
         for a in range(self.timeout):
             time.sleep(1)
-            response = self._plugin.check_gone_backup_pod(namespace, force=force)
+            response = self._plugin.check_gone_backup_pod(namespace, get_backup_pod_name(self.jobname), force=force)
             if isinstance(response, dict) and 'error' in response:
                 self._handle_error(CANNOT_REMOVE_BACKUP_POD_ERR.format(parse_json_descr(response)))
             else:
@@ -302,7 +304,7 @@ class JobPodBacula(Job, metaclass=ABCMeta):
 
     def handle_delete_pod(self, namespace):
         if not self.delete_pod(namespace=namespace):
-            self._handle_error(POD_REMOVE_ERR.format(podname=BACULABACKUPPODNAME))
+            self._handle_error(POD_REMOVE_ERR.format(podname=get_backup_pod_name(self.jobname)))
 
     def handle_tarstderr(self):
         if self.tarexitcode != '0' or len(self.tarstderr) > 0:

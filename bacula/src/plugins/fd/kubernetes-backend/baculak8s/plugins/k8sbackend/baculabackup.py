@@ -25,8 +25,9 @@ import os
 import logging
 from baculak8s.plugins.k8sbackend.baculabackupimage import KUBERNETES_TAR_IMAGE
 
-
-BACULABACKUPPODNAME = 'bacula-backup'
+JOB_NAME_MAX_CHARS = 23
+JOB_ID_MAX_DIGITS = 12
+BACULABACKUPPODNAME = 'bacula-backup-{job_name}-{job_id}'
 # BACULABACKUPIMAGE = "hub.baculasystems.com/bacula-backup:" + KUBERNETES_TAR_IMAGE
 BACULABACKUPIMAGE = "bacula-backup:" + KUBERNETES_TAR_IMAGE
 DEFAULTPODYAML = os.getenv('DEFAULTPODYAML', "/opt/bacula/scripts/bacula-backup.yaml")
@@ -89,6 +90,26 @@ class ImagePullPolicy(object):
                     return p
         return ImagePullPolicy.IfNotPresent
 
+def exists_bacula_pod(pod_list, job):
+    """Get name of first backup pod belong to previous job.
+    
+    :param pod_list: list of pods in namespace
+    :param job: Name of job, without id
+
+    :return: Name of pod of previous job
+    """
+    name_for_search = 'bacula-backup-' + job.split('.')[0][:JOB_NAME_MAX_CHARS].lower() + '-'
+    num_hyphen=name_for_search.count('-')
+    for pod_name in pod_list:
+        if name_for_search in pod_name and num_hyphen == pod_name.count('-'):
+            return pod_name
+    return ''
+
+def get_backup_pod_name(job):
+    # Get job name and id, and limit to not exceed 63 characters in pod name
+    job_name = job.split('.')[0][:JOB_NAME_MAX_CHARS].lower()
+    job_id = job.split(':')[1][:JOB_ID_MAX_DIGITS]
+    return BACULABACKUPPODNAME.format(job_name=job_name, job_id=job_id)
 
 def prepare_backup_pod_yaml(mode='backup', nodename=None, host='localhost', port=9104, token='', namespace='default',
                             pvcname='', image=BACULABACKUPIMAGE, imagepullpolicy=ImagePullPolicy.IfNotPresent, job=''):
@@ -101,4 +122,4 @@ def prepare_backup_pod_yaml(mode='backup', nodename=None, host='localhost', port
       nodenameparam = "nodeName: {nodename}".format(nodename=nodename)
     logging.debug('host:{} port:{} namespace:{} image:{} job:{}'.format(host, port, namespace, image, job))
     return podyaml.format(mode=mode, nodenameparam=nodenameparam, host=host, port=port, token=token, namespace=namespace,
-                          image=image, pvcname=pvcname, podname=BACULABACKUPPODNAME, imagepullpolicy=imagepullpolicy, job=job)
+                          image=image, pvcname=pvcname, podname=get_backup_pod_name(job), imagepullpolicy=imagepullpolicy, job=job)

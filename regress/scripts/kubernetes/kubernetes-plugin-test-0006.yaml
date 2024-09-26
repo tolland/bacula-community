@@ -1,0 +1,131 @@
+# testing-ns-0006: Check parallel jobs
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: testing-ns-0006-1
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: testing-ns-0006-2
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: test-n1-pvc-0006-1
+  namespace: testing-ns-0006-1
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: local-path
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: test-n1-pvc-0006-2
+  namespace: testing-ns-0006-1
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: local-path
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: test-n1-pvc-0006-3
+  namespace: testing-ns-0006-1
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: local-path
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: test-n2-pvc-0006-1
+  namespace: testing-ns-0006-2
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: local-path
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-n1-pod-0006-1
+  namespace: testing-ns-0006-1
+spec:
+  volumes:
+    - name: pvc-0006-1-aasdsadsf
+      persistentVolumeClaim:
+        claimName: test-n1-pvc-0006-1
+    - name: pvc-0006-2-dgdhghrhrhr
+      persistentVolumeClaim:
+        claimName: test-n1-pvc-0006-2
+  containers:
+    - name: test-nginx-container
+      image: nginx
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/pvc-1"
+          name: pvc-0006-1-aasdsadsf
+        - mountPath: "/pvc-2"
+          name: pvc-0006-2-dgdhghrhrhr
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-n1-pod-0006-2
+  namespace: testing-ns-0006-1
+spec:
+  volumes:
+    - name: pvc-0006-3-asdgregrhrhffq
+      persistentVolumeClaim:
+        claimName: test-n1-pvc-0006-3
+  containers:
+    - name: test-nginx-container
+      image: nginx
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/pvc-3"
+          name: pvc-0006-3-asdgregrhrhffq
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-n2-pod-0006-1
+  namespace: testing-ns-0006-2
+spec:
+  volumes:
+    - name: pvc-0006-1-gkjguybhejw
+      persistentVolumeClaim:
+        claimName: test-n2-pvc-0006-1
+  containers:
+    - name: test-nginx-container
+      image: nginx
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/pvc-1"
+          name: pvc-0006-1-gkjguybhejw

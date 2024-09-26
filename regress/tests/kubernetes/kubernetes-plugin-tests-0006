@@ -1,0 +1,377 @@
+#!/bin/bash
+#
+# Copyright (C) 2000-2015 Kern Sibbald
+# License: BSD 2-Clause; see file LICENSE-FOSS
+#
+
+#
+# Attempt to backup and restore kubernetes pvcs avoiding the pvc
+#   with Terminating status
+#
+# Assumes:
+#   - You have a working K8S cluster avaialable
+#   - You can create storage class with any local-storage provider
+
+#
+# The k8s cluster status:
+
+# $ kubectl apply -f scripts/kubernetes/kubernetes-plugin-test-0001.yaml
+# namespace/testing-ns-0001-1 created
+# storageclass.storage.k8s.io/local-storage unchanged
+# persistentvolumeclaim/test-persistent-volume-claim-0001 created
+# pod/test-pod-0001 created
+
+
+# $ kubectl -n testing-ns-0001-1 get pods -o wide
+# NAME            READY   STATUS    RESTARTS   AGE     IP            NODE                      NOMINATED NODE   READINESS GATES
+# test-pod-0001   1/1     Running   0          4m59s   10.85.0.124   am-u20-k8s-worker02-bck   <none>           <none>
+
+# $ kubectl -n testing-ns-0001-1 get pvc -o wide 
+# NAME                                STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE     VOLUMEMODE
+# test-persistent-volume-claim-0001   Bound    pvc-e4b2c7b7-2679-494c-af61-8e1cac026c4d   1Gi        RWO            local-path     5m29s   Filesystem
+
+# $ kubectl -n testing-ns-0001-1 get svc -o wide
+# No resources found in testing-ns-0001-1 namespace.
+
+# $ kubectl -n testing-ns-0001-1 get rs -o wide
+# No resources found in testing-ns-0001-1 namespace.
+
+# $ kubectl -n testing-ns-0001-1 get sts -o wide
+# No resources found in testing-ns-0001-1 namespace.
+
+# $ kubectl -n testing-ns-0001-1 get storageclass -o wide
+# NAME              PROVISIONER                                   RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+# local-path        rancher.io/local-path                         Delete          WaitForFirstConsumer   false                  16h
+# local-storage     kubernetes.io/no-provisioner                  Delete          WaitForFirstConsumer   false                  148m
+# nfs-client        k8s-sigs.io/nfs-subdir-external-provisioner   Delete          Immediate              false                  250d
+# rook-ceph-block   rook-ceph.rbd.csi.ceph.com                    Delete          Immediate              true                   236d
+
+
+# $ kubectl -n testing-ns-0001-1 get volumesnapshotclasses -o wide
+# NAME                      DRIVER                       DELETIONPOLICY   AGE
+# csi-rbdplugin-snapclass   rook-ceph.rbd.csi.ceph.com   Delete           235d
+
+TEST_ID=0006
+TestName="kubernetes-plugin-test-${TEST_ID}"
+JobNameBase="Test-K8S-${TEST_ID}"
+FileSetName="Test-K8S-Set-${TEST_ID}-"
+
+# Variables in tests
+K8S_SCRIPT_YAML_FILE="scripts/kubernetes/kubernetes-plugin-test-${TEST_ID}.yaml"
+K8S_NAMESPACE_1="testing-ns-${TEST_ID}-1"
+K8S_NAMESPACE_2="testing-ns-${TEST_ID}-2"
+
+PVC_N1_0006_1="test-n1-pvc-${TEST_ID}-1"
+PVC_N1_0006_2="test-n1-pvc-${TEST_ID}-2"
+PVC_N1_0006_3="test-n1-pvc-${TEST_ID}-3"
+PVC_N2_0006_1="test-n2-pvc-${TEST_ID}-1"
+
+POD_N1_0006_1="test-n1-pod-${TEST_ID}-1"
+POD_N1_0006_2="test-n1-pod-${TEST_ID}-2"
+POD_N2_0006_1="test-n2-pod-${TEST_ID}-1"
+
+PVC_N1_0006_1_PATH_IN_POD="/pvc-1"
+PVC_N1_0006_2_PATH_IN_POD="/pvc-2"
+PVC_N1_0006_3_PATH_IN_POD="/pvc-3"
+PVC_N2_0006_1_PATH_IN_POD="/pvc-1"
+
+. scripts/functions
+. scripts/regress-utils.sh
+
+. tests/kubernetes/k8s-utils.sh
+
+estat=0
+
+bstat=0
+JOBID=1
+# This job is the base of all backup jobs names
+JobName=${JobNameBase}-
+
+tmp="${tmp}/test-${TEST_ID}"
+mkdir -p ${tmp}
+
+printf "\nInit test: ${TestName}\n"
+
+CONNECTION_ARGS=""
+if [ ! -z $KUBE_FD_CERT_FILE ]
+then
+   setup_self_signed_cert $KUBE_FD_CERT_DIR $KUBE_FD_CERT_NAME
+   CONNECTION_ARGS=" fdkeyfile=$KUBE_FD_KEY_FILE fdcertfile=$KUBE_FD_CERT_FILE "
+fi
+
+if [ ! -z "$KUBE_PROXY_POD_PLUGIN_HOST" ]
+then
+   CONNECTION_ARGS="${CONNECTION_ARGS} pluginhost=${KUBE_PROXY_POD_PLUGIN_HOST} "
+fi
+
+if [ ! -z "$KUBE_BACULA_IMAGE" ]
+then
+   CONNECTION_ARGS="${CONNECTION_ARGS} baculaimage=${KUBE_BACULA_IMAGE} imagepullpolicy=ifNotPresent "
+fi
+
+export debug=1
+scripts/cleanup
+scripts/copy-kubernetes-plugin-confs ${TEST_ID}
+
+printf "\n ... Preparing ...\n"
+
+# export requires variables
+setup_plugin_param "kubernetes:"
+if [ "x$KUBECONFIG" != "x" ]
+then
+   export KUBECONFIG
+   LPLUG="${LPLUG} config='$KUBECONFIG' ${CONNECTION_ARGS}"
+fi
+
+KSTORAGECLASS=`${KUBECTL} get storageclass | grep local | wc -l`
+if [ $KSTORAGECLASS -eq 0 ]
+then
+   echo "Do you need a local storage class. It is to simplify the errors!"
+   exit 1
+fi
+
+
+# check the requirements
+KNODES=`${KUBECTL} get nodes | grep Ready | wc -l`
+if [ $KNODES -eq 0 ]
+then
+   echo "A working Kubernetes cluster required!"
+   exit 1
+fi
+
+# check if K8S_NAMESPACE_1 exists
+KPLUGTEST_1=`${KUBECTL} get ns | grep "^${K8S_NAMESPACE_1} " | wc -l`
+KPLUGTEST_2=`${KUBECTL} get ns | grep "^${K8S_NAMESPACE_2} " | wc -l`
+if [ $KPLUGTEST_1 -ne 0 ] && [ "x$1" != "xforce" ];
+then
+   echo "Namespace \"${K8S_NAMESPACE_1}\" exist on cluster and no force option specified!"
+   exit 1
+fi
+if [ $KPLUGTEST_2 -ne 0 ] && [ "x$1" != "xforce" ];
+then
+   echo "Namespace \"${K8S_NAMESPACE_2}\" exist on cluster and no force option specified!"
+   exit 1
+fi
+
+# prepare data
+printf "\n ... Apply data ... \n"
+reset_k8s_env() {
+   if [ $KPLUGTEST_1 -ne 0 ]
+   then
+      printf "Removing namespaces: ${K8S_NAMESPACE_1} and ${K8S_NAMESPACE_2}\n"
+      ${KUBECTL} delete ns ${K8S_NAMESPACE_1} 2>&1 > ${tmp}/kube.log
+      ${KUBECTL} delete ns ${K8S_NAMESPACE_2} 2>&1 >> ${tmp}/kube.log
+      printf "Removed namespaces: ${K8S_NAMESPACE_1} and ${K8S_NAMESPACE_2}\n"
+   fi
+   ${KUBECTL} apply -f ${K8S_SCRIPT_YAML_FILE} 2>&1 >> ${tmp}/kube.log
+
+   i=0
+   SPIN=('-' '\\' '|' '/')
+   printf "\n ... Waiting to ready ... \n"
+   while true
+   do
+      kstat_n1=`${KUBECTL} -n ${K8S_NAMESPACE_1} get pods -o go-template='{{range .items}}{{.status.phase}}{{"\n"}}{{end}}' | grep -v Running | wc -l`
+      kstat_n2=`${KUBECTL} -n ${K8S_NAMESPACE_2} get pods -o go-template='{{range .items}}{{.status.phase}}{{"\n"}}{{end}}' | grep -v Running | wc -l`
+
+      if [ $kstat_n1 -eq 0 ] && [ $kstat_n2 -eq 0 ]; then
+         break
+      fi;
+      w=1
+      printf "\b${SPIN[(($i % 4))]}"
+      if [ $i -eq 600 ]
+      then
+         echo "Timeout waiting for test data to populate. Cannot continue!"
+         exit 1
+      fi
+      ((i++))
+      sleep 1
+   done
+   # Command to create a file inside pvc
+   printf "\n ... Refill data in pvcs ...\n"
+   SIZE_MB=1000
+   DD_CMD="dd if=/dev/urandom of=${PVC_N1_0006_1_PATH_IN_POD}/file${SIZE_MB}MB bs=1M count=${SIZE_MB}"
+   # Exec command inside pod.
+   ${KUBECTL} exec -it $POD_N1_0006_1 -n ${K8S_NAMESPACE_1} -- /bin/bash -c "$DD_CMD"
+   SIZE_MB=1500
+   DD_CMD="dd if=/dev/urandom of=${PVC_N1_0006_2_PATH_IN_POD}/file${SIZE_MB}MB bs=1M count=${SIZE_MB}"
+   # Exec command inside pod.
+   ${KUBECTL} exec -it $POD_N1_0006_1 -n ${K8S_NAMESPACE_1} -- /bin/bash -c "$DD_CMD"
+   SIZE_MB=1300
+   DD_CMD="dd if=/dev/urandom of=${PVC_N1_0006_3_PATH_IN_POD}/file${SIZE_MB}MB bs=1M count=${SIZE_MB}"
+   # Exec command inside pod.
+   ${KUBECTL} exec -it $POD_N1_0006_2 -n ${K8S_NAMESPACE_1} -- /bin/bash -c "$DD_CMD"
+
+   SIZE_MB=800
+   DD_CMD="dd if=/dev/urandom of=${PVC_N2_0006_1_PATH_IN_POD}/file${SIZE_MB}MB bs=1M count=${SIZE_MB}"
+   # Exec command inside pod.
+   ${KUBECTL} exec -it $POD_N2_0006_1 -n ${K8S_NAMESPACE_2} -- /bin/bash -c "$DD_CMD"
+}
+
+reset_k8s_env
+
+
+# wait a bit to objects to populate.
+sleep 10
+
+
+# get variables
+printf "\n ... Get Environment Variables ...\n"
+${KUBECTL} get ns -o name > ${tmp}/allns.log
+${KUBECTL} get pv -o name > ${tmp}/allpv.log
+${KUBECTL} get storageclass -o name > ${tmp}/allsc.log
+
+
+# Prepare bacula dir configuration
+printf "\n ... Preparing Bacula-dir configuration ...\n"
+export PLUGIN_WORKING=${cwd}/working
+
+out_sed="${tmp}/sed_tmp"
+echo "s%@LPLUG@%${LPLUG}%" > ${out_sed}
+echo "s%@K8S_NAMESPACE_1@%${K8S_NAMESPACE_1}%" >> ${out_sed}
+echo "s%@K8S_NAMESPACE_2@%${K8S_NAMESPACE_2}%" >> ${out_sed}
+echo "s%@PVC_N1_0006_1@%${PVC_N1_0006_1}%" >> ${out_sed}
+echo "s%@PVC_N1_0006_2@%${PVC_N1_0006_2}%" >> ${out_sed}
+echo "s%@PVC_N1_0006_3@%${PVC_N1_0006_3}%" >> ${out_sed}
+echo "s%@PVC_N2_0006_1@%${PVC_N2_0006_1}%" >> ${out_sed}
+
+echo "s%@CONNECTION_ARGS@%${CONNECTION_ARGS}%" >> ${out_sed}
+echo "s%@BACKUP_PROXY_WITHOUT_PVC@%${BACKUP_PROXY_WITHOUT_PVC}%" >> ${out_sed}
+echo "s%@BACKUP_ONLY_PVC@%${BACKUP_ONLY_PVC}%" >> ${out_sed}
+printf "\nCommand launched:\n"
+echo "sed -i -f ${out_sed} ${conf}/bacula-dir.conf"
+
+sed -i -f ${out_sed} ${conf}/bacula-dir.conf
+
+printf "\n ... Done ...\n"
+
+## Variables to restore from other jobs
+JOB_ID_TO_RESTORE_1=0
+JOB_ID_TO_RESTORE_2=0
+
+
+start_test
+
+# We must put the bconsole command in ${cwd}/tmp/bconcmds
+cat <<END_OF_DATA >${tmp}/bconcmds
+@output /dev/null
+messages
+@$out ${tmp}/log.out
+label storage=File1 pool=Default volume=TestVolume001
+@setdebug dir level=500 trace=1
+quit
+END_OF_DATA
+
+run_bacula
+
+#############
+## BTEST 1 ##
+#############
+
+btest1 () {
+   # Test 1
+   TEST=1
+   OUTPUT_FILE=${tmp}/blog${TEST}.out
+   JOB_ID_TO_RESTORE_1=${JOBID}
+   do_regress_parallel_backup_test ${TEST} 5 6
+   check_regress_parallel_backup_statusT ${TEST} 2
+   F=$?
+   # Check pvc1 is backup once
+   F_1=0
+   RET=`grep "@kubernetes" ${OUTPUT_FILE} | grep "${PVC_N1_0006_1}.tar" | wc -l`
+   RES=1
+   if [ $RET -ne $RES ]
+   then
+      F_1=1
+      ((bstat++))
+   fi
+   # Check pvc2 data is backup
+   F_2=0
+   RET=`grep "@kubernetes" ${OUTPUT_FILE} | grep "${PVC_N1_0006_3}.tar" | wc -l`
+   RES=1
+   if [ $RET -ne $RES ]
+   then
+      F_2=1
+      ((bstat++))
+   fi
+
+   printf "%s\n" "--------"
+   printf "Results backup test ${TEST}:\n"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   printf "%s%s\n" " -> The pvc data of '${PVC_N1_0006_1}' is backup: " $(regress_test_result ${F_1}) 
+   printf "%s%s\n" " -> The pvc data of '${PVC_N1_0006_3}' is backup: " $(regress_test_result ${F_2})
+   printf "%s\n" "--------"
+}
+
+
+#############
+## RTEST 1 ##
+#############
+rtest1 () {
+   TEST=1
+   if [ "${JOB_ID_TO_RESTORE_1}" -eq 0 ]; then
+      printf "%s\n" "--------------"
+      printf "%s\n" "The job id to restore ${TEST} was not assigned."
+      printf "%s\n" "--------------"
+      exit 1
+   fi
+   # Before delete
+   echo "---> Before delete the pvc:" 2>&1 > ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get pvc/${PVC_N1_0006_1} 2>&1 >> ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get pod/${POD_N1_0006_1} 2>&1 >> ${tmp}/rlog${TEST}.out
+   echo "---> Deleting the pvc and pod:" 2>&1 >> ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} delete pod/${POD_N1_0006_1} 2>&1 >> ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} delete pvc/${PVC_N1_0006_1} 2>&1 >> ${tmp}/rlog${TEST}.out
+   echo "---> Deleted the pvc(${PVC_N1_0006_1}) and pod (${POD_N1_0006_1})" 2>&1 >> ${tmp}/rlog${TEST}.out
+   actions=(
+      "" # Always starts with empty line. I don't know why is neccesary.
+      "cd @kubernetes/namespaces/${K8S_NAMESPACE_1}/pods/"
+      "mark ${POD_N1_0006_1}.yaml"
+      "cd ../persistentvolumeclaims/"
+      "mark ${PVC_N1_0006_1}.yaml"
+      "mark ${PVC_N1_0006_1}.tar"
+   )
+   do_regress_restore_test_jobid ${TEST} ${JOB_ID_TO_RESTORE_1} "/" $actions
+   check_regress_restore_statusT ${TEST}
+   F=$?
+   # check if object restored on kubernetes
+   
+   echo "---> After restore the pod and pvc:" 2>&1 >> ${tmp}/rlog${TEST}.out
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get pod/${POD_N1_0006_1} 2>&1 >> ${tmp}/rlog${TEST}.out
+   RET=`${KUBECTL} -n ${K8S_NAMESPACE_1} get pod/${POD_N1_0006_1} -o go-template='{{.metadata.name}}{{"\n"}}' 2>/dev/null | wc -l`
+   ${KUBECTL} -n ${K8S_NAMESPACE_1} get pvc/${PVC_N1_0006_1} 2>&1 >> ${tmp}/rlog${TEST}.out
+   RET_1=`${KUBECTL} -n ${K8S_NAMESPACE_1} get pvc/${PVC_N1_0006_1} -o go-template='{{.metadata.name}}{{"\n"}}' 2>/dev/null | wc -l`
+
+   F_1=0 F_2=0
+   rets=($RET $RET_1)
+   fs=("F_1" "F_2")
+
+   for i in ${!rets[@]}; do
+      echo "RET: ${rets[i]}" >> ${tmp}/rlog${TEST}.out
+      if [ ${rets[i]} -ne 1 ]; then
+         eval ${fs[i]}=1
+         rstat=$((rstat+1))
+      fi
+   done
+
+   printf "%s\n" "--------"
+   printf "Result restore test ${TEST}:"
+   printf "%s%s\n" " -> StatusT: " $(regress_test_result ${F})
+   printf "%s%s\n" " -> The pod ${POD_N1_0006_1} was restored: " $(regress_test_result ${F_1})
+   printf "%s%s\n" " -> The pvc ${PVC_N1_0006_1} was restored: " $(regress_test_result ${F_2})
+   printf "%s\n" "--------"
+}
+
+estat=0
+
+bstat=0
+JOBID=1
+# This job is the base of all backup jobs names
+JobName=${JobNameBase}-
+
+btest1
+
+rstat=0
+#rtest1
+
+# stop_bacula
+end_test

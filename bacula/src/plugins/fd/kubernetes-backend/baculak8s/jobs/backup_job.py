@@ -25,7 +25,6 @@ from baculak8s.jobs.estimation_job import PVCDATA_GET_ERROR, EstimationJob
 from baculak8s.jobs.job_pod_bacula import DEFAULTRECVBUFFERSIZE
 from baculak8s.plugins.k8sbackend.baculaannotations import (
     BaculaAnnotationsClass, BaculaBackupMode, annotated_pvc_backup_mode)
-from baculak8s.plugins.k8sbackend.baculabackup import BACULABACKUPPODNAME
 from baculak8s.plugins.k8sbackend.podexec import ExecStatus, exec_commands
 from baculak8s.util.respbody import parse_json_descr
 from baculak8s.util.boolparam import BoolParam

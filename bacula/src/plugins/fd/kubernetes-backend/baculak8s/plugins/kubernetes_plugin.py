@@ -29,7 +29,7 @@ from baculak8s.entities.file_info import (DEFAULT_DIR_MODE, DIRECTORY,
 from baculak8s.entities.k8sobjtype import K8SObjType
 from baculak8s.io.log import Log
 from baculak8s.plugins import k8sbackend
-from baculak8s.plugins.k8sbackend.baculabackup import BACULABACKUPPODNAME
+from baculak8s.plugins.k8sbackend.baculabackup import exists_bacula_pod
 from baculak8s.plugins.k8sbackend.baculaannotations import annotated_namespaced_pods_data
 from baculak8s.plugins.k8sbackend.configmaps import *
 from baculak8s.plugins.k8sbackend.csi_snapshot import *
@@ -641,6 +641,10 @@ class KubernetesPlugin(Plugin):
     def check_pod(self, namespace, name):
         return self.__exec_check_object(lambda: self.corev1api.read_namespaced_pod(name, namespace))
 
+    def check_bacula_pod(self, namespace, job):
+        pod_list = self.get_pods(namespace)
+        return exists_bacula_pod(pod_list, job)
+
     def _check_persistentvolume_claim(self, file_info):
         return self.__exec_check_object(
             lambda: self.corev1api.read_namespaced_persistent_volume_claim(k8sfile2objname(file_info.name),
@@ -919,8 +923,8 @@ class KubernetesPlugin(Plugin):
             'fi': pvcdata.get('fi')
         }
 
-    def backup_pod_status(self, namespace):
-        return self.corev1api.read_namespaced_pod_status(name=BACULABACKUPPODNAME, namespace=namespace)
+    def backup_pod_status(self, namespace, bacula_pod_name):
+        return self.corev1api.read_namespaced_pod_status(name=bacula_pod_name, namespace=namespace)
 
     def pvc_status(self, namespace, pvcname):
         return self.__execute(lambda: self.corev1api.read_namespaced_persistent_volume_claim_status(name=pvcname, namespace=namespace))
@@ -940,8 +944,8 @@ class KubernetesPlugin(Plugin):
     def _vsnapshot_status(self, namespace, snapshot_name):
         return self.__execute(lambda: self.crd_api.get_namespaced_custom_object_status(**prepare_snapshot_action(namespace, snapshot_name)))
 
-    def backup_pod_isready(self, namespace, seq=None, podname=BACULABACKUPPODNAME):
-        pod = self.backup_pod_status(namespace)
+    def backup_pod_isready(self, namespace, podname, seq=None):
+        pod = self.backup_pod_status(namespace, podname)
         status = pod.status
         # logging.debug("backup_pod_isready:status:{} {}".format(type(status), status))
         if status.container_statuses is None:
@@ -1004,7 +1008,7 @@ class KubernetesPlugin(Plugin):
         logging.error('Had a error when try to get pvc status')
         return True
 
-    def remove_backup_pod(self, namespace, podname=BACULABACKUPPODNAME):
+    def remove_backup_pod(self, namespace, podname):
         logging.debug('remove_backup_pod')
         response = self.__execute(lambda: self.corev1api.delete_namespaced_pod(
             podname, namespace, grace_period_seconds=0,
@@ -1036,8 +1040,8 @@ class KubernetesPlugin(Plugin):
         logging.debug('Volume Snapshot removed `{}`'.format(vsnapshot_name))
         return {}
 
-    def check_gone_backup_pod(self, namespace, force=False):
-        """ Checks if $BACULABACKUPPODNAME at selected namespace is already running.
+    def check_gone_backup_pod(self, namespace, backup_pod_name, force=False):
+        """ Checks if `pod_name` at selected namespace is already running.
             If not then we can proceed with Job. If it terminated but not removed then we will safely remove it.
         Args:
             namespace (str): namespace for Pod
@@ -1050,7 +1054,7 @@ class KubernetesPlugin(Plugin):
         status = None
         gone = False
         try:
-            status = self.backup_pod_status(namespace)
+            status = self.backup_pod_status(namespace, backup_pod_name)
         except ApiException as e:
             if e.status == HTTP_NOT_FOUND:
                 gone = True
@@ -1058,7 +1062,7 @@ class KubernetesPlugin(Plugin):
         finally:
             logging.info("check_gone_backup_pod:gone:" + str(gone))
         if status is not None and (force or status.status.phase not in ['Pending', 'Running']):
-            response = self.remove_backup_pod(namespace)
+            response = self.remove_backup_pod(namespace, backup_pod_name)
             if isinstance(response, dict) and 'error' in response:
                 # propagate error up
                 return response

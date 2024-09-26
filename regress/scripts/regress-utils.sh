@@ -135,6 +135,57 @@ run_bconsole
 }
 
 #
+# do parallel backup job test
+#   generate ${tmp}/blog${ltest}.out job output messages logfile
+#
+# in:
+#       $1 - a test number to perform
+#       $@ - a sequence of job name. 
+#
+# for example:
+#   do_regress_parallel_backup_test 10 23 43
+#
+# Explication:
+#   We run the test number 10.
+#   We run the jobs ${JobName}-23 and ${jobName}-43
+#
+do_regress_parallel_backup_test()
+{
+test_id=$1
+shift
+job_ids=""
+blevel="full"
+
+printf "     backup test${test_id} ... "
+cat << END_OF_DATA >${tmp}/bconcmds
+@output /dev/null
+messages
+@$out ${tmp}/blog${test_id}.out
+status client=${CLIENT}
+setdebug level=500 client=${CLIENT} trace=1
+END_OF_DATA
+counter=1
+for job_id in "$@"; do
+   
+   job_ids="${job_ids} jobid=${JOBID}"
+   echo "run job=${JobName}${job_id} level=${blevel} storage=File1 yes" >>${tmp}/bconcmds
+   ((JOBID++))
+
+done
+
+cat << END_OF_DATA >>${tmp}/bconcmds
+wait
+status client=${CLIENT}
+messages
+setdebug level=0 trace=0 client=${CLIENT}
+llist ${job_ids}
+list files ${job_ids}
+quit
+END_OF_DATA
+run_bconsole
+}
+
+#
 # do simpe estimation listing test
 #   generate ${tmp}/elog${ltest}.out job output messages logfile
 #
@@ -248,6 +299,29 @@ then
 else
    return 0
 fi
+}
+
+#
+# check the expected backup job execution status based on logfile
+#   check for status Successful
+#
+# in:
+# $1 - a test number to examine which means we will check blog${ltest}.out logfile
+# $2 - number of jobs to examine
+#
+check_regress_parallel_backup_statusT()
+{
+   ltest=$1
+   n_jobs=$2
+   RET=`grep "jobstatus: " ${tmp}/blog${ltest}.out | sed 's/^[[:space:]]*//g' | awk '{print $2}' | grep "T" | wc -l`
+   ERRS=$((`grep "joberrors: " ${tmp}/blog${ltest}.out | awk '{print $2}' | awk '{sum+=$1} END {print sum}'`+0))
+   if [ "$RET" != "$n_jobs" -o $ERRS -ne 0 ]
+   then
+      ((bstat++))
+      return 1
+   else
+      return 0
+   fi
 }
 
 #
