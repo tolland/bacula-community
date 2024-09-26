@@ -25,6 +25,7 @@ from baculak8s.jobs.estimation_job import PVCDATA_GET_ERROR, EstimationJob
 from baculak8s.jobs.job_pod_bacula import DEFAULTRECVBUFFERSIZE
 from baculak8s.plugins.k8sbackend.baculaannotations import (
     BaculaAnnotationsClass, BaculaBackupMode, annotated_pvc_backup_mode)
+from baculak8s.plugins.k8sbackend.baculabackup import BACULABACKUPPODNAME
 from baculak8s.plugins.k8sbackend.podexec import ExecStatus, exec_commands
 from baculak8s.util.respbody import parse_json_descr
 from baculak8s.util.boolparam import BoolParam
@@ -142,14 +143,16 @@ class BackupJob(EstimationJob):
         # Detect if pvcdata is compatible with snapshots
         if not backup_with_pod and not retry_backup:
             logging.debug('Backup mode {} of pvc {} without pod:'.format(self.fs_backup_mode, pvcdata.get('name')))
-            if self.fs_backup_mode == BaculaBackupMode.Snapshot:
+            pvc_raw = self._plugin.get_persistentvolumeclaim_read_namespaced(namespace, pvcdata.get('name'))
+            pvc_backup_mode = annotated_pvc_backup_mode(pvc_raw, self.fs_backup_mode)
+            if pvc_backup_mode == BaculaBackupMode.Snapshot:
                 logging.debug('Snapshot is activated')
                 vsnapshot, pvcdata = self.handle_create_vsnapshot_backup(namespace, pvcdata.get('name'))
                 self._io.send_info(PVC_BACKUP_MODE_APPLIED_INFO.format(pvcdata.get('name'), BaculaBackupMode.Snapshot))
                 self.current_backup_mode = BaculaBackupMode.Snapshot
 
-            if (vsnapshot is None and self.fs_backup_mode != BaculaBackupMode.Standard) or self.fs_backup_mode == BaculaBackupMode.Clone:
-                if self.fs_backup_mode != BaculaBackupMode.Clone:
+            if (vsnapshot is None and pvc_backup_mode != BaculaBackupMode.Standard) or pvc_backup_mode == BaculaBackupMode.Clone:
+                if pvc_backup_mode != BaculaBackupMode.Clone:
                     self._io.send_info(CHANGE_BACKUP_MODE_FOR_INCOMPATIBLITY_PVC.format(pvcdata.get('name')))
                 self._io.send_info(PVC_BACKUP_MODE_APPLIED_INFO.format(pvcdata.get('name'), BaculaBackupMode.Clone))
                 cloned_pvc_name = self.create_pvcclone(namespace, pvcdata.get('name'))
@@ -160,7 +163,7 @@ class BackupJob(EstimationJob):
                 is_cloned = True
                 self.current_backup_mode = BaculaBackupMode.Clone
 
-            if self.fs_backup_mode == BaculaBackupMode.Standard:
+            if pvc_backup_mode == BaculaBackupMode.Standard:
                 self._io.send_info(PVC_BACKUP_MODE_APPLIED_INFO.format(pvcdata.get('name'), BaculaBackupMode.Standard))
                 self.current_backup_mode = BaculaBackupMode.Standard
         logging.debug('Process_pvcdata (Backup_job): {} --- {}'.format(vsnapshot, pvcdata))
