@@ -41,7 +41,7 @@ metadata:
     app: baculabackup
 spec:
   hostname: {podname}
-  {nodenameparam}
+  {nodename}
   containers:
   - name: {podname}
     resources:
@@ -67,6 +67,7 @@ spec:
     volumeMounts:
       - name: {podname}-storage
         mountPath: /{mode}
+  {imagepullsecrets}
   restartPolicy: Never
   volumes:
     - name: {podname}-storage
@@ -112,14 +113,19 @@ def get_backup_pod_name(job):
     return BACULABACKUPPODNAME.format(job_name=job_name, job_id=job_id)
 
 def prepare_backup_pod_yaml(mode='backup', nodename=None, host='localhost', port=9104, token='', namespace='default',
-                            pvcname='', image=BACULABACKUPIMAGE, imagepullpolicy=ImagePullPolicy.IfNotPresent, job=''):
+                            pvcname='', image=BACULABACKUPIMAGE, imagepullpolicy=ImagePullPolicy.IfNotPresent, imagepullsecret=None, job=''):
     podyaml = PODTEMPLATE
     if os.path.exists(DEFAULTPODYAML):
         with open(DEFAULTPODYAML, 'r') as file:
             podyaml = file.read()
-    nodenameparam = ''
+    nodename_param = ''
+    imagepullsecrets_param = ''
     if nodename is not None:
-      nodenameparam = "nodeName: {nodename}".format(nodename=nodename)
-    logging.debug('host:{} port:{} namespace:{} image:{} job:{}'.format(host, port, namespace, image, job))
-    return podyaml.format(mode=mode, nodenameparam=nodenameparam, host=host, port=port, token=token, namespace=namespace,
-                          image=image, pvcname=pvcname, podname=get_backup_pod_name(job), imagepullpolicy=imagepullpolicy, job=job)
+      nodename_param = "nodeName: {nodename}".format(nodename=nodename)
+    if imagepullsecret is not None:
+      imagepullsecrets_param = "imagePullSecrets:\n  - name: {imagepullsecret}".format(imagepullsecret=imagepullsecret)
+    logging.debug('host:{} port:{} namespace:{} image:{} imagepullsecret:{} job:{}'.format(host, port, namespace, image, imagepullsecret, job))
+    
+    return podyaml.format(mode=mode, nodename=nodename_param, host=host, port=port, token=token, namespace=namespace,
+                          image=image, pvcname=pvcname, podname=get_backup_pod_name(job), imagepullpolicy=imagepullpolicy, 
+                          imagepullsecrets=imagepullsecrets_param, job=job)

@@ -95,6 +95,7 @@ class JobPodBacula(Job, metaclass=ABCMeta):
         self.tarexitcode = None
         self.backupimage = params.get('baculaimage', BACULABACKUPIMAGE)
         self.imagepullpolicy = ImagePullPolicy.process_param(params.get('imagepullpolicy'))
+        self.imagepullsecret = params.get('imagepullsecret', None)
         self.backup_clone_compatibility = True
         self.debug = params.get('debug', 0)
         self.current_backup_mode = BaculaBackupMode.Standard
@@ -179,7 +180,7 @@ class JobPodBacula(Job, metaclass=ABCMeta):
 
         podyaml = prepare_backup_pod_yaml(mode=mode, nodename=node_name, host=self.pluginhost, port=self.pluginport,
                                           token=self.token, namespace=namespace, pvcname=pvcname, image=self.backupimage,
-                                          imagepullpolicy=self.imagepullpolicy, job=self.jobname)
+                                          imagepullpolicy=self.imagepullpolicy, imagepullsecret=self.imagepullsecret, job=self.jobname)
         if node_name is None:
             self._io.send_info(POD_YAML_PREPARED_INFO.format(
                 image=self.backupimage,
@@ -231,8 +232,8 @@ class JobPodBacula(Job, metaclass=ABCMeta):
                                             keyfile=self.keyfile,
                                             timeout=self.timeout)
             response = self.connsrv.listen()
+            logging.debug("response:{}".format(response))
             if isinstance(response, dict) and 'error' in response:
-                logging.debug("RESPONSE:{}".format(response))
                 self._handle_error(CANNOT_START_CONNECTIONSERVER.format(parse_json_descr(response)))
                 return False
         else:

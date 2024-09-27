@@ -84,6 +84,7 @@ const char * valid_params[] =
    "fdkeyfile",
    "baculaimage",
    "imagepullpolicy",
+   "imagepullsecret",
    "outputformat",
    "labels",
    NULL,

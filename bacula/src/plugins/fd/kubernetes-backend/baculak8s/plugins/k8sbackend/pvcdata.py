@@ -48,7 +48,7 @@ def pvcdata_list_update_node_names(corev1api, namespace, pvcdatalist):
         dict: updated pvc data list as dictionary
     """
     # here we collect node_names for proper backup pod deployment
-    logging.debug('Init PVCDATALIST')
+    logging.debug('Init pvc nodes list')
     pods = pods_namespaced_specs(corev1api, namespace=namespace)
     # logging.debug('Get pods:{}'.format(pods))
     for pod in pods:
@@ -58,10 +58,9 @@ def pvcdata_list_update_node_names(corev1api, namespace, pvcdatalist):
                     pvcname = vol.persistent_volume_claim.claim_name
                     for pvcf in pvcdatalist:
                         if pvcname == pvcdatalist[pvcf].get('name') and pvcdatalist[pvcf].get('node_name') is None:
-                            logging.debug('[CUSTOM] Enter in pvcdatalist')
                             logging.debug('Pvcf: {} -- Node_name: {}'.format(pvcf, pod.spec.node_name))
                             pvcdatalist[pvcf]['node_name'] = pod.spec.node_name
-    logging.debug('END PVCDATALIST')
+    logging.debug('End pvc nodes list')
     return pvcdatalist
 
 
