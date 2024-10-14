@@ -184,8 +184,8 @@ class BackupJob(EstimationJob):
         if not backup_with_pod and not retry_backup and not self.backup_clone_compatibility:
             # It is important set to True before recall the process.
             self.backup_clone_compatibility = True # We only try once
-
             self._io.send_info(RETRY_BACKUP_WITH_STANDARD_MODE)
+            logging.debug("Sent info to joblog: " + RETRY_BACKUP_WITH_STANDARD_MODE)
 
             status = self.process_pvcdata(namespace, orig_pvcdata, backup_with_pod, True)
         return status

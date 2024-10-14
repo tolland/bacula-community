@@ -37,6 +37,12 @@ from baculak8s.plugins.k8sbackend.k8sutils import prepare_metadata
 def persistentvolumeclaims_read_namespaced(corev1api, namespace, name):
     return corev1api.read_namespaced_persistent_volume_claim(name, namespace)
 
+def persistentvolumeclaims_namespaced_only_names(corev1api, namespace, labels=""):
+    pvcslist = []
+    pvcs = corev1api.list_namespaced_persistent_volume_claim(namespace=namespace, watch=False, label_selector=labels)
+    for pvc in pvcs.items:
+        pvcslist.append(pvc.metadata.name)
+    return pvcslist
 
 def persistentvolumeclaims_namespaced_names(corev1api, namespace, labels=""):
     pvcslist = []
@@ -64,8 +70,7 @@ def persistentvolumeclaims_list_namespaced(corev1api, namespace, estimate=False,
         if (pvcdata.status.capacity is not None):
             pvcsize = k8s_size_to_int(pvcdata.status.capacity['storage'])
         pvcstotalsize += pvcsize
-        # logging.debug("PVCDATA-SIZE:{} {}".format(pvcdata.status.capacity['storage'], pvcsize))
-        # logging.debug("PVCDATA-ENC:{}".format(spec))
+
         pvcslist['pvc-' + pvc.metadata.name] = {
             'spec': spec if not estimate else None,
             'fi': k8sfileinfo(objtype=K8SObjType.K8SOBJ_PVOLCLAIM, nsname=namespace,

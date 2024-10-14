@@ -21,11 +21,16 @@
 #
 
 import os
-import string
+import json
+import logging
 
 from baculak8s.util.token import generate_token
 
 DEFAULTCLONEYAML = os.getenv('DEFAULTCLONEYAML', "/opt/bacula/scripts/bacula-backup-clone.yaml")
+PREFIX_CLONE_PVC_BACKUP_NAME = "bacula-pvcclone-{job_name}-"
+CLONE_PVC_BACKUP_NAME=PREFIX_CLONE_PVC_BACKUP_NAME + "{job_id}"
+JOB_NAME_MAX_CHARS=25
+JOB_ID_MAX_DIGITS=12
 CLONETEMPLATE = """
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -46,8 +51,23 @@ spec:
       storage: {pvcsize}
 """
 
+def find_bacula_pvc_clones_from_old_job(pvc_list, job):
+    name_for_search = PREFIX_CLONE_PVC_BACKUP_NAME.format(job_name=job.split('.')[0][:JOB_NAME_MAX_CHARS].lower())
+    num_hyphen=name_for_search.count('-')
+    old_pvcs = []
+    for pvc_name in pvc_list:
+        if pvc_name.startswith(name_for_search) and num_hyphen == pvc_name.count('-'):
+            old_pvcs.append(pvc_name)
+    logging.debug(f"Found old cloned pvcs: {old_pvcs}")
+    return old_pvcs
 
-def prepare_backup_clone_yaml(namespace, pvcname, pvcsize, scname, clonename=None):
+def get_clone_pvc_name(job):
+    # Get job name and id, and limit to not exceed 63 characters in pvc name
+    job_name = job.split('.')[0][:JOB_NAME_MAX_CHARS].lower()
+    job_id = job.split(':')[1][:JOB_ID_MAX_DIGITS]
+    return CLONE_PVC_BACKUP_NAME.format(job_name=job_name, job_id=job_id)
+
+def prepare_backup_clone_yaml(namespace, pvcname, pvcsize, scname, jobname, clonename=None):
     """ Handles PVC clone yaml preparation based on available templates
 
     Args:
@@ -55,6 +75,7 @@ def prepare_backup_clone_yaml(namespace, pvcname, pvcsize, scname, clonename=Non
         pvcname (str): source pvc name to clone from
         pvcsize (str): k8s capacity of the original pvc
         scname (str): storage class of the original pvc
+        job (str): Job name to add to cloned pvc name
         clonename (str, optional): the cloned - destination - pvcname; if `None` then name will be assigned automatically. Defaults to None.
 
     Returns:
@@ -65,7 +86,10 @@ def prepare_backup_clone_yaml(namespace, pvcname, pvcsize, scname, clonename=Non
         with open(DEFAULTCLONEYAML, 'r') as file:
             cloneyaml = file.read()
     if clonename is None:
-        validchars = tuple(string.ascii_lowercase) + tuple(string.digits)
-        clonename = "{pvcname}-baculaclone-{id}".format(pvcname=pvcname, id=generate_token(size=6, chars=validchars))
-
+        clonename = get_clone_pvc_name(jobname)
     return cloneyaml.format(namespace=namespace, pvcname=pvcname, pvcsize=pvcsize, clonename=clonename, storageclassname=scname), clonename
+    
+def delete_pvcclone(corev1api, namespace, pvc_name, grace_period_seconds=0, propagation_policy='Foreground'):
+    return corev1api.delete_namespaced_persistent_volume_claim(
+        pvc_name, namespace, grace_period_seconds=grace_period_seconds,
+        propagation_policy=propagation_policy)

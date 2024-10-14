@@ -45,6 +45,7 @@ from baculak8s.plugins.k8sbackend.persistentvolumes import *
 from baculak8s.plugins.k8sbackend.pods import *
 from baculak8s.plugins.k8sbackend.podtemplates import *
 from baculak8s.plugins.k8sbackend.pvcdata import *
+from baculak8s.plugins.k8sbackend.pvcclone import delete_pvcclone
 from baculak8s.plugins.k8sbackend.replicaset import *
 from baculak8s.plugins.k8sbackend.replicationcontroller import *
 from baculak8s.plugins.k8sbackend.resourcequota import *
@@ -370,6 +371,9 @@ class KubernetesPlugin(Plugin):
             return pvcs
         else:
             return response # it should be a dictionary with an error
+
+    def get_pvc_names(self, namespace):
+        return self.__execute(lambda: persistentvolumeclaims_namespaced_only_names(self.corev1api, namespace))
 
     def get_podtemplates(self, namespace, estimate=False):
         return self.__execute(lambda: podtemplates_list_namespaced(self.corev1api, namespace, estimate,
@@ -700,6 +704,11 @@ class KubernetesPlugin(Plugin):
             lambda: self.corev1api.read_namespaced_service_account(k8sfile2objname(file_info.name),
                                                                    file_info.namespace))
 
+    def delete_persistent_volume_claim(self, namespace, pvc_name, grace_period_seconds=0, propagation_policy="Foreground"):
+        return self.__execute(lambda: delete_pvcclone(self.corev1api,
+            namespace, pvc_name, grace_period_seconds=grace_period_seconds,
+            propagation_policy=propagation_policy))
+
     def check_file(self, file_info):
         """
 
@@ -1018,11 +1027,9 @@ class KubernetesPlugin(Plugin):
         return {}
 
     def remove_pvcclone(self, namespace, clonename):
-        logging.debug('remove_pvcclone `{}`'.format(clonename))
-        response = self.__execute(lambda: self.corev1api.delete_namespaced_persistent_volume_claim(
-            clonename, namespace, grace_period_seconds=0,
-            propagation_policy='Foreground'))
-        logging.debug("Response: {}".format(response))
+        logging.debug('Remove pvcclone `{}`'.format(clonename))
+        response = self.delete_persistent_volume_claim(namespace, clonename)
+        logging.debug("Response from delete pvc: {}".format(response))
         if isinstance(response, dict) and "error" in response:
             return response
         r1 = self.get_pvcdata_namespaced(namespace, clonename)

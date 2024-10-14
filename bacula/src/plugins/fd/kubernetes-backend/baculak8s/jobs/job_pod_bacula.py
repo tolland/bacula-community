@@ -31,7 +31,7 @@ from baculak8s.plugins.k8sbackend.baculabackup import (BACULABACKUPIMAGE,
                                                        ImagePullPolicy,
                                                        prepare_backup_pod_yaml,
                                                        get_backup_pod_name)
-from baculak8s.plugins.k8sbackend.pvcclone import prepare_backup_clone_yaml
+from baculak8s.plugins.k8sbackend.pvcclone import prepare_backup_clone_yaml, find_bacula_pvc_clones_from_old_job
 from baculak8s.plugins.k8sbackend.baculaannotations import BaculaBackupMode
 from baculak8s.util.respbody import parse_json_descr
 from baculak8s.util.sslserver import DEFAULTTIMEOUT, ConnectionServer
@@ -202,7 +202,7 @@ class JobPodBacula(Job, metaclass=ABCMeta):
         if namespace is None or pvcname is None or capacity is None or storage_class is None:
             logging.error("Invalid params to pvc clone!")
             return None, None
-        pvcyaml, snapname = prepare_backup_clone_yaml(namespace, pvcname, capacity, storage_class)
+        pvcyaml, snapname = prepare_backup_clone_yaml(namespace, pvcname, capacity, storage_class, self.jobname)
         self._io.send_info(PVCCLONE_YAML_PREPARED_INFO.format(
             namespace=namespace,
             snapname=snapname,
@@ -244,22 +244,12 @@ class JobPodBacula(Job, metaclass=ABCMeta):
         prev_bacula_pod_name = self._plugin.check_bacula_pod(namespace, self.jobname)
         if prev_bacula_pod_name:
             logging.debug('Exist previous bacula-backup pod! Name: {}'.format(prev_bacula_pod_name))
-            # TODO: Check if we remove or not the bacula-backup pod
-            self._io.send_info('Exist a previous bacula-backup pod. Name: {}'.format(prev_bacula_pod_name))
-            response = False
-            for a in range(self.timeout):
-                time.sleep(1)
-                response = self._plugin.check_gone_backup_pod(namespace, prev_bacula_pod_name)
-                if isinstance(response, dict) and 'error' in response:
-                    self._handle_error(CANNOT_REMOVE_BACKUP_POD_ERR.format(parse_json_descr(response)))
-                    return False
-                else:
-                    if response:
-                        break
-            if not response:
-                self._handle_error(POD_EXIST_ERR.format(namespace=namespace, podname=prev_bacula_pod_name))
+            self._io.send_info('Exist a previous bacula-backup pod: {}'.format(prev_bacula_pod_name))
+            response = self._plugin.remove_backup_pod(namespace, prev_bacula_pod_name)
+            if isinstance(response, dict) and 'error' in response:
+                self._handle_error(CANNOT_REMOVE_BACKUP_POD_ERR.format(parse_json_descr(response)))
                 return False
-
+            self._io.send_info('Removed previous bacula-backup pod: {}'.format(prev_bacula_pod_name))
         poddata = yaml.safe_load(podyaml)
         response = self._plugin.create_backup_pod(namespace, poddata)
         if isinstance(response, dict) and 'error' in response:
@@ -341,9 +331,27 @@ class JobPodBacula(Job, metaclass=ABCMeta):
             return False
         return True
 
+    def cleanup_old_cloned_pvc(self, namespace):
+        logging.debug("Starting cleanup the old pvc from other previous job")
+        # List all pvc names from namespace
+        pvc_names = self._plugin.get_pvc_names(namespace)
+        # Search old cloned pvcs
+        old_clone_pvcs = find_bacula_pvc_clones_from_old_job(pvc_names, self.jobname)
+        # Remove old pvcs
+        for old_clone_pvc in old_clone_pvcs:
+            self._io.send_info(f"Exist a previous bacula-backup pvc. Name: {old_clone_pvc}")
+            response = self._plugin.delete_persistent_volume_claim(namespace, old_clone_pvc)
+            logging.debug(f"Response from pvc `{old_clone_pvc}` delete request: {response}")
+            if isinstance(response, dict) and "error" in response:
+                return response
+            self._io.send_info(f"Removed the previous bacula-backup pvc: {old_clone_pvc}")
+            logging.debug("Deleted request launched successfully")
+        logging.debug("Ended cleanup the old pvcs from other previous job")
+
     def create_pvcclone(self, namespace, pvcname):
         clonename = None
         logging.debug("pvcclone for:{}/{}".format(namespace, pvcname))
+        self.cleanup_old_cloned_pvc(namespace)
         pvcdata = self._plugin.get_pvcdata_namespaced(namespace, pvcname)
         if isinstance(pvcdata, dict) and 'exception' in pvcdata:
             self._handle_error(PVCDATA_GET_ERROR.format(parse_json_descr(pvcdata)))
