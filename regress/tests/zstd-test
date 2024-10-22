@@ -13,8 +13,8 @@ JobName=zstd
 
 scripts/cleanup
 scripts/copy-test-confs
-echo "${cwd}/build/po/fr.po" >${cwd}/tmp/file-list
-#echo "${cwd}/build" >${cwd}/tmp/file-list
+#echo "${cwd}/build/po/fr.po" >${cwd}/tmp/file-list
+echo "${cwd}/build" >${cwd}/tmp/file-list
 
 if ! grep ZSTD $cwd/build/config.out | grep yes > /dev/null ; then
     print_debug "ERROR: ZSTD not available here"
@@ -61,8 +61,17 @@ run_bacula
 check_for_zombie_jobs storage=File
 stop_bacula
 
+
+mkdir -p $tmp/bextract
+$bin/bextract -V TestVolume001 FileStorage $tmp/bextract
+$rscripts/diff.pl -s $cwd/build -d $tmp/bextract/$cwd/build
+if [ $? != 0 ] ; then
+   print_debug "ERROR: bextract issue"
+   bstat=1
+fi
+
 check_two_logs
-#check_restore_diff
+check_restore_diff
 grep " Software Compression" ${cwd}/tmp/log1.out | grep "%" 2>&1 1>/dev/null
 if [ $? != 0 ] ; then
    echo "  !!!!! No compression !!!!!"
