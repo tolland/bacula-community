@@ -688,24 +688,24 @@ static bool record_cb(DCR *dcr, DEV_RECORD *rec)
                real_compress_len = wsize - sizeof(comp_stream_header);
                Dmsg2(200, "Comp_len=%d msglen=%d\n", compress_len, wsize);
 
-               unsigned long long rSize = ZSTD_getFrameContentSize(compress_buf, real_compress_len);
+               unsigned long long rSize = ZSTD_getFrameContentSize(cbuf, real_compress_len);
                if (rSize == ZSTD_CONTENTSIZE_ERROR || rSize == ZSTD_CONTENTSIZE_UNKNOWN) {
                   Emsg1(M_ERROR, 0, _("ZSTD uncompression error. ERR=%d\n"), rSize);
                   extract = false;
                   goto bail_out;
                }
                compress_buf = check_pool_memory_size(compress_buf, rSize);
-               rSize = ZSTD_decompressDCtx(ZSTD_decompress_workset, (unsigned char *)compress_buf, compress_len, cbuf, real_compress_len);
+               rSize = ZSTD_decompressDCtx(ZSTD_decompress_workset, (unsigned char *)compress_buf, rSize, cbuf, real_compress_len);
 
                if (rSize == ZSTD_CONTENTSIZE_ERROR || rSize == ZSTD_CONTENTSIZE_UNKNOWN) {
                   Emsg1(M_ERROR, 0, _("ZSTD uncompression error. ERR=%d\n"), rSize);
                   goto bail_out;
                }
-               Dmsg2(100, "Write uncompressed %d bytes, total before write=%d\n", compress_len, total);
-               store_data(rec->Stream, &bfd, compress_buf, compress_len);
-               total += compress_len;
-               fileAddr += compress_len;
-               Dmsg2(100, "Compress len=%d uncompressed=%d\n", rec->data_len, compress_len);
+               Dmsg2(100, "Write uncompressed %d bytes, total before write=%d\n", (int)rSize, total);
+               store_data(rec->Stream, &bfd, compress_buf, rSize);
+               total += rSize;
+               fileAddr += rSize;
+               Dmsg2(100, "Compress len=%d uncompressed=%d\n", rec->data_len, rSize);
             }
             break;
 #endif
