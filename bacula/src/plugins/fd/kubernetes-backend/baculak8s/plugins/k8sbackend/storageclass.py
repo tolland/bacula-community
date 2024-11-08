@@ -91,7 +91,7 @@ def storageclass_list_all_names(storagev1api):
 
 
 def get_provisioner(storagev1api, storage_name: str):
-    storageclass = storagev1api.patch_storage_class(storage_name, {})
+    storageclass = storagev1api.read_storage_class(storage_name)
     if storageclass is not None:
         return storageclass.provisioner
     return None
