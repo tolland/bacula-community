@@ -2179,7 +2179,6 @@ static int check_open_fd()
    if (!dir) {
       return -1;
    }
-   Enter(0);
    while ((entry = readdir(dir)) != NULL)
    {
       if (entry->d_name[0] == '.') {
