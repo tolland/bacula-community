@@ -596,11 +596,6 @@ static bool record_cb(DCR *dcr, DEV_RECORD *rec)
       if (extract) {
          uint32_t comp_magic, comp_len;
          uint16_t comp_level, comp_version;
-#ifdef HAVE_LZO
-         lzo_uint compress_len;
-         const unsigned char *cbuf;
-         int r, real_compress_len;
-#endif
 
          if (is_offset_stream(rec->Stream)) {
             ser_declare;
@@ -652,9 +647,11 @@ static bool record_cb(DCR *dcr, DEV_RECORD *rec)
           switch(comp_magic) {
 #ifdef HAVE_LZO
             case COMPRESS_LZO1X:
-               compress_len = compress_buf_size;
-               cbuf = (const unsigned char*) wbuf + sizeof(comp_stream_header);
-               real_compress_len = wsize - sizeof(comp_stream_header);
+	    {
+	       int r;
+               lzo_uint compress_len = compress_buf_size;
+               const unsigned char *cbuf = (const unsigned char*) wbuf + sizeof(comp_stream_header);
+               int real_compress_len = wsize - sizeof(comp_stream_header);
                Dmsg2(200, "Comp_len=%d msglen=%d\n", compress_len, wsize);
                while ((r=lzo1x_decompress_safe(cbuf, real_compress_len,
                                                (unsigned char *)compress_buf, &compress_len, NULL)) == LZO_E_OUTPUT_OVERRUN)
@@ -676,6 +673,7 @@ static bool record_cb(DCR *dcr, DEV_RECORD *rec)
                fileAddr += compress_len;
                Dmsg2(100, "Compress len=%d uncompressed=%d\n", rec->data_len, compress_len);
                break;
+	    }
 #endif
 #ifdef HAVE_ZSTD
             case COMPRESS_ZSTD:
@@ -683,9 +681,9 @@ static bool record_cb(DCR *dcr, DEV_RECORD *rec)
                if (!ZSTD_decompress_workset) {
                   ZSTD_decompress_workset = ZSTD_createDCtx();
                }
-               compress_len = compress_buf_size;
-               cbuf = (const unsigned char*) wbuf + sizeof(comp_stream_header);
-               real_compress_len = wsize - sizeof(comp_stream_header);
+               size_t compress_len = compress_buf_size;
+               const unsigned char*cbuf = (const unsigned char*) wbuf + sizeof(comp_stream_header);
+               size_t real_compress_len = wsize - sizeof(comp_stream_header);
                Dmsg2(200, "Comp_len=%d msglen=%d\n", compress_len, wsize);
 
                unsigned long long rSize = ZSTD_getFrameContentSize(cbuf, real_compress_len);
