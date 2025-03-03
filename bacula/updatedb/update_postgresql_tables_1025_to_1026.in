@@ -13,7 +13,7 @@ PATH="$bindir:$PATH"
 db_name=${db_name:-@db_name@}
 
 DBVERSION=`psql -d ${db_name} -t --pset format=unaligned -c "select VersionId from Version" $*`
-if [ $DBVERSION != 1024 ] ; then
+if [ $DBVERSION != 1025 ] ; then
    echo " "
    echo "The existing database is version $DBVERSION !!"
    echo "This script can only update an existing version 1025 database to version 1026."
