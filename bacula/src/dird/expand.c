@@ -220,13 +220,13 @@ static var_rc_t lookup_counter_var(var_t *ctx, void *my_ctx,
    LockRes();
    for (COUNTER *counter=NULL; (counter = (COUNTER *)GetNextRes(R_COUNTER, (RES *)counter)); ) {
       if (strcmp(counter->name(), buf) == 0) {
-         Dmsg2(100, "Counter=%s val=%d\n", buf, counter->CurrentValue);
+         Dmsg3(100, "Counter=%s val=%d var_index=%d\n", buf, counter->CurrentValue, var_index);
          /* -1 => return size of array */
         if (var_index == -1) {
             bsnprintf(buf, sizeof(buf), "%d", counter->CurrentValue);
             *val_len = bsnprintf(buf, sizeof(buf), "%d", strlen(buf));
-            *val_ptr = buf;
-            *val_size = 0;                  /* don't try to free val_ptr */
+            *val_ptr = bstrdup(buf);
+            *val_size = *val_len+1;
             return VAR_OK;
          } else {
             bsnprintf(buf, sizeof(buf), "%d", counter->CurrentValue);
@@ -324,8 +324,8 @@ static var_rc_t lookup_var(var_t *ctx, void *my_ctx,
          len = count;                 /* else return # array items */
       }
       *val_len = bsnprintf(buf, sizeof(buf), "%d", len);
-      *val_ptr = buf;
-      *val_size = 0;                  /* don't try to free val_ptr */
+      *val_ptr = bstrdup(buf);
+      *val_size = *val_len+1;
       return VAR_OK;
    }
 
