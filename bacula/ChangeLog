@@ -1,3 +1,168 @@
+        ChangeLog for Bacula Enterprise version 15.0.3
+
+20Mar25
+ - Fix compilation variable in var.c and expand.c
+
+03Mar25
+ - Fix org#2748 About compilation error with ZSTD and not LZO enabled
+
+04Dec24
+ - Fix org#2738 About error message with generated fileset
+ - bpipe: Fix org#2737 About segfault with bpipe
+
+29Nov24
+ - Fix #11251 About bcopy not mounting correctly volumes provided with -i 
+  option
+
+08Nov24
+ - k8s: Fix get provisioner permissions
+
+22Oct24
+ - Fix #11197 About error when using bextract on ZSTD compressed data
+
+14Oct24
+ - k8s: Add pvc clean up from old backup jobs
+
+27Sep24
+ - k8s: Get images from repositories with auth
+
+26Sep24
+ - k8s: Add pvc annotation takes precedence without pod annotation
+ - k8s: Add parallel job in same namespace
+
+25Sep24
+ - Update bsmtp copyright information
+
+24Sep24
+ - k8s: Fix show pvdatada message when you don't use it
+ - k8s: Add new level(In pvc annotations) in selection of backup mode
+
+23Sep24
+ - win32: Fix unwanted debug messages in windows File Daemon
+
+17Sep24
+ - Add Francisco to AUTHORS file
+
+04Sep24
+ - baculum: Add new query parameters in M365EmailList endpoint
+
+29Aug24
+ - Fix #11058 About fsync error reported for tape driver
+
+09Aug24
+ - Check for backquote in check_for_invalid_chars() function
+
+07Aug24
+ - Fix #11048 About LastBackedUpTo StorageGroup policy not correctly set
+
+09Jul24
+ - metaplugin: Include bacula jobid in the backend calls as BACULA_JOBID env 
+  variable
+
+05Jul24
+ - Disable orphan file detection
+
+04Jul24
+ - Fix windows compilation
+ - Use bfopen instead of fopen in various tools
+ - win32: Limit the scope of the open files
+ - Add handle-list.exe tool in tools/Makefile
+ - Use bclose_from() in daemon.c
+ - Add k8s dependency versions in requirements
+
+03Jul24
+ - Add helper functions to close open files
+ - Use O_CLOEXEC in pid/stat file management
+ - Add SOCK_CLOEXEC to bnet_server sockets
+
+02Jul24
+ - k8s: Fix #0011005: ModuleNotFoundError: No module named 'baculak8s.plugins.k8sbackend.ingress'
+
+21Jun24
+ - baculum: Add enable and disable client, storage, job and schedule endpoints
+
+20Jun24
+ - Fix #10985 Report the FD/SD Encryption in the Job record and the job output
+
+13Jun24
+ - deploy: limit urllib3 version to be compatible with rhel8
+
+12Jun24
+ - k8s: Avoid pvc data when pvc is in Pending status. k8s: Fix redoing backup 
+  when pvcdata is 0 bytes and the backup mode is standard
+
+11Jun24
+ - deploy: create dockerfile to fast k8s compilation in rhel platform
+
+10Jun24
+ - baculum: Fix missing scopes on supported OAuth2 scope list
+
+07Jun24
+ - baculum: Fix compatibility with very old PHP 5.4
+
+06Jun24
+ - k8s: Fix restore problem where pod require the pvc data when it starts
+
+05Jun24
+ - Fix #10947 time output without century for locale that use multi bytes 
+  utf8
+
+04Jun24
+ - k8s: Add more options to debug
+
+03Jun24
+ - baculum: Add cloud storage status to SD status endpoint
+
+26May24
+ - baculum: Fix #2722 port from Bacularis fix for displaying schedule list
+
+14May24
+ - k8s: Avoid pvcs backup when the pvc status is Terminating
+
+10May24
+ - k8s: Fix #0010901 - Problem when restore service clusterIPs
+
+09May24
+ - k8s: Add dockerfile to create an image to compile k8s plugin in any debian/ubuntu 
+  distribution
+ - k8s: Add Ingress integration backup/restore
+
+07May24
+ - Fix compilation issue with zstd and without lzo
+
+17Apr24
+ - Enforce malware database download from Abuse.ch
+
+16Apr24
+ - Fix org#2714 Fails to take TLS Allowed CN into account
+
+04Apr24
+ - baculum: Fix sorting in filesets endpoint if unique filesets parameter is 
+  used
+
+28Mar24
+ - Fix Client/Uname field not always updated after a status client
+ - baculum: Update API documentation
+ - baculum: Add name and sort parameters to filesets filter
+
+22Mar24
+ - BSOCK improve POLL to detect and report errors
+
+05Feb24
+ - show minimal backtrace if gdb is not installed
+
+17Jan24
+ - Detect unsolvable volume cycle in split_bsr_loop()
+
+21Dec23
+ - cloud: reapply usefull previous changes
+ - Revert "cloud storage: Fix #10291 Assume that driver ls can return an error 
+  when scanning an unexistant cloud volume and loosen the conditions that 
+  handle this case"
+
+Bugs fixed/closed since last release:
+0010901 0011005 10291 10947 10985 11048 11058 11197 11251 2714 2722 2737 2738 2748
+
         ChangeLog for Bacula Enterprise version 15.0.2
 
 22Mar24

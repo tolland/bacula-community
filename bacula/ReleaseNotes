@@ -1,6 +1,6 @@
                Release Notes for Bacula 15.0
 
-This is a major beta release with many new features and a number of
+This is a major release with many new features and a number of
 changes. Please take care to test this code carefully before putting it into
 production. Although the new features have been tested, they have not run in a
 production environment.
@@ -41,6 +41,68 @@ directory after you run the ./configure command.
 As mentioned above, before running this script, please backup your catalog
 database, be sure to shutdown Bacula and be aware that running the script can
 take some time depending on your database size.
+
+Release 15.0.3 / 25 March 2025
+----------------------------------------------------------------
+
+15.0.3 is a minor bug fix release.
+
+ - Use the CLOEXEC function in sockets and all file descriptors
+ - BSOCK improve POLL to detect and report errors
+ - Check for backquote in check_for_invalid_chars() function
+ - Detect unsolvable volume cycle in split_bsr_loop()
+ - Enforce malware database download from Abuse.ch
+
+ - Fix #10947 time output without century for locale that use multi bytes utf8
+ - Fix #10985 Report the FD/SD Encryption in the Job record and the job output
+ - Fix #11048 About LastBackedUpTo StorageGroup policy not correctly set
+ - Fix #11058 About fsync error reported for tape driver
+ - Fix #11197 About error when using bextract on ZSTD compressed data
+ - Fix #11251 About bcopy not mounting correctly volumes provided with -i option
+ - Fix Client/Uname field not always updated after a status client
+ - Fix compilation issue with zstd and without lzo
+ - Fix compilation variable in var.c and expand.c
+
+ - Fix org#2714 Fails to take TLS Allowed CN into account
+ - Fix org#2738 About error message with generated fileset
+ - Fix org#2748 About compilation error with ZSTD and not LZO enabled
+
+ - Update bsmtp copyright information
+
+ - baculum: Add cloud storage status to SD status endpoint
+ - baculum: Add enable and disable client, storage, job and schedule endpoints
+ - baculum: Add name and sort parameters to filesets filter
+ - baculum: Add new query parameters in M365EmailList endpoint
+ - baculum: Fix #2722 port from Bacularis fix for displaying schedule list
+ - baculum: Fix compatibility with very old PHP 5.4
+ - baculum: Fix missing scopes on supported OAuth2 scope list
+ - baculum: Fix sorting in filesets endpoint if unique filesets parameter is used
+ - baculum: Update API documentation
+
+ - bpipe: Fix org#2737 About segfault with bpipe
+
+ - k8s: Add Ingress integration backup/restore
+ - k8s: Add dockerfile to create an image to compile k8s plugin in any debian/ubuntu distribution
+ - k8s: Add more options to debug
+ - k8s: Add new level(In pvc annotations) in selection of backup mode
+ - k8s: Add parallel job in same namespace
+ - k8s: Add pvc annotation takes precedence without pod annotation
+ - k8s: Add pvc clean up from old backup jobs
+ - k8s: Avoid pvc data when pvc is in Pending status. k8s: Fix redoing backup when pvcdata is 0 bytes and the backup mode is standard
+ - k8s: Avoid pvcs backup when the pvc status is Terminating
+ - k8s: Fix #0010901 - Problem when restore service clusterIPs
+ - k8s: Fix #0011005: ModuleNotFoundError: No module named 'baculak8s.plugins.k8sbackend.ingress'
+ - k8s: Fix get provisioner permissions
+ - k8s: Fix restore problem where pod require the pvc data when it starts
+ - k8s: Fix show pvdatada message when you don't use it
+ - k8s: Get images from repositories with auth
+
+ - show minimal backtrace if gdb is not installed
+ - win32: Fix unwanted debug messages in windows File Daemon
+
+Bugs fixed/closed since last release:
+ 10291 10901 10947 10985 11005 11048 11058 11197 11251 2722
+
 
 ----------------------------------------------------------------
 Release 15.0.2 / 21 March 2024
