@@ -1,7 +1,7 @@
 /*
    Bacula(R) - The Network Backup Solution
 
-   Copyright (C) 2000-2023 Kern Sibbald
+   Copyright (C) 2000-2025 Kern Sibbald
    All rights reserved.
 
    The original author of Bacula is Kern Sibbald, with contributions

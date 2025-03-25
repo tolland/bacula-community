@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2000-2023 Kern Sibbald
+# Copyright (C) 2000-2025 Kern Sibbald
 # License: BSD 2-Clause; see file LICENSE-FOSS
 #
 # Purge files from job, run bscan, check if file records were reinserted back

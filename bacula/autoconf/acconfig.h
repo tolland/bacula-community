@@ -3,7 +3,7 @@
 /* ------------------------------------------------------------------------- */
 
 /*
- * Copyright (C) 2000-2022 Kern Sibbald
+ * Copyright (C) 2000-2025 Kern Sibbald
  * License: BSD 2-Clause; see file LICENSE-FOSS
  */
    

@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2000-2020 Kern Sibbald
+# Copyright (C) 2000-2025 Kern Sibbald
 # License: BSD 2-Clause; see file LICENSE-FOSS
 #
 # Cloud test. We run backups and restore with the "truncate cache" command in-between
