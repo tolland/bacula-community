@@ -1,4 +1,19 @@
 
+                Release Notes for Baculum 15.0.3
+
+This is new feature and bugfix release. We prepared new changes to the API part.
+
+ - Add name and sort parameters to filesets filter
+ - Add cloud storage status to SD status endpoint
+ - Add enable and disable client, storage, job and schedule endpoints
+ - Add new query parameters in M365EmailList endpoint
+ - Update API documentation
+ - Fix sorting in filesets endpoint if unique filesets parameter is used
+ - Fix #2722 port from Bacularis fix for displaying schedule list
+ - Fix compatibility with very old PHP 5.4
+ - Fix missing scopes on supported OAuth2 scope list
+
+
                 Release Notes for Baculum 15.0.2
 
 This is a new feature release. Almost all changes are for the API part.
