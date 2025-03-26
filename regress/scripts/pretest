@@ -10,6 +10,7 @@
 
 TestName="pretest"
 JobName=backup
+export CHECK_ENCRYPTION=0
 error=0
 
 . scripts/functions
