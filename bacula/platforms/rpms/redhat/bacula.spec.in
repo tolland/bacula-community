@@ -583,6 +583,23 @@ Group: System Environment/Daemons
 
 This package installs the TOTP Director Authentication plugin.
 
+%package snapshot
+
+Summary: Bacula - The Network Backup Solution
+Group: System Environment/Daemons
+
+%description snapshot
+%{blurb}
+
+%{blurb2}
+%{blurb3}
+%{blurb4}
+%{blurb5}
+%{blurb6}
+%{blurb7}
+
+This package installs the Snapshot FD plugin.
+
 %package antivirus-plugin
 
 Summary: Bacula - The Network Backup Solution
@@ -751,6 +768,7 @@ export BACULA="Bacula"
         --with-gpfsdir=${cwd}/%{depkgs}/gpfs/include
 
 make -j3
+make -C src/tools install-bsnapshot
 
 %install
 
@@ -1434,6 +1452,10 @@ if [ -d %{sysconf_dir} ]; then
       rm -f $file.new
    done
 fi
+
+%files snapshot
+%defattr(-,root,root)
+%attr(755, root, root) %{_sbindir}/bsnapshot
 
 %files antivirus-plugin
 %defattr(-,root,root)
