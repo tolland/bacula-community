@@ -70,3 +70,9 @@ parameters needed to deal with FreeBSD tape drivers.
 
 License:
 Please see the file LICENSE for the terms of the license.
+
+Contributing:
+Contribution requires creating [an issue](https://gitlab.bacula.org/bacula-community-edition/bacula-community/-/issues)
+describing your changes, and then attaching commits produced via `git format-patch -n --stdout > 1.patch` 
+command, where `n` is the number of commits.
+
