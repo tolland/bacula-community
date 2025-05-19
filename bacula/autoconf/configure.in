@@ -982,7 +982,9 @@ AC_CHECK_LIB(curl,curl_version_info,,[error="Can't find CURL library."])
 
 if test x"${error}" == "x"; then
    support_curl=yes
-fi 
+fi
+
+unset error
 
 AC_MSG_RESULT([$support_curl])
 if test "$support_curl" = "yes"; then
@@ -1042,6 +1044,8 @@ else
     ZSTD_LIBS=""
     ZSTD_INC=""
 fi
+
+unset error
 
 AC_MSG_RESULT([$support_zstd])
 if test "$support_zstd" = "yes"; then
