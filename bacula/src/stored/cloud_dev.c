@@ -1397,17 +1397,19 @@ bool cloud_dev::open_device(DCR *dcr, int omode)
    }
    pm_strcat(archive_name, getVolCatName());
 
-   /* If create make directory with Volume name */
-   if (part <= 0 && omode == CREATE_READ_WRITE) {
-      Dmsg1(dbglvl, "=== makedir=%s\n", archive_name.c_str());
-      if (!makedir(dcr->jcr, archive_name.c_str(), 0740)) {
-         berrno be;
-         if (errmsg[0] == 0) {
-            Mmsg2(errmsg, _("Could not make dir %s. %s"), archive_name.c_str(), be.bstrerror());
+   /* Ensure the volume directory exists when creating a volume, regardless of current part */
+   if (omode == CREATE_READ_WRITE) {
+      if (lstat(archive_name.c_str(), &sp) != 0) {
+         Dmsg1(dbglvl, "=== makedir=%s\n", archive_name.c_str());
+         if (!makedir(dcr->jcr, (char*)archive_name.c_str(), 0740)) {
+            berrno be;
+            if (errmsg[0] == 0) {
+               Mmsg2(errmsg, _("Could not make dir %s. %s"), archive_name.c_str(), be.bstrerror());
+            }
+            Dmsg2(dbglvl, _("Could not make dir %s. %s"), archive_name.c_str(), be.bstrerror());
+            Leave(dbglvl);
+            return false;
          }
-         Dmsg2(dbglvl, _("Could not make dir %s. %s"), archive_name.c_str(), be.bstrerror());
-         Leave(dbglvl);
-         return false;
       }
    }
    if (part <= 0) {
