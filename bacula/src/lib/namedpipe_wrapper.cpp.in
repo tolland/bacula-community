@@ -1,0 +1,3 @@
+#include "bacula.h"
+#include "../findlib/namedpipe.c"
+

@@ -1,0 +1,18 @@
+# Meson options for Bacula configuration
+# These replace autoconf-style @VARIABLE@ substitutions
+
+option('default_db_type',
+  type: 'string',
+  value: 'sqlite3',
+  description: 'Default database backend (sqlite3, mysql, postgresql)')
+
+option('scriptdir',
+  type: 'string',
+  value: '/usr/bin',
+  description: 'Directory for scripts')
+
+option('working_dir',
+  type: 'string',
+  value: '/var/lib/bacula',
+  description: 'Working directory for Bacula')
+
